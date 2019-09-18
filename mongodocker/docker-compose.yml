@@ -1,0 +1,12 @@
+version: '3.5'
+services:
+  mongo:
+    container_name: mongodb_dev
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+  mongo_seeder:
+    container_name: mongo_seeder
+    build: .
+    depends_on:
+      - mongo

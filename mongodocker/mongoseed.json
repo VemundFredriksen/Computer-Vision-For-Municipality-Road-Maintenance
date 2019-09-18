@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "classification": "pothole",
+    "severity": 3,
+    "picture": "./images/1.jpeg"
+  },
+  {
+    "id": 2,
+    "classification": "crack",
+    "severity": 1,
+    "picture": "./images/2.jpeg"
+  }
+]
