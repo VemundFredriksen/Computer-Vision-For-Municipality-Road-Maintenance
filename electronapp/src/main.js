@@ -3,9 +3,10 @@ const path = require("path");
 
 import { app, BrowserWindow } from "electron";
 
+let window;
 
 const createWindow = () => {
-    let window = new BrowserWindow({ width: 800, height: 600 });
+    window = new BrowserWindow({ width: 800, height: 600 });
 
     window.loadURL(
         url.format({
