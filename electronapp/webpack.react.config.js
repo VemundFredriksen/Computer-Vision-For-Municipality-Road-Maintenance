@@ -43,7 +43,7 @@ const config = {
     },
 
     resolve: {
-        extensions: [".js"]
+        extensions: [".js", ".jsx", ".css"]
     },
     plugins: [htmlPlugin]
 };

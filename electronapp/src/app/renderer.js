@@ -1,12 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
+import HomePage from './components/HomePage';
 
-export class App extends Component {
-    render() {
-        return  (
-            <div>App</div>
-        )
-    }
-}
+const App = () => <HomePage />;
 
-ReactDOM.render(<App/>, document.getElementById('renderer'));
+ReactDOM.render(<App />, document.getElementById('renderer'));
