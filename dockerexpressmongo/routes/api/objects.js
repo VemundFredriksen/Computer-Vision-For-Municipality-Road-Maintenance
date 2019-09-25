@@ -3,6 +3,7 @@ const router = express.Router();
 const mongo = require("mongodb").MongoClient;
 const objectId = require("mongodb").ObjectID;
 const assert = require("assert");
+
 const url = "mongodb://mongo:27017/express_mongodb";
 const collectionName = "Objects";
 
@@ -41,8 +42,8 @@ router.post("/insert-one", (req, res, next) => {
     };
     db.collection(collectionName).insertOne(object, (err, result) => {
       assert.equal(null, err);
-      console.log("Object inserted");
     });
+    console.log("Object inserted");
     db.close();
   });
   res.redirect("/get-all-objects");
