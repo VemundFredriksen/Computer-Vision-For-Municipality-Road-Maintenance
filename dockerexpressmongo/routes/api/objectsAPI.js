@@ -21,15 +21,28 @@ router.post("/insert-one", (req, res, next) => {
   var item = {
     type: req.body.type,
     priority: req.body.priority,
-    coordinates: req.body.coordinates
+    coordinates: req.body.coordinates,
+    status: req.body.status
   };
   var obj = new DetectedObject(item);
   obj.save((err, docs) => {
     if (err) {
       console.log(err);
-      return res.status(400).json({ msg: "No object were inserted.." });
+      return res.status(400).json({ msg: "No objects were inserted.." });
     } else {
       return res.json({ msg: "Object inserted" });
+    }
+  });
+});
+
+//insert many object (array of json objects)
+router.post("/insert-many", (req, res, next) => {
+  DetectedObject.insertMany(req.body, (err, doc) => {
+    if (err) {
+      console.log(err);
+      res.status(400).json({ msg: "Somthing went wrong when insterting.." });
+    } else {
+      res.json({ msg: "Objects inserted!" });
     }
   });
 });
@@ -72,7 +85,7 @@ router.put("/update-by-id", (req, res, next) => {
   DetectedObject.findOneAndUpdate({ _id: req.query.id }, item, (err, doc) => {
     if (err) {
       console.log(err);
-      return res.status(400).json({ msg: "No object were updated.." });
+      return res.status(400).json({ msg: "No objects were updated.." });
     } else {
       return res.json({ msg: "Object updated" });
     }
@@ -84,7 +97,7 @@ router.delete("/delete-by-id", (req, res, next) => {
   DetectedObject.findByIdAndRemove(req.query.id, (err, doc) => {
     if (err) {
       console.log(err);
-      return res.status(400).json({ msg: "No object were deleted.." });
+      return res.status(400).json({ msg: "No objects were deleted.." });
     } else {
       return res.json({ msg: "Object deleted" });
     }

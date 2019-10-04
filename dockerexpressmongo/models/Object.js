@@ -16,6 +16,10 @@ const detectedObjectSchema = new Schema({
   coordinates: {
     type: [Number],
     required: true
+  },
+  status: {
+    type: String,
+    required: true
   }
 });
 
