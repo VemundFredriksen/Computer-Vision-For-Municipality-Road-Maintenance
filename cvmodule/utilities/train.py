@@ -4,15 +4,29 @@ import argparse
 from os import path
 from ctypes import *
 
+#C bindings
+lib = CDLL("./../core/darknet/libdarknet.so", RTLD_GLOBAL)
+
+load_net = lib.load_network
+load_net.argtypes = [c_char_p, c_char_p, c_int]
+load_net.restype = c_void_p
+
+c_train = lib.train_detector
+c_train.argtypes = [c_char_p, c_char_p, c_char_p, POINTER(c_int), c_int, c_int]
+c_train.restype = c_void_p
+
+c_fetch_gpus = lib.fetch_gpus
+c_fetch_gpus.argtypes = []
+c_fetch_gpus.restype = POINTER(c_int)
+
 #Validate and store
 
 #Train
 
 #Load Net
-lib = CDLL("./../core/darknet/libdarknet.so", RTLD_GLOBAL)
 
-def load_net(cfg, weights):
-    return darknet.load_net(cfg, weights, 0)
+def load_network(cfg, weights):
+    return load_net(cfg.encode("UTF-8"), weights.encode("UTF-8"), 0)
 
 # PreProcessing
 
@@ -62,7 +76,7 @@ def pre_process(cfg, weights, train_txt, ignore_validation_txt):
         print("'{}' not found".format(train_txt))
         return False
 
-    validate_data_file(train_txt, ignore_validation_txt)
+    return validate_data_file(train_txt, ignore_validation_txt)
 
 # Main
 
@@ -70,8 +84,8 @@ def main(cfg, weights, train_txt, ignore_validation_txt):
     if(not pre_process(cfg, weights, train_txt, ignore_validation_txt)):
         print("Training stopped premature")
         return
-    net = load_net(cfg, weights)
-    
+    #load_network(cfg, weights)
+    c_train(train_txt.encode("UTF-8"), cfg.encode("UTF-8"), weights.encode("UTF-8"), c_fetch_gpus(), 1, 0);
 
 if(__name__ == "__main__"):
     parser = argparse.ArgumentParser(description='Train specified network on specified data')
