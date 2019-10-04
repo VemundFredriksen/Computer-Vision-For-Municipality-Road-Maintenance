@@ -1,7 +1,7 @@
 const express = require("express");
 const logger = require("morgan");
 const bodyParser = require("body-parser");
-const routes = require("./routes/api/objects");
+const routes = require("./routes/api/objectsAPI");
 const app = express();
 
 app.use(logger("dev"));
