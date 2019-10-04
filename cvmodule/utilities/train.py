@@ -2,12 +2,17 @@
 
 import argparse
 from os import path
+from ctypes import *
 
 #Validate and store
 
 #Train
 
 #Load Net
+lib = CDLL("./../core/darknet/libdarknet.so", RTLD_GLOBAL)
+
+def load_net(cfg, weights):
+    return darknet.load_net(cfg, weights, 0)
 
 # PreProcessing
 
@@ -62,9 +67,10 @@ def pre_process(cfg, weights, train_txt, ignore_validation_txt):
 # Main
 
 def main(cfg, weights, train_txt, ignore_validation_txt):
-    if( not pre_process(cfg, weights, train_txt, ignore_validation_txt)):
+    if(not pre_process(cfg, weights, train_txt, ignore_validation_txt)):
         print("Training stopped premature")
         return
+    net = load_net(cfg, weights)
     
 
 if(__name__ == "__main__"):
