@@ -7,8 +7,8 @@ module.exports = {
     path: path.resolve(__dirname, 'build'),
     publicPath: '/',
     filename: 'bundle.js',
-    devtool: 'source-map'
   },
+  devtool: 'source-map',
   devServer: {
     contentBase: "./build",
   },
@@ -17,7 +17,7 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: ['babel-loader', 'eslint-loader']
+        use: ['babel-loader']
       },
       {
         test: /\.css$/,
