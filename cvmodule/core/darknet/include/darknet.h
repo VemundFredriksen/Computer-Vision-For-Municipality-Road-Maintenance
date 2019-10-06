@@ -799,6 +799,8 @@ size_t rand_size_t();
 float rand_normal();
 float rand_uniform(float min, float max);
 
+void custom_train(char *datacfg, char *cfgfile, int **net_in, int *gpus, int ngpus, int clear, int epoch_size, int epoch);
+int predict(char *datacfg, char *cfgfile, int **net_in, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen);
 void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, int ngpus, int clear);
 int fetch_gpus();
 

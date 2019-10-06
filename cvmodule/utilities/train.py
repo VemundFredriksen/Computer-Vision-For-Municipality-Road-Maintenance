@@ -2,33 +2,41 @@
 
 import argparse
 from os import path
-from ctypes import *
+import c_bindings as cb
+import predict
 
-#C bindings
-lib = CDLL("./../core/darknet/libdarknet.so", RTLD_GLOBAL)
-
-load_net = lib.load_network
-load_net.argtypes = [c_char_p, c_char_p, c_int]
-load_net.restype = c_void_p
-
-c_train = lib.train_detector
-c_train.argtypes = [c_char_p, c_char_p, c_char_p, POINTER(c_int), c_int, c_int]
-c_train.restype = c_void_p
-
-c_fetch_gpus = lib.fetch_gpus
-c_fetch_gpus.argtypes = []
-c_fetch_gpus.restype = POINTER(c_int)
 
 #Validate and store
 
-#Train
+def validate(net, val_txt):
+    preds = predict.predict("yolo-potholes-tiny.cfg", net)
+    print(preds[0].bbox.x)
+
+def validate_and_log(val_txt, val_log):
+    
+    val_file = open(val_log, "a+")
+    val_file.write("\n{ Epoch 1 : 25}")
+    val_file.close()
+    print("Validated!")
 
 #Load Net
 
 def load_network(cfg, weights):
-    return load_net(cfg.encode("UTF-8"), weights.encode("UTF-8"), 0)
+    return cb.load_net(cfg.encode("UTF-8"), weights.encode("UTF-8"), 0)
 
 # PreProcessing
+
+def number_of_datafiles(cfg_file):
+    c = open(cfg_file, "r")
+    cfg_lines = c.readlines()
+    c.close()
+    
+    file = cfg_lines[1].split('=')[1].replace("\n", "").strip()
+
+    f = open(file, "r")
+    lines = f.readlines()
+    f.close()
+    return len(lines)
 
 def file_exists(file):
     return path.exists(file)
@@ -84,8 +92,19 @@ def main(cfg, weights, train_txt, ignore_validation_txt):
     if(not pre_process(cfg, weights, train_txt, ignore_validation_txt)):
         print("Training stopped premature")
         return
-    #load_network(cfg, weights)
-    c_train(train_txt.encode("UTF-8"), cfg.encode("UTF-8"), weights.encode("UTF-8"), c_fetch_gpus(), 1, 0);
+    net = load_network(cfg, weights)
+    n_data = number_of_datafiles(train_txt)
+    
+    validate(net, "arne.txt")    
+
+    max_epochs = 4
+    '''
+    for i in range(1, max_epochs + 1):
+        c_custom_train(train_txt.encode("UTF-8"), cfg.encode("UTF-8"), net, c_fetch_gpus(), 1, 0, 32, i);
+        print("Epoch {} done!".format(i))
+        print("Validating loss...")
+        validate_and_log("arne", "backup/val_log.txt")
+   '''
 
 if(__name__ == "__main__"):
     parser = argparse.ArgumentParser(description='Train specified network on specified data')
