@@ -1,0 +1,22 @@
+.button {
+    box-sizing: border-box;
+    position: relative;
+    border-radius: 22px;
+    border: 1px black solid;
+    width: 200px;
+    height: 41px;
+    cursor: pointer;
+    background-color: inherit;
+}
+
+.button:hover {
+    border-color: #61dafb;
+}
+
+.button:active {
+    border-color: #61dafb;
+}
+
+.button:focus {
+    outline: none;
+}
