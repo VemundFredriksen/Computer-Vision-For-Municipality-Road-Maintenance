@@ -11,6 +11,8 @@ module.exports = {
   devtool: 'source-map',
   devServer: {
     contentBase: "./build",
+    historyApiFallback: true,
+    hot: true,
   },
   module: {
     rules: [
