@@ -45,7 +45,7 @@ if(outfile){
 
 
 //Train Network
-void custom_train(char *datacfg, char *cfgfile, int **net_in, int *gpus, int ngpus, int clear, int epoch_size, int epoch)
+float custom_train(char *datacfg, char *cfgfile, int **net_in, int *gpus, int ngpus, int clear, int epoch_size, int epoch)
 {
     list *options = read_data_cfg(datacfg);
     char *train_images = option_find_str(options, "train", "data/train.list");
@@ -162,7 +162,7 @@ void custom_train(char *datacfg, char *cfgfile, int **net_in, int *gpus, int ngp
         }
         free_data(train);
 	if(i*imgs >= epoch_size * epoch){
-		return;	
+		return avg_loss;	
 	}
     }
 #ifdef GPU
@@ -171,6 +171,8 @@ void custom_train(char *datacfg, char *cfgfile, int **net_in, int *gpus, int ngp
     char buff[256];
     sprintf(buff, "%s/%s_final.weights", backup_directory, base);
     save_weights(net, buff);
+    
+    return avg_loss;
 }
 
 int fetch_gpus()

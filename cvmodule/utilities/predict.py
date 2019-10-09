@@ -13,8 +13,8 @@ def draw_prediction_box(image, preds):
 		draw.rectangle((((rect.x - rect.w/2)*width, (rect.y - rect.h/2)*height), ((rect.x + rect.w/2)*width, (rect.y + rect.h/2)*height)), fill=None, outline=None, width=3)
 	img.save(image + ".pred", "JPEG")
 
-def predict(cfg, net):
-    preds = cb.predict("./obj.data".encode("UTF-8"), "./yolo-potholes-tiny.cfg".encode("UTF-8"), net, "./G0011769.jpg".encode("UTF-8"),0.2, 0.5, "./predict.jpg".encode("UTF-8"), 0)
+def predict(cfg, net, image):
+    preds = cb.predict("./obj.data".encode("UTF-8"), "./yolo-potholes-tiny.cfg".encode("UTF-8"), net, image.encode("UTF-8"),0.2, 0.5, "./predict.jpg".encode("UTF-8"), 0)
     
     n = int(sizeof(preds)/4)
     detects = []
@@ -31,7 +31,7 @@ if(__name__ == "__main__"):
     args = vars(parser.parse_args())
 
     net = cb.load_net(args["cfg"].encode("UTF-8"), args["weights"].encode("UTF-8"), 0)
-    preds = predict(args["cfg"], net)
+    preds = predict(args["cfg"], net, "./G0011769.jpg")
     print("Found {} objects in image".format(len(preds)))
     for i in range(len(preds)):
         print("{} at ({} , {}, {}, {}) with {}% certanity".format(preds[i].classes, preds[i].bbox.x, preds[i].bbox.y, preds[i].bbox.w, preds[i].bbox.h, round(preds[i].prob[0]*100, 2)))

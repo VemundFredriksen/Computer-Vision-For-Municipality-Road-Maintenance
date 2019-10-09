@@ -4,20 +4,18 @@ import argparse
 from os import path
 import c_bindings as cb
 import predict
+import validate
 
 
 #Validate and store
-
-def validate(net, val_txt):
-    preds = predict.predict("yolo-potholes-tiny.cfg", net)
-    print(preds[0].bbox.x)
-
-def validate_and_log(val_txt, val_log):
-    
-    val_file = open(val_log, "a+")
-    val_file.write("\n{ Epoch 1 : 25}")
-    val_file.close()
-    print("Validated!")
+def fetch_val_images(file):
+    f = open(file)
+    lines = f.readlines()
+    f.close()
+    ims = []
+    for l in lines:
+        ims.append(l.strip())
+    return ims
 
 #Load Net
 
@@ -94,17 +92,17 @@ def main(cfg, weights, train_txt, ignore_validation_txt):
         return
     net = load_network(cfg, weights)
     n_data = number_of_datafiles(train_txt)
-    
-    validate(net, "arne.txt")    
 
-    max_epochs = 4
-    '''
+    max_epochs = 25
+    
+    val_ims = fetch_val_images("./val.txt")
+    
     for i in range(1, max_epochs + 1):
-        c_custom_train(train_txt.encode("UTF-8"), cfg.encode("UTF-8"), net, c_fetch_gpus(), 1, 0, 32, i);
-        print("Epoch {} done!".format(i))
+        loss = cb.train(train_txt.encode("UTF-8"), cfg.encode("UTF-8"), net, cb.fetch_gpus(), 1, 0, 300, i);
+        print("Epoch {} done! Average loss: {}".format(i, loss))
         print("Validating loss...")
-        validate_and_log("arne", "backup/val_log.txt")
-   '''
+        validate.validate_and_log(cfg, net, val_ims, loss)
+   
 
 if(__name__ == "__main__"):
     parser = argparse.ArgumentParser(description='Train specified network on specified data')

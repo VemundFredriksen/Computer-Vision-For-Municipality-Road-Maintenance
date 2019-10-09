@@ -29,7 +29,7 @@ fetch_gpus.restype = POINTER(c_int)
 # ======== Envokes the training function in darknet core code ======== #
 train = lib.custom_train
 train.argtypes = [c_char_p, c_char_p, c_int, POINTER(c_int), c_int, c_int, c_int, c_int]
-train.restype = c_void_p
+train.restype = c_float
 
 # ======== Makes a detection of given image ======== #
 predict = lib.predict
