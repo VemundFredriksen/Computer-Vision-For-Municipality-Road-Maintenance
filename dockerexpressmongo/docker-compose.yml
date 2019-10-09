@@ -1,6 +1,6 @@
 # Here, we are building two containers.
-# 1. app container(It is our express app)
-# 2. mongodb container(mongodb server).
+# 1. Node container(It is our express app)
+# 2. mongodb container(mongodb).
 
 version: "3"
 services:

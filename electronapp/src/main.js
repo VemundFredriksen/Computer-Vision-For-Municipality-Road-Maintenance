@@ -2,12 +2,23 @@ import { app, BrowserWindow } from 'electron';
 
 const url = require('url');
 const path = require('path');
+const { ipcMain } = require('electron');
+const python = require('child_process');
+
+// change base path to run script
+const basePath = '/Users/ingriddomben/Documents/Projects/Computer-Vision-For-Municipality-Road-Maintenance/electronapp/src/';
 
 
 let window;
 
 const createWindow = () => {
-  window = new BrowserWindow({ width: 800, height: 600 });
+  window = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true,
+    },
+  });
 
   window.loadURL(
     url.format({
@@ -34,4 +45,9 @@ app.on('activate', () => {
   if (window === null) {
     createWindow();
   }
+});
+
+ipcMain.on('message', (event, arg) => {
+  python.spawn('python', [`${basePath} + 'test_script.py`, arg]);
+  event.reply('message-reply');
 });

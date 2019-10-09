@@ -4,6 +4,8 @@ import Button from './Button';
 
 import './DragAndDrop.css';
 
+const { ipcRenderer } = window.require('electron');
+
 const fileSelector = () => {
   const selector = document.createElement('input');
   selector.setAttribute('type', 'file');
@@ -25,8 +27,19 @@ export default class DragAndDrop extends Component {
       dropped: false,
       filePath: '',
       error: '',
+      gotReply: '',
     };
   }
+
+  componentDidMount() {
+    ipcRenderer.on('message-reply', this.onMessageReply);
+  }
+
+  onMessageReply = () => {
+    this.setState({
+      gotReply: 'ran script',
+    });
+  };
 
   onDrop = (e) => {
     const filePath = e.dataTransfer.files[0];
@@ -72,12 +85,14 @@ export default class DragAndDrop extends Component {
     });
   };
 
+  /* eslint-disable no-param-reassign */
   onButtonClick = (e) => {
     const { dropped } = this.state;
     if (dropped) {
       this.setState({
         dropped: false,
         filePath: '',
+        gotReply: '',
       });
     } else {
       e.preventDefault();
@@ -101,12 +116,20 @@ export default class DragAndDrop extends Component {
     }
   };
 
+  onFeedClick = () => {
+    const { filePath } = this.state;
+    if (filePath !== '') {
+      ipcRenderer.send('message', filePath);
+    }
+  };
+
   render() {
     const {
       dragOver,
       dropped,
       filePath,
       error,
+      gotReply,
     } = this.state;
 
     const className = cx({
@@ -124,9 +147,11 @@ export default class DragAndDrop extends Component {
         className={className}
       >
         {error !== '' ? <span>{error}</span> : null}
+        {gotReply !== '' ? <span>{gotReply}</span> : null}
         <span className="path_text">{!dropped ? 'Drop your video file here' : `Selected file: ${filePath}`}</span>
-        <span>
+        <span className="buttons__wrapper">
           <Button text={dropped ? 'Remove file' : 'Select file'} onClick={this.onButtonClick} />
+          {dropped ? <Button text="feed file" onClick={this.onFeedClick} /> : null}
         </span>
       </div>
     );

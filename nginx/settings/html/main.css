@@ -1,0 +1,44 @@
+.fullvideo {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    z-index: -100;
+}
+
+.fullvideo-bg__video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: auto;
+    height: auto;
+    min-width: 100%;
+    min-height: 100%;
+    -webkit-transform: translate(-50%, -50%);
+       -moz-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+	    transform: translate(-50%, -50%);
+}
+
+#info { 
+    font-family: Agenda, Arial Narrow, sans-serif;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    padding: 2rem;
+    margin:2rem;
+    font-size: 1.2rem;
+    float: left;
+    width: 21%;
+}
+
+@media (max-width: 767px) {
+    .fullscreen-bg {
+        background: none;
+    }
+
+    .fullscreen-bg__video {
+        display: none;
+    }
+}
