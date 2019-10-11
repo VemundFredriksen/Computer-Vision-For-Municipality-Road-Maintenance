@@ -20,6 +20,10 @@ const detectedObjectSchema = new Schema({
   status: {
     type: String,
     required: true
+  },
+  filename: {
+    type: String,
+    required: true
   }
 });
 

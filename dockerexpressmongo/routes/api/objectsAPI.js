@@ -1,13 +1,20 @@
 const express = require("express");
-const router = express.Router();
-const objectId = require("mongodb").ObjectID;
-
 const mongoose = require("mongoose");
+const router = express.Router();
 const url = "mongodb://mongo:27017/express_mongodb";
+const multer = require("multer");
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, "./uploads/images");
+  },
+  filename: function(req, file, cb) {
+    cb(null, file.originalname);
+  }
+});
+const upload = multer({ storage: storage }); // This constant allows us to take in files and store it in our server in the defined path.
 
 // Connect to MongoDB
 mongoose.connect(url, { useNewUrlParser: true });
-
 //Get the models
 const DetectedObject = require("../../models/Object");
 
@@ -22,7 +29,8 @@ router.post("/insert-one", (req, res, next) => {
     type: req.body.type,
     priority: req.body.priority,
     coordinates: req.body.coordinates,
-    status: req.body.status
+    status: req.body.status,
+    filename: req.body.filename
   };
   var obj = new DetectedObject(item);
   obj.save((err, docs) => {
@@ -42,7 +50,7 @@ router.post("/insert-many", (req, res, next) => {
       console.log(err);
       res.status(400).json({ msg: "Somthing went wrong when insterting.." });
     } else {
-      res.json({ msg: "Objects inserted!" });
+      res.json({ msg: "This call is out of service haha" });
     }
   });
 });
@@ -102,6 +110,16 @@ router.delete("/delete-by-id", (req, res, next) => {
       return res.json({ msg: "Object deleted" });
     }
   });
+});
+
+//Uploads a single image
+//Here we simply use the middleware (multer) as per the documentation to get the image passed and store it.
+router.post("/upload", upload.single("image"), (req, res, next) => {
+  try {
+    res.send(req.file);
+  } catch (err) {
+    res.send(400);
+  }
 });
 
 //exports...
