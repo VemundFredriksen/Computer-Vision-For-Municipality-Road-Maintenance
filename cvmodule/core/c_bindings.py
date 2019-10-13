@@ -1,4 +1,5 @@
 from ctypes import *
+import os
 
 class BOX(Structure):
     _fields_ = [("x", c_float),
@@ -14,7 +15,8 @@ class DETECTION(Structure):
                 ("objectness", c_float),
                 ("sort_class", c_int)]
 
-lib = CDLL("./../core/darknet/libdarknet.so", RTLD_GLOBAL)
+current_path = os.path.dirname(os.path.abspath(__file__))
+lib = CDLL(current_path + "/darknet/libdarknet.so", RTLD_GLOBAL)
 
 # ======== Loads the neural net into GPU Memory ======== #
 load_net = lib.load_network
