@@ -13,7 +13,7 @@ class HomePage extends React.Component {
   }
 
   componentDidMount() {
-    fetch('http://dewp.eu.org:4000/get-all-objects')
+    fetch('https://api.dewp.eu.org/get-all-objects')
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
