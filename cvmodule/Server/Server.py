@@ -1,4 +1,5 @@
 import os
+
 from pyftpdlib.authorizers import DummyAuthorizer
 from RequestHandler import RequestHandler
 from pyftpdlib.servers import FTPServer
@@ -29,7 +30,9 @@ def main():
 	handler = RequestHandler
 	handler.authorizer = authorizer
 
+
 	server = FTPServer((ip, 21), handler)
 	server.serve_forever()
 
-main()
+if __name__ == "__main__":
+	main()
