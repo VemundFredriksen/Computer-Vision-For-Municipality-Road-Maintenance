@@ -1,15 +1,19 @@
 import React from 'react';
 import MapComponent from '../components/MapComponent';
+import InfoBar from '../components/infoBar/InfoBar';
 
 class HomePage extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
       hasLoaded: false,
       objects: [],
       error: null,
+      chosenObject: null,
     };
+
+    this.handleMarkerClick = this.handleMarkerClick.bind(this);
   }
 
   componentDidMount() {
@@ -29,8 +33,22 @@ class HomePage extends React.Component {
       });
   }
 
+  handleMarkerClick = (id) => {
+    const { objects } = this.state;
+    const object = objects.filter((obj) => obj._id === id);
+
+    this.setState({
+      chosenObject: object[0],
+    });
+  };
+
   render() {
-    const { hasLoaded, objects, error } = this.state;
+    const {
+      hasLoaded,
+      objects,
+      error,
+      chosenObject,
+    } = this.state;
 
     if (!hasLoaded) {
       return <div>is loading..</div>;
@@ -42,7 +60,18 @@ class HomePage extends React.Component {
 
     return (
       <div style={{ height: '100vh', textAlign: 'center' }}>
-        <MapComponent objects={objects} />
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          {chosenObject
+            ? (
+              <InfoBar
+                type={chosenObject.type}
+                status={chosenObject.status}
+                priority={chosenObject.priority}
+              />
+            )
+            : null }
+          <MapComponent objects={objects} onMarkerClick={this.handleMarkerClick} />
+        </div>
       </div>
     );
   }
