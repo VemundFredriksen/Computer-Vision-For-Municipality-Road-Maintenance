@@ -10,7 +10,7 @@ class HomePage extends React.Component {
       hasLoaded: false,
       objects: [],
       error: null,
-      chosenObject: null,
+      currentObject: null,
     };
 
     this.handleMarkerClick = this.handleMarkerClick.bind(this);
@@ -38,7 +38,7 @@ class HomePage extends React.Component {
     const object = objects.filter((obj) => obj._id === id);
 
     this.setState({
-      chosenObject: object[0],
+      currentObject: object[0],
     });
   };
 
@@ -47,7 +47,7 @@ class HomePage extends React.Component {
       hasLoaded,
       objects,
       error,
-      chosenObject,
+      currentObject,
     } = this.state;
 
     if (!hasLoaded) {
@@ -61,16 +61,20 @@ class HomePage extends React.Component {
     return (
       <div style={{ height: '100vh', textAlign: 'center' }}>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          {chosenObject
+          {currentObject
             ? (
               <InfoBar
-                type={chosenObject.type}
-                status={chosenObject.status}
-                priority={chosenObject.priority}
+                type={currentObject.objecttype}
+                status={currentObject.status}
+                priority={currentObject.priority}
+                imagePath={`https://api.dewp.eu.org/get-image?filename=${currentObject.filename}`}
               />
             )
             : null }
-          <MapComponent objects={objects} onMarkerClick={this.handleMarkerClick} />
+          <MapComponent
+            objects={objects}
+            onMarkerClick={this.handleMarkerClick}
+          />
         </div>
       </div>
     );

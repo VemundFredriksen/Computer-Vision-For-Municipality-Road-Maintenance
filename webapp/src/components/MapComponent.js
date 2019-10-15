@@ -2,6 +2,7 @@ import React from 'react';
 import { Map, TileLayer, Marker } from 'react-leaflet';
 import PropTypes from 'prop-types';
 
+
 const MapComponent = ({ objects, onMarkerClick }) => (
   <Map style={{ height: '600px', width: '700px', position: 'relative' }} center={[63.42, 10.39]} zoom={12}>
     <TileLayer
