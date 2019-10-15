@@ -5,7 +5,7 @@ const url = "mongodb://mongo:27017/express_mongodb";
 const multer = require("multer");
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    cb(null, "./uploads/images");
+    cb(null, "/app/uploads/images");
   },
   filename: function(req, file, cb) {
     cb(null, file.originalname);
@@ -23,39 +23,52 @@ router.get("/", (req, res, next) => {
   res.json({ msg: "Hello world.." });
 });
 
-//insert one object (from json)
-router.post("/insert-one", (req, res, next) => {
-  var item = {
-    type: req.body.type,
-    priority: req.body.priority,
-    coordinates: req.body.coordinates,
-    status: req.body.status,
-    filename: req.body.filename
-  };
-  var obj = new DetectedObject(item);
-  obj.save((err, docs) => {
-    if (err) {
+//Uploads a single image
+//Here we simply use the middleware (multer) as per the documentation to get the image passed and store it.
+router.post("/upload-image", upload.array("image"), (req, res, next) => {
+  if (req.files.length <= 0) {
+    console.log("No file received");
+    return res.status(400).send({
+      success: false
+    });
+  } else {
+    try {
+      console.log("file(s) received");
+      res.status(200).send(req.files);
+      console.log(req.body);
+      console.log(req.body.type);
+    } catch (err) {
       console.log(err);
-      return res.status(400).json({ msg: "No objects were inserted.." });
-    } else {
-      return res.json({ msg: "Object inserted" });
+      res.send(400);
     }
-  });
+  }
 });
 
-//insert many object (array of json objects)
-router.post("/insert-many", (req, res, next) => {
+//insert one or many objects (array of json objects)
+router.post("/insert-data", (req, res, next) => {
   DetectedObject.insertMany(req.body, (err, doc) => {
     if (err) {
       console.log(err);
       res.status(400).json({ msg: "Somthing went wrong when insterting.." });
     } else {
-      res.json({ msg: "This call is out of service haha" });
+      res.json({ msg: "Objectdata inserted!" });
     }
   });
 });
 
-//Get all objects as json
+// E.g: http://localhost:4000/get-image?filename=rutenett.png
+router.get("/get-image", (req, res, next) => {
+  let filename = req.query.filename;
+  try {
+    const file = `/app/uploads/images/${filename}`;
+    res.download(file);
+  } catch (err) {
+    res.status(400).json({ msg: `No file with name ${filename}` });
+    console.log(err);
+  }
+});
+
+//Get all objects as json (only metadata, not images)
 router.get("/get-all-objects", (req, res, next) => {
   DetectedObject.find()
     .lean()
@@ -110,16 +123,6 @@ router.delete("/delete-by-id", (req, res, next) => {
       return res.json({ msg: "Object deleted" });
     }
   });
-});
-
-//Uploads a single image
-//Here we simply use the middleware (multer) as per the documentation to get the image passed and store it.
-router.post("/upload", upload.single("image"), (req, res, next) => {
-  try {
-    res.send(req.file);
-  } catch (err) {
-    res.send(400);
-  }
 });
 
 //exports...
