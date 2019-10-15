@@ -22,7 +22,9 @@ module.exports = {
   ],
   rules: {
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    "no-underscore-dangle": 'off'
+    "no-underscore-dangle": 'off',
+    "jsx-a11y/label-has-associated-control": "off",
+    "jsx-a11y/label-has-for": 0
   },
   parser: "babel-eslint"
 };
