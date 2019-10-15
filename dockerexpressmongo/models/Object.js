@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 // Each schema maps to a MongoDB collection and defines the
 // shape of the documents within that collection.
 const detectedObjectSchema = new Schema({
-  type: {
+  objecttype: {
     type: String,
     required: true
   },
@@ -18,6 +18,10 @@ const detectedObjectSchema = new Schema({
     required: true
   },
   status: {
+    type: String,
+    required: true
+  },
+  filename: {
     type: String,
     required: true
   }
