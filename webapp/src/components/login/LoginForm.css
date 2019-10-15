@@ -1,0 +1,53 @@
+@import '../../vars.css';
+
+.form {
+    width: 320px;
+    font-family: var(--main-font);
+    margin: 24px auto auto;
+}
+
+.login_form__wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.login_input {
+    height: 40px;
+    border-radius: 7px;
+    border-width: 1px;
+    border-color: #d8d8d8;
+    border-style: solid;
+    margin: 8px 0 16px;
+}
+
+.login_input:focus {
+    outline: none;
+}
+
+.login_button {
+    box-sizing: border-box;
+    position: relative;
+    border-radius: 22px;
+    border: 1px black solid;
+    width: 200px;
+    height: 41px;
+    cursor: pointer;
+    background-color: inherit;
+}
+
+.login_button:hover {
+    border-color: #61dafb;
+}
+
+.login_button:active {
+    border-color: #61dafb;
+}
+
+.login_button:focus {
+    outline: none;
+}
+
+.label {
+    font-weight: bold;
+    font-size: 18px;
+}
