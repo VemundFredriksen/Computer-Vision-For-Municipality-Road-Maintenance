@@ -14,13 +14,19 @@ def draw_prediction_box(image, preds):
 	img.save(image + ".pred", "JPEG")
 
 def predict(cfg, net, image):
-    preds = cb.predict("./obj.data".encode("UTF-8"), "./yolo-potholes-tiny.cfg".encode("UTF-8"), net, image.encode("UTF-8"),0.2, 0.5, "./predict.jpg".encode("UTF-8"), 0)
+    nboxes = c_int(5)
+    pnboxes = pointer(nboxes)
+    preds = cb.predict("./obj.data".encode("UTF-8"), "./yolo-potholes-tiny.cfg".encode("UTF-8"), net, image.encode("UTF-8"),0.2, 0.5, "./predict.jpg".encode("UTF-8"), 0, pnboxes)
     
     n = int(sizeof(preds)/4)
     detects = []
     for i in range(n):
         detects.append(preds[i])  
     
+#TODO this is dangerous, because other places in the code these preds are used.
+    print("\t\t\t\t\t\t\t\t {}".format(pnboxes[0]))
+    cb.free_detection(preds, pnboxes[0])
+
     return detects
 
 if(__name__ == "__main__"):

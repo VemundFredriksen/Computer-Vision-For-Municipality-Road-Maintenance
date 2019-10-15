@@ -95,7 +95,7 @@ def main(cfg, weights, train_txt, ignore_validation_txt):
 
     max_epochs = 25
     
-    val_ims = fetch_val_images("./val.txt")
+    val_ims = fetch_val_images("./valid.txt")
     
     for i in range(1, max_epochs + 1):
         loss = cb.train(train_txt.encode("UTF-8"), cfg.encode("UTF-8"), net, cb.fetch_gpus(), 1, 0, 300, i);

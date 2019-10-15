@@ -35,6 +35,10 @@ train.restype = c_float
 
 # ======== Makes a detection of given image ======== #
 predict = lib.predict
-predict.argtypes = [c_char_p, c_char_p, c_int, c_char_p, c_float, c_float, c_char_p, c_int]
+predict.argtypes = [c_char_p, c_char_p, c_int, c_char_p, c_float, c_float, c_char_p, c_int, POINTER(c_int)]
 predict.restype = POINTER(DETECTION)
 
+# ======== Frees the memory of the detection ======== #
+free_detection = lib.free_dets
+free_detection.argtypes = [POINTER(DETECTION), c_int]
+free_detection.restype = c_void_p

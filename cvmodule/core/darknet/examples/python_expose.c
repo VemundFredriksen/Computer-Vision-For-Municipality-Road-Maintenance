@@ -2,7 +2,7 @@
 
 //Run Prediction
 
-int predict(char *datacfg, char *cfgfile, int **net_in, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen)
+int predict(char *datacfg, char *cfgfile, int **net_in, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen, int *nboxes)
 {
     list *options = read_data_cfg(datacfg);
     char *name_list = option_find_str(options, "names", "obj.names");
@@ -25,11 +25,11 @@ int predict(char *datacfg, char *cfgfile, int **net_in, char *filename, float th
     time=what_time_is_it_now();
     network_predict(net, X);
     printf("%s: Predicted in %f seconds.\n", input, what_time_is_it_now()-time);
-    int nboxes = 0;
-    detection *dets = get_network_boxes(net, im.w, im.h, thresh, hier_thresh, 0, 1, &nboxes);
+    *nboxes = 0;
+    detection *dets = get_network_boxes(net, im.w, im.h, thresh, hier_thresh, 0, 1, &*nboxes);
+    printf("\n A1: %d ,%d",*nboxes, &*dets);
     //draw_detections(im, dets, nboxes, thresh, names, alphabet, l.classes);
-    if (nms) do_nms_sort(dets, nboxes, l.classes, nms);
-    
+    if (nms) do_nms_sort(dets, *nboxes, l.classes, nms);
 /*    
 if(outfile){
             save_image(im, outfile);
@@ -43,6 +43,12 @@ if(outfile){
         return dets;
 }
 
+//Frees the detections
+void free_dets(detection *dets, int nboxes)
+{
+        printf("\nB:%d ,%d", nboxes, &*dets);
+	free_detections(dets, nboxes);
+}
 
 //Train Network
 float custom_train(char *datacfg, char *cfgfile, int **net_in, int *gpus, int ngpus, int clear, int epoch_size, int epoch)
