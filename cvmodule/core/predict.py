@@ -25,7 +25,7 @@ def predict(cfg, net, image):
     
 #TODO this is dangerous, because other places in the code these preds are used.
     print("\t\t\t\t\t\t\t\t {}".format(pnboxes[0]))
-    cb.free_detection(preds, pnboxes[0])
+    #cb.free_detection(preds, pnboxes[0])
 
     return detects
 

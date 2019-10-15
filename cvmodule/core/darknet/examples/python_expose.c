@@ -26,8 +26,8 @@ int predict(char *datacfg, char *cfgfile, int **net_in, char *filename, float th
     network_predict(net, X);
     printf("%s: Predicted in %f seconds.\n", input, what_time_is_it_now()-time);
     *nboxes = 0;
-    detection *dets = get_network_boxes(net, im.w, im.h, thresh, hier_thresh, 0, 1, &*nboxes);
-    printf("\n A1: %d ,%d",*nboxes, &*dets);
+    detection *dets = get_network_boxes(net, im.w, im.h, thresh, hier_thresh, 0, 1, nboxes);
+    printf("\n A1: %p ,%p",*nboxes, dets);
     //draw_detections(im, dets, nboxes, thresh, names, alphabet, l.classes);
     if (nms) do_nms_sort(dets, *nboxes, l.classes, nms);
 /*    
@@ -40,13 +40,16 @@ if(outfile){
 */
         free_image(im);
         free_image(sized);
+        printf("\n A1: %d ,%p",*nboxes, dets);
+        free_detections(dets, *nboxes);
+        
         return dets;
 }
 
 //Frees the detections
 void free_dets(detection *dets, int nboxes)
 {
-        printf("\nB:%d ,%d", nboxes, &*dets);
+        printf("\nB:%d ,%p", nboxes, dets);
 	free_detections(dets, nboxes);
 }
 
