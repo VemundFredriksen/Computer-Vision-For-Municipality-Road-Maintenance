@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --mode development",
-    "lint": "eslint ./src"
+    "lint": "eslint ./src",
+    "build": "webpack"
   },
   "keywords": [],
   "author": "",
