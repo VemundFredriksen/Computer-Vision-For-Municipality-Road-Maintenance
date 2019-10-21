@@ -13,7 +13,7 @@ def read_config():
 		dir_path = f.readline().strip()
 		ip = f.readline().strip()
 	else:
-		dir_path = os.path.abspath(__file__)
+		dir_path = os.path.abspath(__file__[:-10])
 		ip = "127.0.0.1"
 	
 	print("ip is %s" % ip)
@@ -22,7 +22,7 @@ def read_config():
 
 def main():
 	(dir_path, ip) = read_config()
-
+	print(dir_path)
 	authorizer = DummyAuthorizer()
 	authorizer.add_user("user", "12345", dir_path, perm="elradfmwMT")
 	authorizer.add_anonymous(dir_path)
