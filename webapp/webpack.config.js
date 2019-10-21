@@ -28,7 +28,15 @@ module.exports = {
           'css-loader',
         ],
       },
-    ]
+      {
+        test: /\.(png|jpe?g|svg)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+          },
+        ],
+      },
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({

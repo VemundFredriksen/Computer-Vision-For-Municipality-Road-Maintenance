@@ -7,4 +7,5 @@
     font-family: var(--main-font);
     list-style-type: none;
     font-size: 20px;
+    text-decoration: none;
 }

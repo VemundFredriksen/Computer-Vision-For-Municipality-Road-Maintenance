@@ -7,10 +7,10 @@ const Header = () => (
   <div>
     <ul className="ul_list">
       <li>
-        <Link to="/">Home</Link>
+        <Link to="/" style={{ textDecoration: 'none' }}>Home</Link>
       </li>
       <li>
-        <Link to="/login">Login</Link>
+        <Link to="/login" style={{ textDecoration: 'none' }}>Login</Link>
       </li>
     </ul>
   </div>

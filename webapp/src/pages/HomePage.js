@@ -1,14 +1,16 @@
 import React from 'react';
 import MapComponent from '../components/MapComponent';
+import InfoBar from '../components/infoBar/InfoBar';
 
 class HomePage extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
       hasLoaded: false,
       objects: [],
       error: null,
+      currentObject: null,
     };
   }
 
@@ -29,8 +31,28 @@ class HomePage extends React.Component {
       });
   }
 
+  handleMarkerClick = (id) => {
+    const { objects } = this.state;
+    const object = objects.filter((obj) => obj._id === id);
+
+    this.setState({
+      currentObject: object[0],
+    });
+  };
+
+  handleCloseClick = () => {
+    this.setState({
+      currentObject: null,
+    });
+  };
+
   render() {
-    const { hasLoaded, objects, error } = this.state;
+    const {
+      hasLoaded,
+      objects,
+      error,
+      currentObject,
+    } = this.state;
 
     if (!hasLoaded) {
       return <div>is loading..</div>;
@@ -42,7 +64,23 @@ class HomePage extends React.Component {
 
     return (
       <div style={{ height: '100vh', textAlign: 'center' }}>
-        <MapComponent objects={objects} />
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          {currentObject
+            ? (
+              <InfoBar
+                type={currentObject.objecttype}
+                status={currentObject.status}
+                priority={currentObject.priority}
+                imagePath={`https://api.dewp.eu.org/get-image?filename=${currentObject.filename}`}
+                onCloseClick={this.handleCloseClick}
+              />
+            )
+            : null }
+          <MapComponent
+            objects={objects}
+            onMarkerClick={this.handleMarkerClick}
+          />
+        </div>
       </div>
     );
   }
