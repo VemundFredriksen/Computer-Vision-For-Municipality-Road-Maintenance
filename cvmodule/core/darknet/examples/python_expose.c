@@ -2,13 +2,13 @@
 
 //Run Prediction
 
-int predict(char *datacfg, char *cfgfile, int **net_in, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen, int *nboxes)
+int predict(char *datacfg, char *cfgfile, int **net_in, char *filename, float thresh, float hier_thresh, char *outfile, int fullscreen, int *nnboxes)
 {
     list *options = read_data_cfg(datacfg);
     char *name_list = option_find_str(options, "names", "obj.names");
     char **names = get_labels(name_list);
     
-    image **alphabet = load_alphabet();
+    //image **alphabet = load_alphabet();
     network *net = net_in;
     set_batch_network(net, 1);
     srand(2222222);
@@ -25,11 +25,9 @@ int predict(char *datacfg, char *cfgfile, int **net_in, char *filename, float th
     time=what_time_is_it_now();
     network_predict(net, X);
     printf("%s: Predicted in %f seconds.\n", input, what_time_is_it_now()-time);
-    *nboxes = 0;
-    detection *dets = get_network_boxes(net, im.w, im.h, thresh, hier_thresh, 0, 1, nboxes);
-    printf("\n A1: %p ,%p",*nboxes, dets);
-    //draw_detections(im, dets, nboxes, thresh, names, alphabet, l.classes);
-    if (nms) do_nms_sort(dets, *nboxes, l.classes, nms);
+    int nboxes = 0;
+    detection *dets = get_network_boxes(net, im.w, im.h, thresh, hier_thresh, 0, 1, &nboxes);
+    if (nms) do_nms_sort(dets, nboxes, l.classes, nms);
 /*    
 if(outfile){
             save_image(im, outfile);
@@ -40,8 +38,6 @@ if(outfile){
 */
         free_image(im);
         free_image(sized);
-        printf("\n A1: %d ,%p",*nboxes, dets);
-        free_detections(dets, *nboxes);
         
         return dets;
 }
@@ -49,7 +45,6 @@ if(outfile){
 //Frees the detections
 void free_dets(detection *dets, int nboxes)
 {
-        printf("\nB:%d ,%p", nboxes, dets);
 	free_detections(dets, nboxes);
 }
 
@@ -115,7 +110,6 @@ float custom_train(char *datacfg, char *cfgfile, int **net_in, int *gpus, int ng
             int dim = (rand() % 10 + 10) * 32;
             if (get_current_batch(net)+200 > net->max_batches) dim = 608;
             //int dim = (rand() % 4 + 16) * 32;
-            printf("%d\n", dim);
             args.w = dim;
             args.h = dim;
 
