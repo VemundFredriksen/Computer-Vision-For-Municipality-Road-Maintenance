@@ -2,10 +2,14 @@
     display: flex;
     flex-direction: column;
     width: 300px;
-    justify-content: space-evenly;
+    justify-content: space-between;
     padding: 20px;
     border: #d8d8d8 1px solid;
     font-family: Arial;
+}
+
+.close_icon__container {
+    align-self: flex-end;
 }
 
 .image__container {
@@ -25,4 +29,10 @@
 
 .object_info {
     margin: 10px;
+}
+
+.close_button {
+    width: 45px;
+    border: none;
+    cursor: pointer;
 }

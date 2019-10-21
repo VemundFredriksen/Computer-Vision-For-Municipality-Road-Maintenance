@@ -12,8 +12,6 @@ class HomePage extends React.Component {
       error: null,
       currentObject: null,
     };
-
-    this.handleMarkerClick = this.handleMarkerClick.bind(this);
   }
 
   componentDidMount() {
@@ -39,6 +37,12 @@ class HomePage extends React.Component {
 
     this.setState({
       currentObject: object[0],
+    });
+  };
+
+  handleCloseClick = () => {
+    this.setState({
+      currentObject: null,
     });
   };
 
@@ -68,6 +72,7 @@ class HomePage extends React.Component {
                 status={currentObject.status}
                 priority={currentObject.priority}
                 imagePath={`https://api.dewp.eu.org/get-image?filename=${currentObject.filename}`}
+                onCloseClick={this.handleCloseClick}
               />
             )
             : null }
