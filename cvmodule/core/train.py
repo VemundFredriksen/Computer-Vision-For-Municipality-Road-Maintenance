@@ -93,12 +93,12 @@ def main(cfg, weights, train_txt, ignore_validation_txt):
     net = load_network(cfg, weights)
     n_data = number_of_datafiles(train_txt)
 
-    max_epochs = 25
+    max_epochs = 500
     
     val_ims = fetch_val_images("./valid.txt")
     
     for i in range(1, max_epochs + 1):
-        loss = cb.train(train_txt.encode("UTF-8"), cfg.encode("UTF-8"), net, cb.fetch_gpus(), 1, 0, 300, i);
+        loss = cb.train(train_txt.encode("UTF-8"), cfg.encode("UTF-8"), net, cb.fetch_gpus(), 1, 0, n_data, i);
         print("Epoch {} done! Average loss: {}".format(i, loss))
         print("Validating loss...")
         validate.validate_and_log(cfg, net, val_ims, loss)

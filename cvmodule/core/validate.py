@@ -82,11 +82,7 @@ def validate_and_log(cfg, net, images, training_loss, iou_thresh=0.3):
         res = validate(bbs, gtruths)
         precisions.append(res[0])
         recalls.append(res[1])
-    print(precisions)
-    print(sum(precisions)/len(precisions))
 
-    print(recalls)
-    print(sum(precisions)/len(precisions))
     log("val_log.txt", sum(precisions)/len(precisions), sum(precisions)/len(precisions), training_loss)
 
 def temp():    

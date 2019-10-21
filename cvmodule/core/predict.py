@@ -1,7 +1,6 @@
 import c_bindings as cb
 from ctypes import *
 import argparse
-
 from PIL import Image, ImageDraw
 
 def draw_prediction_box(image, preds):
@@ -24,9 +23,7 @@ def predict(cfg, net, image):
         detects.append(preds[i])  
     
 #TODO this is dangerous, because other places in the code these preds are used.
-    print("\t\t\t\t\t\t\t\t {}".format(pnboxes[0]))
-    #cb.free_detection(preds, pnboxes[0])
-
+    cb.free_detection(preds, pnboxes[0])
     return detects
 
 if(__name__ == "__main__"):
