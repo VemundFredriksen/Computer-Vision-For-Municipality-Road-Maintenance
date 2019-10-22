@@ -4,7 +4,6 @@ from PIL import Image, ImageDraw
 import argparse
 import os
 
-
 if __name__ == '__main__':
 
     input_folder = 'Test Data'
