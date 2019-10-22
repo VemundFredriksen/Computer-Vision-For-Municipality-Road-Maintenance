@@ -1,15 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Button from '../shared/button/Button';
+import EditForm from '../header/editForm/EditForm';
 
 import './InfoBar.css';
 
 const InfoBar = (
   {
-    type,
-    status,
-    priority,
-    imagePath,
+    object,
+    edit,
     onCloseClick,
+    onEditClick,
   },
 ) => (
   <div className="info_bar__wrapper">
@@ -19,35 +20,48 @@ const InfoBar = (
       </button>
     </span>
     <div className="image__container">
-      <img src={imagePath} alt="detected road object" className="object_image" />
+      <img src={`https://api.dewp.eu.org/get-image?filename=${object.filename}`} alt="detected road object" className="object_image" />
     </div>
-    <div className="info__container">
-      <span className="object_info">
-        {`Type: ${type}`}
-      </span>
-      <span className="object_info">
-        {`Status: ${status}`}
-      </span>
-      <span className="object_info">
-        {`Priority: ${priority}`}
-      </span>
-    </div>
+    {
+      edit ? (
+        <EditForm
+          id={object._id}
+          type={object.objecttype}
+          status={object.status}
+          priority={object.priority}
+        />
+      ) : (
+        <div className="info__container">
+          <span className="object_info">
+            {`Type: ${object.objecttype}`}
+          </span>
+          <span className="object_info">
+            {`Status: ${object.status}`}
+          </span>
+          <span className="object_info">
+            {`Priority: ${object.priority}`}
+          </span>
+          <Button text="Edit" onClick={onEditClick} />
+        </div>
+      )
+    }
   </div>
 );
 
 InfoBar.propTypes = {
-  type: PropTypes.string,
-  status: PropTypes.string,
-  priority: PropTypes.number,
-  imagePath: PropTypes.string,
+  object: PropTypes.arrayOf(PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    objecttype: PropTypes.string.isRequired,
+    status: PropTypes.string.isRequired,
+    priority: PropTypes.number,
+    imagePath: PropTypes.string,
+  })).isRequired,
+  edit: PropTypes.bool.isRequired,
   onCloseClick: PropTypes.func,
+  onEditClick: PropTypes.func.isRequired,
 };
 
 InfoBar.defaultProps = {
-  type: 'Missing',
-  status: 'Missing',
-  priority: 0,
-  imagePath: '',
   onCloseClick: null,
 };
 

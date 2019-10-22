@@ -1,0 +1,40 @@
+.edit_form {
+    display: flex;
+    flex-direction: column;
+}
+
+.selection__wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 170px;
+    text-align: left;
+}
+
+.submit_button {
+    box-sizing: border-box;
+    position: relative;
+    border-radius: 22px;
+    border: 1px black solid;
+    width: 200px;
+    height: 41px;
+    cursor: pointer;
+    background-color: inherit;
+}
+
+.submit_button:hover {
+    border-color: #61dafb;
+}
+
+.submit_button:active {
+    border-color: #61dafb;
+}
+
+.submit_button:focus {
+    outline: none;
+}
+
+select {
+    margin: 0 8px;
+    height: 25px;
+}
