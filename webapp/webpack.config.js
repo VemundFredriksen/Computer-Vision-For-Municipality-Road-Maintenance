@@ -10,14 +10,16 @@ module.exports = {
   },
   devtool: 'source-map',
   devServer: {
-    contentBase: "./build",
+    contentBase: './build',
+    historyApiFallback: true,
+    hot: true,
   },
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: ['babel-loader']
+        use: ['babel-loader'],
       },
       {
         test: /\.css$/,
@@ -26,11 +28,19 @@ module.exports = {
           'css-loader',
         ],
       },
-    ]
+      {
+        test: /\.(png|jpe?g|svg)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+          },
+        ],
+      },
+    ],
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template:  path.resolve('./index.html'),
+      template: path.resolve('./index.html'),
     }),
-  ]
+  ],
 };

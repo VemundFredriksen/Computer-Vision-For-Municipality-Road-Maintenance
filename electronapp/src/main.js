@@ -5,10 +5,6 @@ const path = require('path');
 const { ipcMain } = require('electron');
 const python = require('child_process');
 
-// change base path to run script
-const basePath = '/Users/ingriddomben/Documents/Projects/Computer-Vision-For-Municipality-Road-Maintenance/electronapp/src/';
-
-
 let window;
 
 const createWindow = () => {
@@ -48,6 +44,6 @@ app.on('activate', () => {
 });
 
 ipcMain.on('message', (event, arg) => {
-  python.spawn('python', [`${basePath} + 'test_script.py`, arg]);
+  python.spawn('python', [`${__dirname}\\..\\src\\ftp_client.py`, arg]);
   event.reply('message-reply');
 });

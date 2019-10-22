@@ -1,0 +1,11 @@
+@import '../../vars.css';
+
+.ul_list {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    font-family: var(--main-font);
+    list-style-type: none;
+    font-size: 20px;
+    text-decoration: none;
+}
