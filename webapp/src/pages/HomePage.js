@@ -11,6 +11,7 @@ class HomePage extends React.Component {
       objects: [],
       error: null,
       currentObject: null,
+      edit: false,
     };
   }
 
@@ -37,12 +38,20 @@ class HomePage extends React.Component {
 
     this.setState({
       currentObject: object[0],
+      edit: false,
     });
   };
 
   handleCloseClick = () => {
     this.setState({
       currentObject: null,
+      edit: false,
+    });
+  };
+
+  handleEditClick = () => {
+    this.setState({
+      edit: true,
     });
   };
 
@@ -52,6 +61,7 @@ class HomePage extends React.Component {
       objects,
       error,
       currentObject,
+      edit,
     } = this.state;
 
     if (!hasLoaded) {
@@ -68,11 +78,10 @@ class HomePage extends React.Component {
           {currentObject
             ? (
               <InfoBar
-                type={currentObject.objecttype}
-                status={currentObject.status}
-                priority={currentObject.priority}
-                imagePath={`https://api.dewp.eu.org/get-image?filename=${currentObject.filename}`}
+                object={currentObject}
+                edit={edit}
                 onCloseClick={this.handleCloseClick}
+                onEditClick={this.handleEditClick}
               />
             )
             : null }
