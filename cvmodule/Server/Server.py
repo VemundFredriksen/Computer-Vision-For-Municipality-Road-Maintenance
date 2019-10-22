@@ -14,6 +14,7 @@ def read_config():
 		ip = f.readline().strip()
 	else:
 		dir_path = os.path.abspath(__file__)
+		dir_path = "C:\\Users\\oeial030196\\Documents\\GitHub\\Computer-Vision-For-Municipality-Road-Maintenance\\cvmodule\\Server\\"
 		ip = "127.0.0.1"
 	
 	print("ip is %s" % ip)
