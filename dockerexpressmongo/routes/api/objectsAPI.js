@@ -49,7 +49,7 @@ router.post("/insert-data", (req, res, next) => {
   DetectedObject.insertMany(req.body, (err, doc) => {
     if (err) {
       console.log(err);
-      res.status(400).json({ msg: "Somthing went wrong when insterting.." });
+      res.status(400).json({ msg: "Something went wrong when inserting.." });
     } else {
       res.json({ msg: "Objectdata inserted!" });
     }
@@ -99,14 +99,20 @@ router.get("/get-by-type", (req, res, next) => {
 
 //Update object specified by its id "/update-by-id?id=......."
 router.put("/update-by-id", (req, res, next) => {
-  var item = {};
+  //res.json(req.body);
+  let item = {};
   Object.keys(req.body).forEach(key => {
     item[key] = req.body[key];
   });
+  if (Object.keys(item).length == 0) {
+    return res.status(400).json({ msg: "The http-body was empty..." });
+  }
   DetectedObject.findOneAndUpdate({ _id: req.query.id }, item, (err, doc) => {
     if (err) {
       console.log(err);
-      return res.status(400).json({ msg: "No objects were updated.." });
+      return res
+        .status(400)
+        .json({ msg: "No objects were updated.. Couldn't find the object" });
     } else {
       return res.json({ msg: "Object updated" });
     }
