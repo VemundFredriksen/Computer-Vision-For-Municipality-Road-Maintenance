@@ -98,7 +98,7 @@ router.get("/get-by-type", (req, res, next) => {
 });
 
 //Get objects by its id.
-//A call will be like this :"...../get-by-type?id=someID"
+//A call will be like this :"...../get-by-id?id=someID"
 router.get("/get-by-id", (req, res, next) => {
   DetectedObject.findById(req.query.id, (err, obj) => {
     if (!obj) {
