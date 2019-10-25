@@ -97,6 +97,18 @@ router.get("/get-by-type", (req, res, next) => {
     });
 });
 
+//Get objects by its id.
+//A call will be like this :"...../get-by-type?id=someID"
+router.get("/get-by-id", (req, res, next) => {
+  DetectedObject.findById(req.query.id, (err, obj) => {
+    if (!obj) {
+      console.log(err);
+      res.status(400).json({ msg: "No object with that id..." });
+    }
+    res.json(obj);
+  });
+});
+
 //Update object specified by its id "/update-by-id?id=......."
 router.put("/update-by-id", (req, res, next) => {
   //res.json(req.body);
@@ -107,7 +119,7 @@ router.put("/update-by-id", (req, res, next) => {
   if (Object.keys(item).length == 0) {
     return res.status(400).json({ msg: "The http-body was empty..." });
   }
-  DetectedObject.findOneAndUpdate({ _id: req.query.id }, item, (err, doc) => {
+  DetectedObject.findOneAndUpdate({ _id: req.query.id }, item, (err, obj) => {
     if (err) {
       console.log(err);
       return res
