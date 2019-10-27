@@ -24,6 +24,11 @@ const detectedObjectSchema = new Schema({
   filename: {
     type: String,
     required: true
+  },
+  detectedDate: {
+    type: Date,
+    default: Date.now,
+    required: true
   }
 });
 
