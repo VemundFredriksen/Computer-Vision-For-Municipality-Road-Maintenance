@@ -24,6 +24,11 @@ const detectedObjectSchema = new Schema({
   filename: {
     type: String,
     required: true
+  },
+  confirmed: {
+    type: Boolean,
+    required: true,
+    default: false
   }
 });
 
