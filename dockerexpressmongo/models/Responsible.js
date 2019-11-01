@@ -10,7 +10,7 @@ const responsibleSchema = new Schema({
     required: true
   },
   areas: {
-    type: [[number]],
+    type: [[[Number]]],
     required: true
   }
 });
