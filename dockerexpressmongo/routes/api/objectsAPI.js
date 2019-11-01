@@ -106,7 +106,7 @@ router.put("/update-object-by-id", (req, res, next) => {
   if (Object.keys(item).length == 0) {
     return res.status(400).json({ msg: "The http-body was empty..." });
   }
-  DetectedObject.findOneAndUpdate({ _id: req.query.id }, item, (err, doc) => {
+  DetectedObject.findOneAndUpdate({ _id: req.query.id }, item, (err, obj) => {
     if (err) {
       console.log(err);
       return res

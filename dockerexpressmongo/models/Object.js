@@ -29,6 +29,11 @@ const detectedObjectSchema = new Schema({
     type: Date,
     default: Date.now,
     required: true
+  },
+  confirmed: {
+    type: Boolean,
+    required: true,
+    default: false
   }
 });
 
