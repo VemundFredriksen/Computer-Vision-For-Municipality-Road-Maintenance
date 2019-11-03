@@ -99,22 +99,27 @@ router.get("/get-object-by-type", (req, res, next) => {
 
 //Update object specified by its id "/update-object-by-id?id=someID"
 router.put("/update-object-by-id", (req, res, next) => {
+  console.log("Updating...");
   let item = {};
   Object.keys(req.body).forEach(key => {
     item[key] = req.body[key];
   });
+  console.log(item);
   if (Object.keys(item).length == 0) {
     return res.status(400).json({ msg: "The http-body was empty..." });
   }
-  DetectedObject.findOneAndUpdate({ _id: req.query.id }, item, (err, obj) => {
+  DetectedObject.findOne({ _id: req.query.id }, (err, pre_obj) => {
     if (err) {
       console.log(err);
-      return res
-        .status(400)
-        .json({ msg: "No objects were updated.. Couldn't find the object" });
-    } else {
-      return res.json({ msg: "Object updated" });
+      return res.status(400).json({ msg: "Couldn't find the object" });
     }
+    item["previous_states"] = pre_obj;
+    item["modified_date"] = Date.now();
+    console.log(item);
+    DetectedObject.findOneAndUpdate({ _id: req.query.id }, item, (err, obj) => {
+      if (err) console.log(err);
+      return res.json({ msg: "Object updated" });
+    });
   });
 });
 
