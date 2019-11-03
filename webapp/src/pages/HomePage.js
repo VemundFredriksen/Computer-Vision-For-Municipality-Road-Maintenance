@@ -1,6 +1,8 @@
 import React from 'react';
+import isSubset from 'is-subset';
 import MapComponent from '../components/MapComponent';
 import InfoBar from '../components/infoBar/InfoBar';
+import FilterBar from '../components/filterBar/FilterBar';
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -12,6 +14,7 @@ class HomePage extends React.Component {
       error: null,
       currentObject: null,
       edit: false,
+      filters: null,
     };
   }
 
@@ -55,6 +58,18 @@ class HomePage extends React.Component {
     });
   };
 
+  onFilter = (filters) => {
+    this.setState({
+      filters,
+    });
+  };
+
+  onFilterReset = () => {
+    this.setState({
+      filters: null,
+    });
+  };
+
   render() {
     const {
       hasLoaded,
@@ -62,6 +77,7 @@ class HomePage extends React.Component {
       error,
       currentObject,
       edit,
+      filters,
     } = this.state;
 
     if (!hasLoaded) {
@@ -70,6 +86,11 @@ class HomePage extends React.Component {
 
     if (error) {
       return <div>{error}</div>;
+    }
+
+    let obj = objects;
+    if (filters) {
+      obj = objects.filter((o) => isSubset(o, filters));
     }
 
     return (
@@ -84,11 +105,14 @@ class HomePage extends React.Component {
                 onEditClick={this.handleEditClick}
               />
             )
-            : null }
-          <MapComponent
-            objects={objects}
-            onMarkerClick={this.handleMarkerClick}
-          />
+            : null}
+          <div>
+            <FilterBar onFilter={this.onFilter} onFilterReset={this.onFilterReset} />
+            <MapComponent
+              objects={obj}
+              onMarkerClick={this.handleMarkerClick}
+            />
+          </div>
         </div>
       </div>
     );
