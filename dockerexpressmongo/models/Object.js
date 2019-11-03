@@ -5,12 +5,15 @@ const Schema = mongoose.Schema;
 // Each schema maps to a MongoDB collection and defines the
 // shape of the documents within that collection.
 const detectedObjectSchema = new Schema({
-  objecttype: {
+  type: {
     type: String,
+    enum: ["pothole", "crack"],
     required: true
   },
   priority: {
     type: Number,
+    min: 1,
+    max: 10,
     required: true
   },
   coordinates: {
@@ -19,6 +22,7 @@ const detectedObjectSchema = new Schema({
   },
   status: {
     type: String,
+    enum: ["fixed", "not fixed"],
     required: true
   },
   filename: {
