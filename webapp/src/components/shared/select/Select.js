@@ -13,9 +13,9 @@ const Select = (
   <label>
     {label}
     <select value={value} name={name} onChange={handleChange}>
-      {options.map((t) => (
-        <option value={t}>
-          {t}
+      {options.map((opt) => (
+        <option value={opt}>
+          {opt}
         </option>
       ))}
     </select>

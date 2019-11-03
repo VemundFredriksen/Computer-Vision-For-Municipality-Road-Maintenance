@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 
 const MapComponent = ({ objects, onMarkerClick }) => (
-  <Map style={{ height: '600px', width: '700px', position: 'relative' }} center={[63.42, 10.39]} zoom={12}>
+  <Map style={{ height: '700px', width: '800px', position: 'relative' }} center={[63.42, 10.39]} zoom={12}>
     <TileLayer
       attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

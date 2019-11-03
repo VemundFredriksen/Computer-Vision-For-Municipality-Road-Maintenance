@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '../shared/button/Button';
-import EditForm from '../header/editForm/EditForm';
+import EditForm from '../editForm/EditForm';
 
 import './InfoBar.css';
 
@@ -26,14 +26,14 @@ const InfoBar = (
       edit ? (
         <EditForm
           id={object._id}
-          type={object.objecttype}
+          type={object.type}
           status={object.status}
           priority={object.priority}
         />
       ) : (
         <div className="info__container">
           <span className="object_info">
-            {`Type: ${object.objecttype}`}
+            {`Type: ${object.type}`}
           </span>
           <span className="object_info">
             {`Status: ${object.status}`}
@@ -49,9 +49,9 @@ const InfoBar = (
 );
 
 InfoBar.propTypes = {
-  object: PropTypes.arrayOf(PropTypes.shape({
+  object: PropTypes.objectOf(PropTypes.shape({
     _id: PropTypes.string.isRequired,
-    objecttype: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired,
     priority: PropTypes.number,
     imagePath: PropTypes.string,
