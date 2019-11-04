@@ -70,6 +70,15 @@ class HomePage extends React.Component {
     });
   };
 
+  handleDelete = (id) => {
+    const { objects } = this.state;
+    const obj = objects.filter((o) => o._id !== id);
+    this.setState({
+      objects: obj,
+      currentObject: null,
+    });
+  };
+
   render() {
     const {
       hasLoaded,
@@ -83,11 +92,9 @@ class HomePage extends React.Component {
     if (!hasLoaded) {
       return <div>is loading..</div>;
     }
-
     if (error) {
       return <div>{error}</div>;
     }
-
     let obj = objects;
     if (filters) {
       obj = objects.filter((o) => isSubset(o, filters));
@@ -95,7 +102,7 @@ class HomePage extends React.Component {
 
     return (
       <div style={{ height: '100vh', textAlign: 'center' }}>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end' }}>
           {currentObject
             ? (
               <InfoBar
@@ -103,6 +110,7 @@ class HomePage extends React.Component {
                 edit={edit}
                 onCloseClick={this.handleCloseClick}
                 onEditClick={this.handleEditClick}
+                handleDelete={this.handleDelete}
               />
             )
             : null}

@@ -11,6 +11,7 @@ const InfoBar = (
     edit,
     onCloseClick,
     onEditClick,
+    handleDelete,
   },
 ) => (
   <div className="info_bar__wrapper">
@@ -29,6 +30,7 @@ const InfoBar = (
           type={object.type}
           status={object.status}
           priority={object.priority}
+          handleDelete={handleDelete}
         />
       ) : (
         <div className="info__container">
@@ -59,6 +61,7 @@ InfoBar.propTypes = {
   edit: PropTypes.bool.isRequired,
   onCloseClick: PropTypes.func,
   onEditClick: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func.isRequired,
 };
 
 InfoBar.defaultProps = {

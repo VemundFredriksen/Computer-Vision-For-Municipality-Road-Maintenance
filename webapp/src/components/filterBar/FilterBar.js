@@ -98,7 +98,6 @@ export default class FilterBar extends React.Component {
   }
 }
 
-
 FilterBar.propTypes = {
   onFilter: PropTypes.func.isRequired,
   onFilterReset: PropTypes.func.isRequired,
