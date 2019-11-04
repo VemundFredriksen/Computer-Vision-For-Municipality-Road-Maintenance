@@ -1,11 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import Select from '../shared/select/Select';
 
 import './EditForm.css';
 
 const typeOptions = ['Pothole', 'Crack'];
 const statusOptions = ['Fixed', 'Not fixed'];
-const priorityOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const priorityOptions = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 
 
 export default class EditForm extends React.Component {
@@ -34,7 +35,7 @@ export default class EditForm extends React.Component {
 
     if (e.target.name === 'pri') {
       this.setState({
-        priority: e.target.value,
+        priority: Number(e.target.value),
       });
     }
   };
@@ -43,12 +44,12 @@ export default class EditForm extends React.Component {
     const { type, status, priority } = this.state;
     const { id } = this.props;
     const body = JSON.stringify({
-      objecttype: type,
+      type,
       status,
       priority,
     });
     console.log(body);
-    const url = `https://api.dewp.eu.org/update-by-id?id=${id}`;
+    const url = `https://api.dewp.eu.org/update-object-by-id?id=${id}`;
     e.preventDefault();
     fetch(url, {
       method: 'PUT',
@@ -72,36 +73,9 @@ export default class EditForm extends React.Component {
     return (
       <form method="post" className="edit_form" onSubmit={this.onSubmit}>
         <div className="selection__wrapper">
-          <label>
-            Type:
-            <select value={type} name="typ" onChange={this.handleChange}>
-              {typeOptions.map((t) => (
-                <option value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Status:
-            <select value={status} name="stat" onChange={this.handleChange}>
-              {statusOptions.map((stat) => (
-                <option value={stat}>
-                  {stat}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Priority:
-            <select value={priority} name="pri" onChange={this.handleChange}>
-              {priorityOptions.map((pri) => (
-                <option value={pri.toString()}>
-                  {pri.toString()}
-                </option>
-              ))}
-            </select>
-          </label>
+          <Select options={typeOptions} label="Type: " value={type} name="typ" handleChange={this.handleChange} />
+          <Select options={statusOptions} label="Status: " value={status} name="stat" handleChange={this.handleChange} />
+          <Select options={priorityOptions} label="Priority: " value={priority.toString()} name="pri" handleChange={this.handleChange} />
         </div>
         <button className="submit_button" type="submit">Do edit</button>
       </form>

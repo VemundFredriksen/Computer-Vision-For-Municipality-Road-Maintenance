@@ -1,0 +1,12 @@
+@import '../../vars.css';
+
+.filter_bar__wrapper {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    font-family: var(--main-font);
+}
+
+.filter_button {
+    cursor: pointer;
+}
