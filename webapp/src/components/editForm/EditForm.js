@@ -4,8 +4,8 @@ import Select from '../shared/select/Select';
 
 import './EditForm.css';
 
-const typeOptions = ['Pothole', 'Crack'];
-const statusOptions = ['Fixed', 'Not fixed'];
+const typeOptions = ['pothole', 'crack'];
+const statusOptions = ['fixed', 'not fixed'];
 const priorityOptions = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 
 
@@ -41,16 +41,15 @@ export default class EditForm extends React.Component {
   };
 
   onSubmit = (e) => {
-    const { type, status, priority } = this.state;
+    e.preventDefault();
     const { id } = this.props;
+    const { type, status, priority } = this.state;
     const body = JSON.stringify({
       type,
       status,
       priority,
     });
-    console.log(body);
     const url = `https://api.dewp.eu.org/update-object-by-id?id=${id}`;
-    e.preventDefault();
     fetch(url, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -67,6 +66,32 @@ export default class EditForm extends React.Component {
       });
   };
 
+  onDelete = (e) => {
+    e.preventDefault();
+    const { id, handleDelete } = this.props;
+    const body = JSON.stringify({
+      id,
+    });
+    const url = `https://api.dewp.eu.org/delete-object-by-id?id=${id}`;
+    fetch(url, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body,
+    })
+      .then((res) => (
+        res.json()
+      ))
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    handleDelete(id);
+  };
+
   render() {
     const { type, status, priority } = this.state;
 
@@ -77,7 +102,8 @@ export default class EditForm extends React.Component {
           <Select options={statusOptions} label="Status: " value={status} name="stat" handleChange={this.handleChange} />
           <Select options={priorityOptions} label="Priority: " value={priority.toString()} name="pri" handleChange={this.handleChange} />
         </div>
-        <button className="submit_button" type="submit">Do edit</button>
+        <button className="edit_button" type="submit">Update</button>
+        <button className="edit_button" type="button" onClick={this.onDelete}>Delete</button>
       </form>
     );
   }
@@ -88,4 +114,5 @@ EditForm.propTypes = {
   type: PropTypes.string.isRequired,
   status: PropTypes.string.isRequired,
   priority: PropTypes.number.isRequired,
+  handleDelete: PropTypes.func.isRequired,
 };
