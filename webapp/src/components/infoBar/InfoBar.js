@@ -31,6 +31,7 @@ const InfoBar = (
           status={object.status}
           priority={object.priority}
           handleDelete={handleDelete}
+          approved={object.approved}
         />
       ) : (
         <div className="info__container">
@@ -42,6 +43,9 @@ const InfoBar = (
           </span>
           <span className="object_info">
             {`Priority: ${object.priority}`}
+          </span>
+          <span className="object_info">
+            {`Approved: ${object.approved}`}
           </span>
           <Button text="Edit" onClick={onEditClick} />
         </div>

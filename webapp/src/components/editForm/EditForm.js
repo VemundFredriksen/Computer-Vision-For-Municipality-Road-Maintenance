@@ -7,6 +7,7 @@ import './EditForm.css';
 const typeOptions = ['pothole', 'crack'];
 const statusOptions = ['fixed', 'not fixed'];
 const priorityOptions = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+const approvedOptions = ['true', 'false'];
 
 
 export default class EditForm extends React.Component {
@@ -17,6 +18,7 @@ export default class EditForm extends React.Component {
       type: props.type,
       status: props.status,
       priority: props.priority,
+      approved: props.approved.toString(),
     };
   }
 
@@ -38,16 +40,27 @@ export default class EditForm extends React.Component {
         priority: Number(e.target.value),
       });
     }
+    if (e.target.name === 'appr') {
+      this.setState({
+        approved: e.target.value,
+      });
+    }
   };
 
   onSubmit = (e) => {
     e.preventDefault();
+    const {
+      type,
+      status,
+      priority,
+      approved,
+    } = this.state;
     const { id } = this.props;
-    const { type, status, priority } = this.state;
     const body = JSON.stringify({
       type,
       status,
       priority,
+      approved: approved === 'true',
     });
     const url = `https://api.dewp.eu.org/update-object-by-id?id=${id}`;
     fetch(url, {
@@ -93,7 +106,12 @@ export default class EditForm extends React.Component {
   };
 
   render() {
-    const { type, status, priority } = this.state;
+    const {
+      type,
+      status,
+      priority,
+      approved,
+    } = this.state;
 
     return (
       <form method="post" className="edit_form" onSubmit={this.onSubmit}>
@@ -101,6 +119,7 @@ export default class EditForm extends React.Component {
           <Select options={typeOptions} label="Type: " value={type} name="typ" handleChange={this.handleChange} />
           <Select options={statusOptions} label="Status: " value={status} name="stat" handleChange={this.handleChange} />
           <Select options={priorityOptions} label="Priority: " value={priority.toString()} name="pri" handleChange={this.handleChange} />
+          <Select options={approvedOptions} label="Approved: " value={approved.toString()} name="appr" handleChange={this.handleChange} />
         </div>
         <button className="edit_button" type="submit">Update</button>
         <button className="edit_button" type="button" onClick={this.onDelete}>Delete</button>
@@ -115,4 +134,5 @@ EditForm.propTypes = {
   status: PropTypes.string.isRequired,
   priority: PropTypes.number.isRequired,
   handleDelete: PropTypes.func.isRequired,
+  approved: PropTypes.bool.isRequired,
 };
