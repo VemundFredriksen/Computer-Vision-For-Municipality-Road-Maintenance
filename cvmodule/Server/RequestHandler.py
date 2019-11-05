@@ -2,7 +2,9 @@ from pyftpdlib.handlers import FTPHandler
 import threading
 import subprocess
 import shutil
+import glob
 from datetime import datetime
+from Client import *
 
 class RequestHandler(FTPHandler):
 
@@ -20,6 +22,14 @@ class RequestHandler(FTPHandler):
         result = subprocess.run(cmd_args, stdout=subprocess.PIPE)
         print(result.stdout.decode("utf-8"))
         shutil.rmtree(path_to_image_dir)
+
+        json_files_to_upload = glob.glob(path_to_save_dir + "/*.meta")
+        image_files_to_upload = glob.glob(path_to_save_dir + "/*.jpg")
+
+        for path in json_files_to_upload:
+            upload_data(path)
+        for path in image_files_to_upload:
+            upload_image(path)
 
         self.add_channel()
 

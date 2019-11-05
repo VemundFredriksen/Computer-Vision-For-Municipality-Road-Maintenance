@@ -187,7 +187,7 @@ def store_meta_data(imagePath):
 
 
 def do_video_analysis(path_to_video, path_to_image_dir, path_to_save_dir):
-	#These paths are now wrong? should we use absolute paths intead? 
+	#These paths are now wrong? should we use absolute paths intead?
 	net = load_net("yolo-potholes-tiny.cfg".encode("utf-8"), "yolo-potholes-tiny_29000.weights".encode("utf-8"), 0)
 	meta = load_meta("obj.data".encode("utf-8"))
 
