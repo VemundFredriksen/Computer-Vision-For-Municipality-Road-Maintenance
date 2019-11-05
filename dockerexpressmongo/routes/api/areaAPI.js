@@ -81,5 +81,16 @@ router.get("/get-area-by-coordinate", (req, res) => {
   });
 });
 
+router.delete("/delete-all-areas", (req, res) => {
+  //The empty object will match all of them.
+  areaDB.deleteMany({}, err => {
+    if (err) return res.json(err);
+    return res.json({ msg: "All areas were deleted!! :O " });
+  });
+});
+
+//exports...
+module.exports = router;
+
 //exports...
 module.exports = router;

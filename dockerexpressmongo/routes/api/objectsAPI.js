@@ -16,7 +16,7 @@ const upload = multer({ storage: storage }); // This constant allows us to take 
 // Connect to MongoDB
 mongoose.connect(url, { useNewUrlParser: true });
 //Get the model
-const DetectedObject = require("../../models/Object");
+const detectedObjectDB = require("../../models/Object");
 
 //home..
 router.get("/", (req, res, next) => {
@@ -46,7 +46,7 @@ router.post("/upload-image", upload.array("image"), (req, res, next) => {
 
 //insert one or many objects (array of json objects)
 router.post("/insert-objectdata", (req, res, next) => {
-  DetectedObject.insertMany(req.body, (err, doc) => {
+  detectedObjectDB.insertMany(req.body, (err, doc) => {
     if (err) {
       return res.status(400).json(err.message);
     } else {
@@ -69,7 +69,8 @@ router.get("/get-image", (req, res, next) => {
 
 //Get all objects as json (only metadata, not images)
 router.get("/get-all-objects", (req, res, next) => {
-  DetectedObject.find()
+  detectedObjectDB
+    .find()
     .lean()
     .exec(function(err, objects) {
       return res.json(objects);
@@ -79,11 +80,12 @@ router.get("/get-all-objects", (req, res, next) => {
 //Get objects by type.
 //A call will be like this :"...../get-object-by-type?objecttype=pothole"
 router.get("/get-object-by-type", (req, res, next) => {
-  DetectedObject.find({ objecttype: req.query.objecttype }, (err, docs) => {
-    if (err) {
-      console.log(err);
-    }
-  })
+  detectedObjectDB
+    .find({ objecttype: req.query.objecttype }, (err, docs) => {
+      if (err) {
+        console.log(err);
+      }
+    })
     .lean()
     .exec(function(err, objects) {
       if (objects.length == 0) {
@@ -110,7 +112,7 @@ router.put("/update-object-by-id", (req, res, next) => {
   if (Object.keys(new_state).length == 0) {
     return res.status(400).json({ msg: "The http-body was empty..." });
   }
-  DetectedObject.findOne({ _id: req.query.id }, (err, pre_obj) => {
+  detectedObjectDB.findOne({ _id: req.query.id }, (err, pre_obj) => {
     if (err) {
       console.log(err);
       return res.status(400).json({ msg: "Couldn't find the object" });
@@ -122,7 +124,7 @@ router.put("/update-object-by-id", (req, res, next) => {
     pre_state["modified_date"] = new Date(new_state["modified_date"]);
     new_state["previous_states"] = pre_obj.previous_states;
     new_state["previous_states"].push(pre_state);
-    DetectedObject.findOneAndUpdate(
+    detectedObjectDB.findOneAndUpdate(
       { _id: req.query.id },
       new_state,
       (err, obj) => {
@@ -135,13 +137,21 @@ router.put("/update-object-by-id", (req, res, next) => {
 
 //Delete object specified by its id "/delete-object-by-id?id=someID"
 router.post("/delete-object-by-id", (req, res, next) => {
-  DetectedObject.findByIdAndRemove(req.query.id, (err, doc) => {
+  detectedObjectDB.findByIdAndRemove(req.query.id, (err, doc) => {
     if (err) {
       console.log(err);
       return res.status(400).json({ msg: "No objects were deleted.." });
     } else {
       return res.json({ msg: "Object deleted" });
     }
+  });
+});
+
+router.delete("/delete-all-object", (req, res) => {
+  //The empty object will match all of them.
+  detectedObjectDB.deleteMany({}, err => {
+    if (err) return res.json(err);
+    return res.json({ msg: "All objects were deleted!! :O " });
   });
 });
 
