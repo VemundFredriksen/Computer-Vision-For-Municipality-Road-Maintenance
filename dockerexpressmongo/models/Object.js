@@ -29,15 +29,25 @@ const detectedObjectSchema = new Schema({
     type: String,
     required: true
   },
-  detectedDate: {
+  detected_date: {
     type: Date,
     default: Date.now,
     required: true
   },
-  confirmed: {
+  modified_date: {
+    type: Date,
+    default: Date.now,
+    required: true
+  },
+  approved: {
     type: Boolean,
     required: true,
     default: false
+  },
+  previous_states: {
+    type: [Object],
+    required: false,
+    default: []
   }
 });
 

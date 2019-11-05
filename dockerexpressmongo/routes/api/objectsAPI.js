@@ -97,28 +97,44 @@ router.get("/get-object-by-type", (req, res, next) => {
 });
 
 //Update object specified by its id "/update-object-by-id?id=someID"
+//Might be changed in future sprint...
 router.put("/update-object-by-id", (req, res, next) => {
-  let item = {};
+  console.log("Updating...");
+  let pre_state = {};
+  let new_state = {};
   Object.keys(req.body).forEach(key => {
-    item[key] = req.body[key];
+    new_state[key] = req.body[key];
   });
-  if (Object.keys(item).length == 0) {
+  new_state["modified_date"] = Date.now();
+  console.log(new_state);
+  if (Object.keys(new_state).length == 0) {
     return res.status(400).json({ msg: "The http-body was empty..." });
   }
-  DetectedObject.findOneAndUpdate({ _id: req.query.id }, item, (err, obj) => {
+  DetectedObject.findOne({ _id: req.query.id }, (err, pre_obj) => {
     if (err) {
       console.log(err);
-      return res
-        .status(400)
-        .json({ msg: "No objects were updated.. Couldn't find the object" });
-    } else {
-      return res.json({ msg: "Object updated" });
+      return res.status(400).json({ msg: "Couldn't find the object" });
     }
+    Object.keys(new_state).forEach(key => {
+      pre_state[key] = { old: pre_obj[key], new: new_state[key] };
+    });
+    new_state["modified_date"] = Date.now();
+    pre_state["modified_date"] = new Date(new_state["modified_date"]);
+    new_state["previous_states"] = pre_obj.previous_states;
+    new_state["previous_states"].push(pre_state);
+    DetectedObject.findOneAndUpdate(
+      { _id: req.query.id },
+      new_state,
+      (err, obj) => {
+        if (err) console.log(err);
+        return res.json({ msg: "Object updated" });
+      }
+    );
   });
 });
 
 //Delete object specified by its id "/delete-object-by-id?id=someID"
-router.delete("/delete-object-by-id", (req, res, next) => {
+router.post("/delete-object-by-id", (req, res, next) => {
   DetectedObject.findByIdAndRemove(req.query.id, (err, doc) => {
     if (err) {
       console.log(err);
