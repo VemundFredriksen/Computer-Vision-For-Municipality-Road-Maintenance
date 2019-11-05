@@ -1,11 +1,26 @@
 from pyftpdlib.handlers import FTPHandler
 import threading
+import subprocess
+import shutil
+from datetime import datetime
 
 class RequestHandler(FTPHandler):
 
     def start_cv_module(self, file_path):
-        from cvDummy import run_cv_dummy
-        run_cv_dummy(file_path)
+        now = datetime.now()
+        path_to_image_dir = "{}/.analyzis-{}".format(os.getcwd(),now)
+        path_to_save_dir = "{}/.result-{}".format(os.getcwd(), now)
+
+        cmd_args = ['python', 
+                    '../core/video_analysis.py', 
+                    file_path, 
+                    path_to_image_dir,
+                    path_to_save_dir]
+        print("Starting analysis with args: " + str(cmd_args))
+        result = subprocess.run(cmd_args, stdout=subprocess.PIPE)
+        print(result.stdout.decode("utf-8"))
+        shutil.rmtree(path_to_image_dir)
+
         self.add_channel()
 
     def on_connect(self):

@@ -2,6 +2,7 @@ from ctypes import *
 import math
 import random
 import shutil
+import sys
 
 def sample(probs):
 	s = sum(probs)
@@ -185,7 +186,28 @@ def store_meta_data(imagePath):
     return os.getcwd()
 
 
+def do_video_analysis(path_to_video, path_to_image_dir, path_to_save_dir):
+	#These paths are now wrong? should we use absolute paths intead? 
+	net = load_net("yolo-potholes-tiny.cfg".encode("utf-8"), "yolo-potholes-tiny_29000.weights".encode("utf-8"), 0)
+	meta = load_meta("obj.data".encode("utf-8"))
+
+	video_to_images(path_to_video, path_to_image_dir, 0.5)
+	os.remove(path_to_video)
+	
+	imgs = glob.glob(path_to_image_dir + "/*.jpg")
+	for im in imgs:
+		r = detect(net, meta, im.encode("utf-8"))
+		if(len(r) > 0):
+			image = draw_prediction_box(im, r, path_to_save_dir)
+			store_meta_data(image)
+
+
 if __name__ == "__main__":
+	print("Doing vid analysis")
+	print(sys.argv[1], sys.argv[2], sys.argv[3])
+	do_video_analysis(sys.argv[1], sys.argv[2], sys.argv[3])
+"""
+else:
 	net = load_net("yolo-potholes-tiny.cfg".encode("utf-8"), "yolo-potholes-tiny_29000.weights".encode("utf-8"), 0)
 	meta = load_meta("obj.data".encode("utf-8"))
 
@@ -203,4 +225,4 @@ if __name__ == "__main__":
 		if(len(r) > 0):
 			image = draw_prediction_box(im, r, savePath)
 			store_meta_data(image)
-	shutil.rmtree(imPath)
+	shutil.rmtree(imPath)"""
