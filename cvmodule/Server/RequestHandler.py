@@ -25,11 +25,15 @@ class RequestHandler(FTPHandler):
         json_files_to_upload = glob.glob(path_to_save_dir + "/*.meta")
         image_files_to_upload = glob.glob(path_to_save_dir + "/*.jpg")
 
+        print("These are the JSON files i will be uploading %s" % (json_files_to_upload))
+        print("These are the image files i will be uploading %s" % (image_files_to_upload))
+
         for path in json_files_to_upload:
             upload_data(path)
         for path in image_files_to_upload:
             upload_image(path)
 
+        print("Deleting %s and %s" % (path_to_image_dir, path_to_save_dir))
         shutil.rmtree(path_to_image_dir)
         shutil.rmtree(path_to_save_dir)
         self.add_channel()
