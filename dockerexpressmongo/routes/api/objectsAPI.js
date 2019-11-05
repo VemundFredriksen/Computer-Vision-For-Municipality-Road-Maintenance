@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const url = "mongodb://mongo:27017/express_mongodb";
 const multer = require("multer");
+const fs = require("fs");
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
     cb(null, "/app/uploads/images");
@@ -151,6 +152,8 @@ router.delete("/delete-all-object", (req, res) => {
   //The empty object will match all of them.
   detectedObjectDB.deleteMany({}, err => {
     if (err) return res.json(err);
+    fs.rmdirSync("/app/uploads/images")
+    fs.mkdirSync("/app/uploads/images")
     return res.json({ msg: "All objects were deleted!! :O " });
   });
 });
