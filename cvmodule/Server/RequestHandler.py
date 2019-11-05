@@ -12,7 +12,9 @@ class RequestHandler(FTPHandler):
     def start_cv_module(self, file_path):
         now = datetime.now()
         path_to_image_dir = "{}/.analyzis-{}".format(os.getcwd(),now)
+        os.mkdir(path_to_image_dir)
         path_to_save_dir = "{}/.result-{}".format(os.getcwd(), now)
+        os.mkdir(path_to_save_dir)
 
         cmd_args = ['python', 
                     '../core/video_analysis.py', 

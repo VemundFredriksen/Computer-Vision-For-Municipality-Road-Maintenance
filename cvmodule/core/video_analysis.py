@@ -42,7 +42,7 @@ class METADATA(Structure):
                 ("names", POINTER(c_char_p))]
 
 #lib = CDLL("/home/pjreddie/documents/darknet/libdarknet.so", RTLD_GLOBAL)
-lib = CDLL("/home/vemundf/TDT4290/darknet/python/libdarknet.so", RTLD_GLOBAL)
+lib = CDLL("/home/vemundf/Temp/Computer-Vision-For-Municipality-Road-Maintenance/cvmodule/core/darknet/libdarknet.so", RTLD_GLOBAL)
 lib.network_width.argtypes = [c_void_p]
 lib.network_width.restype = c_int
 lib.network_height.argtypes = [c_void_p]
@@ -153,7 +153,7 @@ def draw_prediction_box(image, preds, store_folder):
 		rect = pred[2]
 		draw.rectangle(((rect[0] - rect[2]/2, rect[1] - rect[3]/2), (rect[0] + rect[2]/2, rect[1] + rect[3]/2)))
 	if(len(preds)>0):
-		img.save(saved[:-4], "JPEG")
+		img.save(saved, "JPEG")
 	return saved
 
 
@@ -169,11 +169,11 @@ def store_meta_data(imagePath):
         if(imagePath[i] == '/'):
            dash = i
            break
-    fileName = imagePath[dash - 1::]
+    fileName = imagePath[dash + 1::]
 
     f = open("{}.meta".format(imagePath[:-4]), "w+")
     log = "{"
-    log += "\n\"objecttype\": \"pothole\","
+    log += "\n\"type\": \"pothole\","
     log += "\n\"priority\" : 5,"
     log += "\n\"coordinates\": [ {} ],".format(mock_gps())
     log += "\n\"status\": \"not fixed\","
