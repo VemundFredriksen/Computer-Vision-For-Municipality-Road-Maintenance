@@ -4,13 +4,14 @@ from PIL import Image, ImageDraw
 import argparse
 import os
 
+
 if __name__ == '__main__':
 
-    input_folder = 'Test Data'
+    input_folder = 'TestData'
     output_folder = "output"
     class_name = "0"
 
-    bo_draw_bbox = True
+    bo_draw_bbox = False
     margin = 100
 
     parser = argparse.ArgumentParser()
@@ -44,9 +45,9 @@ if __name__ == '__main__':
     def main():
         for filename in glob.glob(os.path.join(input_folder, '*.txt')):
             old_txt = open(filename, "r")
-            old_img = Image.open(filename[:19] + "JPG") # <- change this to "jpg" for your dataset
+            old_img = Image.open(filename[:-3] + "jpg") # <- change this to "jpg" for your dataset
 
-            new_img_path = output_folder + filename[9:-3] + "png"
+            new_img_path = output_folder + "/" + "c_" + filename[(len(input_folder) + 1):-4] + ".jpg"
 
             crop_dat_img(old_img, old_txt, filename, new_img_path)
 
@@ -126,7 +127,7 @@ if __name__ == '__main__':
 
         # Go back to top of the file
         txt.seek(0)
-        new_txt = open(output_folder + filename[9:-4] + ".txt", "w")
+        new_txt = open(new_img_path[:-4] + ".txt", "w")
 
         # Second iteration over all the lines calculate new bbox coordinates
         for l in txt:
@@ -169,7 +170,7 @@ if __name__ == '__main__':
 
         new_txt.close()
         # img.show()
-        img_i.save(new_img_path[:-4] + ".png", 'PNG')
+        img_i.save(new_img_path[:-4] + ".jpg", 'JPEG')
 
 
     main()
