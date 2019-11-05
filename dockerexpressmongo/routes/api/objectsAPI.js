@@ -148,7 +148,7 @@ router.post("/delete-object-by-id", (req, res, next) => {
   });
 });
 
-router.delete("/delete-all-object", (req, res) => {
+router.delete("/delete-all-objects", (req, res) => {
   //The empty object will match all of them.
   detectedObjectDB.deleteMany({}, err => {
     if (err) return res.json(err);
