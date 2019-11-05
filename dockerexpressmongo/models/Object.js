@@ -35,7 +35,7 @@ const detectedObjectSchema = new Schema({
     default: Date.now,
     required: true
   },
-  confirmed: {
+  approved: {
     type: Boolean,
     required: true,
     default: false
