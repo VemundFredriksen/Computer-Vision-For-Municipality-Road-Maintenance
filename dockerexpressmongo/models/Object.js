@@ -48,6 +48,12 @@ const detectedObjectSchema = new Schema({
     type: [Object],
     required: false,
     default: []
+  },
+  bounding_box: {
+    x: { type: Number, required: true },
+    y: { type: Number, required: true },
+    w: { type: Number, required: true },
+    h: { type: Number, required: true }
   }
 });
 

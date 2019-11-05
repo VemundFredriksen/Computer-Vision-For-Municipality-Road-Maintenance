@@ -48,7 +48,7 @@ router.post("/upload-image", upload.array("image"), (req, res, next) => {
 router.post("/insert-objectdata", (req, res, next) => {
   DetectedObject.insertMany(req.body, (err, doc) => {
     if (err) {
-      return res.json(err.message);
+      return res.status(400).json(err.message);
     } else {
       res.json({ msg: "Objectdata inserted!" });
     }
