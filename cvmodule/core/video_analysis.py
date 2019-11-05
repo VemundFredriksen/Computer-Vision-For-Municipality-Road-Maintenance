@@ -40,9 +40,10 @@ class IMAGE(Structure):
 class METADATA(Structure):
     _fields_ = [("classes", c_int),
                 ("names", POINTER(c_char_p))]
-
+#import os
 #lib = CDLL("/home/pjreddie/documents/darknet/libdarknet.so", RTLD_GLOBAL)
-lib = CDLL("/home/vemundf/Temp/Computer-Vision-For-Municipality-Road-Maintenance/cvmodule/core/darknet/libdarknet.so", RTLD_GLOBAL)
+#print(os.getcwd())
+lib = CDLL("/home/tk/temp/Computer-Vision-For-Municipality-Road-Maintenance/cvmodule/core/darknet/libdarknet.so", RTLD_GLOBAL)
 lib.network_width.argtypes = [c_void_p]
 lib.network_width.restype = c_int
 lib.network_height.argtypes = [c_void_p]
@@ -188,7 +189,7 @@ def store_meta_data(imagePath):
 
 def do_video_analysis(path_to_video, path_to_image_dir, path_to_save_dir):
 	#These paths are now wrong? should we use absolute paths intead?
-	net = load_net("yolo-potholes-tiny.cfg".encode("utf-8"), "yolo-potholes-tiny_29000.weights".encode("utf-8"), 0)
+	net = load_net("yolov3-pothole.cfg".encode("utf-8"), "yolov3-pothole_23000.weights".encode("utf-8"), 0)
 	meta = load_meta("obj.data".encode("utf-8"))
 
 	video_to_images(path_to_video, path_to_image_dir, 0.5)

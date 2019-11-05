@@ -16,7 +16,7 @@ class RequestHandler(FTPHandler):
         path_to_save_dir = "{}/.result-{}".format(os.getcwd(), now)
         os.mkdir(path_to_save_dir)
 
-        cmd_args = ['python', 
+        cmd_args = ['python3', 
                     '../core/video_analysis.py', 
                     file_path, 
                     path_to_image_dir,
@@ -24,18 +24,22 @@ class RequestHandler(FTPHandler):
         print("Starting analysis with args: " + str(cmd_args))
         result = subprocess.run(cmd_args, stdout=subprocess.PIPE)
         print(result.stdout.decode("utf-8"))
-
+        
         json_files_to_upload = glob.glob(path_to_save_dir + "/*.meta")
+        
         image_files_to_upload = glob.glob(path_to_save_dir + "/*.jpg")
 
+
         print("These are the JSON files i will be uploading %s" % (json_files_to_upload))
+
         print("These are the image files i will be uploading %s" % (image_files_to_upload))
+
 
         for path in json_files_to_upload:
             upload_data(path)
         for path in image_files_to_upload:
             upload_image(path)
-
+ 
         print("Deleting %s and %s" % (path_to_image_dir, path_to_save_dir))
         shutil.rmtree(path_to_image_dir)
         shutil.rmtree(path_to_save_dir)
@@ -49,3 +53,4 @@ class RequestHandler(FTPHandler):
         self.del_channel() #put handler to sleep so it can't send/receive data
         #start cv module on a different thread
         threading.Thread(target=self.start_cv_module, args=(file,)).start()
+
