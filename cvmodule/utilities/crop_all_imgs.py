@@ -4,15 +4,13 @@ from PIL import Image, ImageDraw
 import argparse
 import os
 
-
 if __name__ == '__main__':
 
-    input_folder = 'Test Data'
-    output_folder = "output"
-    base_width = 1920
+    input_folder = 'TestData'
+    output_folder = "output_c1"
     class_name = "0"
 
-    bo_draw_bbox = False;
+    bo_draw_bbox = False
 
     left_factor = 3.6
     right_factor = 1.0
@@ -22,10 +20,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input_folder", dest='input_folder', type=str, default=input_folder, help="input folder path")
     parser.add_argument("-o", "--output_folder", dest='output_folder', type=str, default=output_folder, help="output folder path")
-    parser.add_argument("-w" "--base_width", dest='base_width', type=str, default=base_width, help="base width for scaling")
     parser.add_argument("-c", "--class", dest='class_name', type=str, default=class_name, help="class name")
 
-    parser.add_argument("-d", "--draw", dest='bo_draw_bbox', type=bool, default=False, help="Draw bbox")
+    parser.add_argument("-d", "--draw", dest='bo_draw_bbox', type=bool, default=bo_draw_bbox, help="Draw bbox")
 
     parser.add_argument("-l", "--left", dest='left_factor', type=str, default=left_factor, help="left_factor, default:" + str(left_factor))
     parser.add_argument("-r", "--right", dest='right_factor', type=str, default=right_factor, help="right_factor, default:" + str(right_factor))
@@ -58,13 +55,15 @@ if __name__ == '__main__':
 
     def main():
         for filename in glob.glob(os.path.join(input_folder, '*.txt')):
+
             old_txt = open(filename, "r")
-            old_img = Image.open(filename[:19] + "JPG") # <- change this to "jpg" for your dataset
+            old_img = Image.open(filename[:-3] + "jpg") # <- change this to "jpg" for your dataset
 
-            new_txt = open(output_folder + filename[9:], "w")
-            new_img_path = output_folder + filename[9:-3] + "png"
+            new_img_path = output_folder + "/" + "c1_" + filename[(len(input_folder) + 1):-4] + ".jpg"
 
-            crop_dat_img(old_img, old_txt, new_txt, new_img_path)
+            new_txt = open(new_img_path, "w")
+
+            crop_dat_img(old_img, old_txt, new_img_path)
 
             print(new_img_path)
             old_txt.close()
@@ -76,13 +75,10 @@ if __name__ == '__main__':
     # f = open("kebab_new.txt", "w")
 
 
-    def crop_dat_img(img, txt, new_text, new_img_path):
-        # Set own resolution
-        width_percent = (base_width/float(img.size[0]))
-        height_size = int((float(img.size[1])*float(width_percent)))
-
-        img = img.resize((base_width, height_size), Image.ANTIALIAS)
+    def crop_dat_img(img, txt, new_img_path):
         width, height = img.size
+
+        new_txt = open(new_img_path[:-4] + ".txt", "w")
 
         # Crop img
         left = width / left_factor  # non cropping  -> 0
@@ -92,20 +88,20 @@ if __name__ == '__main__':
 
         img = img.crop((left, top, right, bottom))
 
-        def convert_to_relative(x, y, w, h):
-            x = x/width
-            y = y/height
-            w = w/width
-            h = h/height
+        def convert_to_relative(x, y, w, h, s):
+            x = x/s[0]
+            y = y/s[1]
+            w = w/s[0]
+            h = h/s[1]
 
             if x < 0 or y < 0:
                 pass
             else:
-                new_text.write(class_name + " " + str(x) + " " + str(y) + " " + str(w) + " " + str(h) + "\n")
-
+                new_txt.write(class_name + " " + str(x) + " " + str(y) + " " + str(w) + " " + str(h) + "\n")
 
         # Draw point
         draw = ImageDraw.Draw(img)
+        size = img.size
 
         for line in txt:
             arr = line.split()
@@ -124,17 +120,18 @@ if __name__ == '__main__':
             if bo_draw_bbox:
                 draw_bbox(bbox_x, bbox_y, bbox_width, bbox_height, draw)
 
-            convert_to_relative(bbox_x, bbox_y, bbox_width, bbox_height)
+            convert_to_relative(bbox_x, bbox_y, bbox_width, bbox_height, size)
 
+        new_txt.close()
         #img.show()
-        img.save(new_img_path, 'PNG')
+        img.save(new_img_path[:-4] + ".jpg", 'JPEG')
 
 
     def draw_bbox(bbox_x, bbox_y, bbox_width, bbox_height, draw):
         bbox_start = (bbox_x - (bbox_width / 2), bbox_y - (bbox_height / 2))
         bbox_end = (bbox_x + (bbox_width / 2), bbox_y + (bbox_height / 2))
 
-        draw.rectangle([bbox_start, bbox_end], outline="green", width=2)
+        draw.rectangle([bbox_start, bbox_end], outline="green", width=3)
         draw.point([bbox_x, bbox_y], fill="red")
 
 

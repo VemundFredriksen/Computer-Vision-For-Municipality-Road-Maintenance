@@ -48,7 +48,16 @@ const detectedObjectSchema = new Schema({
     type: [Object],
     required: false,
     default: []
-  }
+  },
+  bounding_box: [
+    {
+      _id: false,
+      x: { type: Number, required: true },
+      y: { type: Number, required: true },
+      w: { type: Number, required: true },
+      h: { type: Number, required: true }
+    }
+  ]
 });
 
 // To use our schema definition, we need to convert our blogSchema into a Model we can work with.
