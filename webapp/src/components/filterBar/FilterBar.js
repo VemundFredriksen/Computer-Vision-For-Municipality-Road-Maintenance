@@ -7,6 +7,7 @@ import './FilterBar.css';
 const typeOptions = ['all', 'pothole', 'crack'];
 const statusOptions = ['all', 'fixed', 'not fixed'];
 const priorityOptions = ['all', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+const approvedOptions = ['all', 'true', 'false'];
 
 
 export default class FilterBar extends React.Component {
@@ -16,6 +17,7 @@ export default class FilterBar extends React.Component {
       type: 'all',
       status: 'all',
       priority: 'all',
+      approved: 'all',
     };
   }
 
@@ -37,11 +39,22 @@ export default class FilterBar extends React.Component {
         priority: Number(e.target.value),
       });
     }
+
+    if (e.target.name === 'appr') {
+      this.setState({
+        approved: e.target.value === 'true',
+      });
+    }
   };
 
   onSubmit = (e) => {
     e.preventDefault();
-    const { type, status, priority } = this.state;
+    const {
+      type,
+      status,
+      priority,
+      approved,
+    } = this.state;
     const { onFilter } = this.props;
     const obj = {};
     if (type !== 'all') {
@@ -52,6 +65,9 @@ export default class FilterBar extends React.Component {
     }
     if (priority !== 'all') {
       obj.priority = priority;
+    }
+    if (approved !== 'all') {
+      obj.approved = approved;
     }
     if (obj) {
       onFilter(obj);
@@ -64,12 +80,18 @@ export default class FilterBar extends React.Component {
       type: 'all',
       status: 'all',
       priority: 'all',
+      approved: 'all',
     });
     onFilterReset();
   };
 
   render() {
-    const { type, status, priority } = this.state;
+    const {
+      type,
+      status,
+      priority,
+      approved,
+    } = this.state;
     return (
       <div className="filter_bar__wrapper">
         <div>
@@ -88,6 +110,7 @@ export default class FilterBar extends React.Component {
             name="prio"
             handleChange={this.handleFilter}
           />
+          <Select options={approvedOptions} label="Approved: " value={approved} name="appr" handleChange={this.handleFilter} />
         </div>
         <div>
           <button className="filter_button" type="submit" onClick={this.onSubmit}>Filter</button>
