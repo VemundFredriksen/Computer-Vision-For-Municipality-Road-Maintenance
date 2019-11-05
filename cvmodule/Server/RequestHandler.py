@@ -21,7 +21,6 @@ class RequestHandler(FTPHandler):
         print("Starting analysis with args: " + str(cmd_args))
         result = subprocess.run(cmd_args, stdout=subprocess.PIPE)
         print(result.stdout.decode("utf-8"))
-        shutil.rmtree(path_to_image_dir)
 
         json_files_to_upload = glob.glob(path_to_save_dir + "/*.meta")
         image_files_to_upload = glob.glob(path_to_save_dir + "/*.jpg")
@@ -31,6 +30,8 @@ class RequestHandler(FTPHandler):
         for path in image_files_to_upload:
             upload_image(path)
 
+        shutil.rmtree(path_to_image_dir)
+        shutil.rmtree(path_to_save_dir)
         self.add_channel()
 
     def on_connect(self):
