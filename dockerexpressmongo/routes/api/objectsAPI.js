@@ -15,7 +15,7 @@ const upload = multer({ storage: storage }); // This constant allows us to take 
 
 // Connect to MongoDB
 mongoose.connect(url, { useNewUrlParser: true });
-//Get the models
+//Get the model
 const DetectedObject = require("../../models/Object");
 
 //home..
@@ -45,11 +45,10 @@ router.post("/upload-image", upload.array("image"), (req, res, next) => {
 });
 
 //insert one or many objects (array of json objects)
-router.post("/insert-data", (req, res, next) => {
+router.post("/insert-objectdata", (req, res, next) => {
   DetectedObject.insertMany(req.body, (err, doc) => {
     if (err) {
-      console.log(err);
-      res.status(400).json({ msg: "Something went wrong when inserting.." });
+      return res.json(err.message);
     } else {
       res.json({ msg: "Objectdata inserted!" });
     }
@@ -78,9 +77,9 @@ router.get("/get-all-objects", (req, res, next) => {
 });
 
 //Get objects by type.
-//A call will be like this :"...../get-by-type?type=pothhole"
-router.get("/get-by-type", (req, res, next) => {
-  DetectedObject.find({ type: req.query.type }, (err, docs) => {
+//A call will be like this :"...../get-object-by-type?objecttype=pothole"
+router.get("/get-object-by-type", (req, res, next) => {
+  DetectedObject.find({ objecttype: req.query.objecttype }, (err, docs) => {
     if (err) {
       console.log(err);
     }
@@ -90,16 +89,15 @@ router.get("/get-by-type", (req, res, next) => {
       if (objects.length == 0) {
         return res
           .status(400)
-          .json({ msg: "No object of type: " + req.query.type });
+          .json({ msg: "No object of type: " + req.query.objecttype });
       } else {
         return res.json(objects);
       }
     });
 });
 
-//Update object specified by its id "/update-by-id?id=......."
-router.put("/update-by-id", (req, res, next) => {
-  //res.json(req.body);
+//Update object specified by its id "/update-object-by-id?id=someID"
+router.put("/update-object-by-id", (req, res, next) => {
   let item = {};
   Object.keys(req.body).forEach(key => {
     item[key] = req.body[key];
@@ -107,7 +105,7 @@ router.put("/update-by-id", (req, res, next) => {
   if (Object.keys(item).length == 0) {
     return res.status(400).json({ msg: "The http-body was empty..." });
   }
-  DetectedObject.findOneAndUpdate({ _id: req.query.id }, item, (err, doc) => {
+  DetectedObject.findOneAndUpdate({ _id: req.query.id }, item, (err, obj) => {
     if (err) {
       console.log(err);
       return res
@@ -119,8 +117,8 @@ router.put("/update-by-id", (req, res, next) => {
   });
 });
 
-//Update object specified by its id "/delete-by-id?id=......."
-router.delete("/delete-by-id", (req, res, next) => {
+//Delete object specified by its id "/delete-object-by-id?id=someID"
+router.delete("/delete-object-by-id", (req, res, next) => {
   DetectedObject.findByIdAndRemove(req.query.id, (err, doc) => {
     if (err) {
       console.log(err);

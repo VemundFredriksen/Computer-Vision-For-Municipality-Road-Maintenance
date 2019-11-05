@@ -1,6 +1,8 @@
 import React from 'react';
+import isSubset from 'is-subset';
 import MapComponent from '../components/MapComponent';
 import InfoBar from '../components/infoBar/InfoBar';
+import FilterBar from '../components/filterBar/FilterBar';
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -12,6 +14,7 @@ class HomePage extends React.Component {
       error: null,
       currentObject: null,
       edit: false,
+      filters: null,
     };
   }
 
@@ -55,6 +58,27 @@ class HomePage extends React.Component {
     });
   };
 
+  onFilter = (filters) => {
+    this.setState({
+      filters,
+    });
+  };
+
+  onFilterReset = () => {
+    this.setState({
+      filters: null,
+    });
+  };
+
+  handleDelete = (id) => {
+    const { objects } = this.state;
+    const obj = objects.filter((o) => o._id !== id);
+    this.setState({
+      objects: obj,
+      currentObject: null,
+    });
+  };
+
   render() {
     const {
       hasLoaded,
@@ -62,19 +86,23 @@ class HomePage extends React.Component {
       error,
       currentObject,
       edit,
+      filters,
     } = this.state;
 
     if (!hasLoaded) {
       return <div>is loading..</div>;
     }
-
     if (error) {
       return <div>{error}</div>;
+    }
+    let obj = objects;
+    if (filters) {
+      obj = objects.filter((o) => isSubset(o, filters));
     }
 
     return (
       <div style={{ height: '100vh', textAlign: 'center' }}>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end' }}>
           {currentObject
             ? (
               <InfoBar
@@ -82,13 +110,17 @@ class HomePage extends React.Component {
                 edit={edit}
                 onCloseClick={this.handleCloseClick}
                 onEditClick={this.handleEditClick}
+                handleDelete={this.handleDelete}
               />
             )
-            : null }
-          <MapComponent
-            objects={objects}
-            onMarkerClick={this.handleMarkerClick}
-          />
+            : null}
+          <div>
+            <FilterBar onFilter={this.onFilter} onFilterReset={this.onFilterReset} />
+            <MapComponent
+              objects={obj}
+              onMarkerClick={this.handleMarkerClick}
+            />
+          </div>
         </div>
       </div>
     );
