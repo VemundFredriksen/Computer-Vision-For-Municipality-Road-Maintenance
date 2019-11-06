@@ -8,7 +8,7 @@ import os
 if __name__ == '__main__':
 
     input_folder = 'TestData'
-    output_folder = "output_c2"
+    output_folder = "output"
     class_name = "0"
 
     bo_draw_bbox = False
@@ -47,7 +47,7 @@ if __name__ == '__main__':
             old_txt = open(filename, "r")
             old_img = Image.open(filename[:-3] + "jpg") # <- change this to "jpg" for your dataset
 
-            new_img_path = output_folder + "/" + "c2_" + filename[(len(input_folder) + 1):-4] + ".jpg"
+            new_img_path = output_folder + "/" + "c_" + filename[(len(input_folder) + 1):-4] + ".jpg"
 
             crop_dat_img(old_img, old_txt, filename, new_img_path)
 
@@ -159,12 +159,11 @@ if __name__ == '__main__':
                 draw.point([x, y], fill="red")
                 draw.rectangle([bbox_start, bbox_end], outline="green", width=2)
 
-            size = img_i.size
             # Convert to relative coordinates
-            x = x / size[0]
-            y = y / size[1]
-            w = bbox_width / size[0]
-            h = bbox_height / size[1]
+            x = x / width
+            y = y / height
+            w = bbox_width / width
+            h = bbox_height / height
 
             # Write to file
             new_txt.write(class_name + " " + str(x) + " " + str(y) + " " + str(w) + " " + str(h) + "\n")

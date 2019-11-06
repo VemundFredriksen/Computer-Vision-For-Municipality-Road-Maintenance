@@ -74,10 +74,10 @@ router.get("/get-area-by-coordinate", (req, res) => {
     for (let k = 0; k < docs.length; k++) {
       let poly = docs[k].polygon;
       if (inside(point, poly)) {
-        res.json(docs[k].responsible);
+        res.json({ responsible: docs[k].responsible });
       }
     }
-    res.json({ Responsible: "Unknown" });
+    res.json({ responsible: "unknown" });
   });
 });
 
