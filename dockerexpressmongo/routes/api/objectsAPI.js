@@ -107,9 +107,8 @@ router.get("/get-object-by-id", (req, res, next) => {
       return res.status(400).json({ msg: "Could not find the Object"});
     }
     return res.json(object)
-  })
+  });
 });
-
 //Update object specified by its id "/update-object-by-id?id=someID"
 //Might be changed in future sprint...
 router.put("/update-object-by-id", (req, res, next) => {
