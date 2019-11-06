@@ -101,15 +101,14 @@ router.get("/get-object-by-type", (req, res, next) => {
 
 //Get object specified by its id "/get-object-by-id?id=someID"
 router.get("/get-object-by-id", (req, res, next) => {
-  detectedObjectDB
-    .findById(req.query.id, (err, object) => {
-      if (err) {
-        console.log(err);
-        return err
-      } else {
-      return res.json(object)
+  detectedObjectDB.findOne({ _id: req.query.id }, function (err, object) {
+    if (err) {
+      console.error(err);
+      return res.status(400).json({ msg: "Could not find the Object"});
     }
-};
+    return res.json(object)
+  })
+});
 
 //Update object specified by its id "/update-object-by-id?id=someID"
 //Might be changed in future sprint...
