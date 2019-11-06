@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const url = "mongodb://mongo:27017/express_mongodb";
 const multer = require("multer");
+const fs = require("fs");
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
     cb(null, "/app/uploads/images");
@@ -98,6 +99,18 @@ router.get("/get-object-by-type", (req, res, next) => {
     });
 });
 
+//Get object specified by its id "/get-object-by-id?id=someID"
+router.get("/get-object-by-id", (req, res, next) => {
+  detectedObjectDB
+    .findById(req.query.id, (err, object) => {
+      if (err) {
+        console.log(err);
+        return err
+      } else {
+      return res.json(object)
+    }
+};
+
 //Update object specified by its id "/update-object-by-id?id=someID"
 //Might be changed in future sprint...
 router.put("/update-object-by-id", (req, res, next) => {
@@ -147,10 +160,12 @@ router.post("/delete-object-by-id", (req, res, next) => {
   });
 });
 
-router.delete("/delete-all-object", (req, res) => {
+router.delete("/delete-all-objects", (req, res) => {
   //The empty object will match all of them.
   detectedObjectDB.deleteMany({}, err => {
     if (err) return res.json(err);
+    fs.rmdirSync("/app/uploads/images")
+    fs.mkdirSync("/app/uploads/images")
     return res.json({ msg: "All objects were deleted!! :O " });
   });
 });
