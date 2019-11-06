@@ -102,7 +102,11 @@ router.get("/get-object-by-type", (req, res, next) => {
 //Get object specified by its id "/get-object-by-id?id=someID"
 router.get("/get-object-by-id", (req, res, next) => {
   detectedObjectDB.findOne({ _id: req.query.id }, function (err, object) {
+    if (error) {
+      return res.status(400).json({ msg: "Could not find the Object"});      
+    }
     if (object === null) {
+      // in the case that the id field was not provided, object will be null
       return res.status(400).json({ msg: "Could not find the Object"});
     }
     return res.json(object)
