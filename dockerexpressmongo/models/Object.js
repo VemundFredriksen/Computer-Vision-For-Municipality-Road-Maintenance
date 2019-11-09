@@ -30,9 +30,9 @@ const detectedObjectSchema = new Schema({
     type: [Number],
     required: true
   },
-  status: {
-    type: String,
-    enum: ["fixed", "not fixed"],
+  fixed: {
+    type: Boolean,
+    default: false,
     required: true
   },
   filename: {
