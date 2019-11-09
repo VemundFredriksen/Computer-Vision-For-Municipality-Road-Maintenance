@@ -112,6 +112,20 @@ router.get("/get-object-by-id", (req, res, next) => {
     return res.json(object)
   });
 });
+
+// Same as above, but queries for multiple ids using the $in operator
+router.get("/get-objects-by-id", (req, res, next) => {
+  detectedObjectDB.find({ _id: { $in: req.query.ids } }, function (err, objects) {
+    if (err) {
+      return res.status(400).json({ msg: "Could not find the Objects"});      
+    }
+    if (objects === null) {
+      // in the case that the id field was not provided, object will be null
+      return res.status(400).json({ msg: "Could not find the Objects"});
+    }
+    return res.json(objects)
+  });
+});
 //Update object specified by its id "/update-object-by-id?id=someID"
 //Might be changed in future sprint...
 router.put("/update-object-by-id", (req, res, next) => {
