@@ -5,9 +5,9 @@ import Select from '../shared/select/Select';
 import './FilterBar.css';
 
 const typeOptions = ['all', 'pothole', 'crack'];
-const statusOptions = ['all', 'fixed', 'not fixed'];
+const fixedOptions = ['all', 'yes', 'no'];
 const priorityOptions = ['all', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-const approvedOptions = ['all', 'true', 'false'];
+const approvedOptions = ['all', 'yes', 'no'];
 
 
 export default class FilterBar extends React.Component {
@@ -15,7 +15,7 @@ export default class FilterBar extends React.Component {
     super(props);
     this.state = {
       type: 'all',
-      status: 'all',
+      fixed: 'all',
       priority: 'all',
       approved: 'all',
     };
@@ -30,7 +30,7 @@ export default class FilterBar extends React.Component {
 
     if (e.target.name === 'status') {
       this.setState({
-        status: e.target.value,
+        fixed: e.target.value,
       });
     }
 
@@ -42,7 +42,7 @@ export default class FilterBar extends React.Component {
 
     if (e.target.name === 'appr') {
       this.setState({
-        approved: e.target.value === 'true',
+        approved: e.target.value,
       });
     }
   };
@@ -51,7 +51,7 @@ export default class FilterBar extends React.Component {
     e.preventDefault();
     const {
       type,
-      status,
+      fixed,
       priority,
       approved,
     } = this.state;
@@ -60,14 +60,14 @@ export default class FilterBar extends React.Component {
     if (type !== 'all') {
       obj.type = type;
     }
-    if (status !== 'all') {
-      obj.status = status;
+    if (fixed !== 'all') {
+      obj.fixed = fixed === 'yes';
     }
     if (priority !== 'all') {
       obj.priority = priority;
     }
     if (approved !== 'all') {
-      obj.approved = approved;
+      obj.approved = approved === 'yes';
     }
     if (obj) {
       onFilter(obj);
@@ -78,7 +78,7 @@ export default class FilterBar extends React.Component {
     const { onFilterReset } = this.props;
     this.setState({
       type: 'all',
-      status: 'all',
+      fixed: 'all',
       priority: 'all',
       approved: 'all',
     });
@@ -88,7 +88,7 @@ export default class FilterBar extends React.Component {
   render() {
     const {
       type,
-      status,
+      fixed,
       priority,
       approved,
     } = this.state;
@@ -97,10 +97,10 @@ export default class FilterBar extends React.Component {
         <div>
           <Select options={typeOptions} label="Type: " value={type} name="type" handleChange={this.handleFilter} />
           <Select
-            options={statusOptions}
-            label="Status: "
-            value={status}
-            name="status"
+            options={fixedOptions}
+            label="Fixed: "
+            value={fixed}
+            name="fixed"
             handleChange={this.handleFilter}
           />
           <Select
