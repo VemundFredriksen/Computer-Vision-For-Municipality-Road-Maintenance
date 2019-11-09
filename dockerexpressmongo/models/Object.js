@@ -12,13 +12,12 @@ const detectedObjectSchema = new Schema({
   },
   responsible: {
     type: String,
-    enum: ["Statens Vegvesen", "Trondheim Kommune"],
+    enum: ["statens vegvesen", "trondheim kommune"],
     required: true
   },
-  workorder: {
-    type: String,
-    enum: ["Yes", "No"],
-    default: "No",
+  work_order: {
+    type: Boolean,
+    default: false,
     required: true
   },
   priority: {
