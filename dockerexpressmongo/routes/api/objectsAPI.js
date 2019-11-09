@@ -156,17 +156,28 @@ router.post("/delete-object-by-id", (req, res, next) => {
       console.log(err);
       return res.status(400).json({ msg: "No objects were deleted.." });
     } else {
+      // NOTE: TBD, consider deleting the image too
+      // for now we will keep the image without the object to
+      // store as many pictures to run CV on as possible
       return res.json({ msg: "Object deleted" });
     }
   });
 });
 
+const deleteImages = function() {
+  // Need it to be done synchronously so 
+  // we do not attempt to make a folder before it is deleted
+  // it is possible to chain asynchornous callback functions
+  // but it has not been done for simplicity
+  fs.rmdirSync("/app/uploads/images");
+  fs.mkdirSync("/app/uploads/images");
+};
+
 router.delete("/delete-all-objects", (req, res) => {
   //The empty object will match all of them.
   detectedObjectDB.deleteMany({}, err => {
     if (err) return res.json(err);
-    fs.rmdirSync("/app/uploads/images")
-    fs.mkdirSync("/app/uploads/images")
+    deleteImages();
     return res.json({ msg: "All objects were deleted!! :O " });
   });
 });
