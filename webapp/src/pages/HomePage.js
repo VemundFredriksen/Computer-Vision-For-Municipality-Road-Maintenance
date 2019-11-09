@@ -15,6 +15,7 @@ class HomePage extends React.Component {
       currentObject: null,
       edit: false,
       filters: null,
+      workOrders: [],
     };
   }
 
@@ -79,6 +80,36 @@ class HomePage extends React.Component {
     });
   };
 
+  handleAddWOList = () => {
+    const { currentObject } = this.state;
+    this.setState((prevState) => ({
+      workOrders: [...prevState.workOrders, currentObject],
+    }));
+  };
+
+  handleRemoveWOList = () => {
+    const { currentObject } = this.state;
+    this.setState((prevState) => ({
+      workOrders: prevState.workOrders.filter((item) => item._id !== currentObject._id),
+    }));
+  };
+
+  handleDeleteWO = () => {
+    const { currentObject } = this.state;
+    fetch(`https://api.dewp.eu.org/delete-workorder-by-id?id=${currentObject._id}`, {
+      method: 'POST',
+    })
+      .then((res) => (
+        res.json()
+      ))
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   render() {
     const {
       hasLoaded,
@@ -87,6 +118,7 @@ class HomePage extends React.Component {
       currentObject,
       edit,
       filters,
+      workOrders,
     } = this.state;
 
     if (!hasLoaded) {
@@ -99,7 +131,7 @@ class HomePage extends React.Component {
     if (filters) {
       obj = objects.filter((o) => isSubset(o, filters));
     }
-
+    const inWOList = workOrders.some((item) => item._id === currentObject._id);
     return (
       <div style={{ height: '100vh', textAlign: 'center' }}>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end' }}>
@@ -111,6 +143,10 @@ class HomePage extends React.Component {
                 onCloseClick={this.handleCloseClick}
                 onEditClick={this.handleEditClick}
                 handleDelete={this.handleDelete}
+                handleAddWOList={this.handleAddWOList}
+                inWOList={inWOList}
+                handleRemoveWOList={this.handleRemoveWOList}
+                handleDeleteWO={this.handleDeleteWO}
               />
             )
             : null}
@@ -119,6 +155,7 @@ class HomePage extends React.Component {
             <MapComponent
               objects={obj}
               onMarkerClick={this.handleMarkerClick}
+              workOrders={workOrders}
             />
           </div>
         </div>
