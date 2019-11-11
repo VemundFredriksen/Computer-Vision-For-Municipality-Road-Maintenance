@@ -15,6 +15,7 @@ class HomePage extends React.Component {
       currentObject: null,
       edit: false,
       filters: null,
+      imageWithBoxes: null,
     };
   }
 
@@ -49,6 +50,7 @@ class HomePage extends React.Component {
     this.setState({
       currentObject: null,
       edit: false,
+      imageWithBoxes: null,
     });
   };
 
@@ -79,6 +81,27 @@ class HomePage extends React.Component {
     });
   };
 
+  drawBox = (e)=>{
+    console.log(e);
+    let canvas = document.createElement("CANVAS");
+    let context = canvas.getContext("2d");
+    let img = e.target;
+    img.crossOrigin = "anonymous";
+
+    canvas.width = img.width;
+    canvas.height = img.height;
+
+    context.drawImage(img, 0, 0);
+    context.strokeStyle = "red";
+    context.strokeWidth = 10;
+    context.strokeRect(10, 10, 10, 10);
+    //for testing
+    //img.src = canvas.toDataURL();
+    this.setState({
+      imageWithBoxes: canvas.toDataURL(),
+    })
+  };
+
   render() {
     const {
       hasLoaded,
@@ -87,6 +110,7 @@ class HomePage extends React.Component {
       currentObject,
       edit,
       filters,
+      imageWithBoxes,
     } = this.state;
 
     if (!hasLoaded) {
@@ -111,6 +135,8 @@ class HomePage extends React.Component {
                 onCloseClick={this.handleCloseClick}
                 onEditClick={this.handleEditClick}
                 handleDelete={this.handleDelete}
+                drawBox={this.drawBox}
+                imageWithBoxes={imageWithBoxes}
               />
             )
             : null}
