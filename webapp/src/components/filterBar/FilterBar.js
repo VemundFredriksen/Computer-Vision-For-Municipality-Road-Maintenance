@@ -4,20 +4,20 @@ import Select from '../shared/select/Select';
 
 import './FilterBar.css';
 
-const typeOptions = ['all', 'pothole', 'crack'];
-const fixedOptions = ['all', 'yes', 'no'];
-const priorityOptions = ['all', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-const approvedOptions = ['all', 'yes', 'no'];
+const typeOptions = ['-- type --', 'pothole', 'crack'];
+const fixedOptions = ['-- fixed --', 'yes', 'no'];
+const priorityOptions = ['-- priority --', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+const approvedOptions = ['-- approved --', 'yes', 'no'];
 
 
 export default class FilterBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      type: 'all',
-      fixed: 'all',
-      priority: 'all',
-      approved: 'all',
+      type: '-- type --',
+      fixed: '-- fixed --',
+      priority: '-- priority --',
+      approved: '-- approved --',
     };
   }
 
@@ -57,16 +57,16 @@ export default class FilterBar extends React.Component {
     } = this.state;
     const { onFilter } = this.props;
     const obj = {};
-    if (type !== 'all') {
+    if (type !== '-- type --') {
       obj.type = type;
     }
-    if (fixed !== 'all') {
+    if (fixed !== '-- fixed --') {
       obj.fixed = fixed === 'yes';
     }
-    if (priority !== 'all') {
+    if (priority !== '-- priority --') {
       obj.priority = priority;
     }
-    if (approved !== 'all') {
+    if (approved !== '-- approved --') {
       obj.approved = approved === 'yes';
     }
     if (obj) {
@@ -77,10 +77,10 @@ export default class FilterBar extends React.Component {
   handleReset = () => {
     const { onFilterReset } = this.props;
     this.setState({
-      type: 'all',
-      fixed: 'all',
-      priority: 'all',
-      approved: 'all',
+      type: '-- type --',
+      fixed: '-- fixed --',
+      priority: '-- priority --',
+      approved: '-- approved --',
     });
     onFilterReset();
   };
@@ -95,22 +95,20 @@ export default class FilterBar extends React.Component {
     return (
       <div className="filter_bar__wrapper">
         <div>
-          <Select options={typeOptions} label="Type: " value={type} name="type" handleChange={this.handleFilter} />
+          <Select options={typeOptions} value={type} name="type" handleChange={this.handleFilter} />
           <Select
             options={fixedOptions}
-            label="Fixed: "
             value={fixed}
             name="fixed"
             handleChange={this.handleFilter}
           />
           <Select
             options={priorityOptions}
-            label="Priority: "
             value={priority}
             name="prio"
             handleChange={this.handleFilter}
           />
-          <Select options={approvedOptions} label="Approved: " value={approved} name="appr" handleChange={this.handleFilter} />
+          <Select options={approvedOptions} value={approved} name="appr" handleChange={this.handleFilter} />
         </div>
         <div>
           <button className="filter_button" type="submit" onClick={this.onSubmit}>Filter</button>

@@ -56,20 +56,29 @@ const InfoBar = (
           />
         ) : (
           <div className="info__container">
-            <span className="object_info">
-              {`Type: ${object.type}`}
-            </span>
-            <span className="object_info">
-              {`Fixed: ${object.fixed ? 'yes' : 'no'}`}
-            </span>
-            <span className="object_info">
-              {`Priority: ${object.priority}`}
-            </span>
-            <span className="object_info">
-              {`Approved: ${object.approved ? 'yes' : 'no'}`}
-            </span>
-            <Button text="Edit" onClick={onEditClick} />
-            {determine()}
+            <table>
+              <tr>
+                <td>Type:</td>
+                <td>{object.type}</td>
+              </tr>
+              <tr>
+                <td>Fixed:</td>
+                <td>{object.fixed ? 'yes' : 'no'}</td>
+              </tr>
+              <tr>
+                <td>Priority:</td>
+                <td>{object.priority}</td>
+              </tr>
+              <tr>
+                <td>Approved:</td>
+                <td>{object.approved ? 'yes' : 'no'}</td>
+              </tr>
+
+            </table>
+            <div>
+              <Button text="Edit" onClick={onEditClick} />
+              {determine()}
+            </div>
           </div>
         )
       }

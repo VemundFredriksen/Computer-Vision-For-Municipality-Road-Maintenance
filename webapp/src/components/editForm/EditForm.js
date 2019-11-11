@@ -115,12 +115,34 @@ export default class EditForm extends React.Component {
 
     return (
       <form method="post" className="edit_form" onSubmit={this.onSubmit}>
-        <div className="selection__wrapper">
-          <Select options={typeOptions} label="Type: " value={type} name="typ" handleChange={this.handleChange} />
-          <Select options={statusOptions} label="Fixed: " value={fixed} name="stat" handleChange={this.handleChange} />
-          <Select options={priorityOptions} label="Priority: " value={priority.toString()} name="pri" handleChange={this.handleChange} />
-          <Select options={approvedOptions} label="Approved: " value={approved} name="appr" handleChange={this.handleChange} />
-        </div>
+        <table className="selection__wrapper">
+          <tr>
+            <td>Type</td>
+            <td>
+              <span>
+                <Select options={typeOptions} value={type} name="typ" handleChange={this.handleChange} />
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td>Fixed</td>
+            <td>
+              <Select options={statusOptions} value={fixed} name="stat" handleChange={this.handleChange} />
+            </td>
+          </tr>
+          <tr>
+            <td>Priority</td>
+            <td>
+              <Select options={priorityOptions} value={priority.toString()} name="pri" handleChange={this.handleChange} />
+            </td>
+          </tr>
+          <tr>
+            <td>Approved</td>
+            <td>
+              <Select options={approvedOptions} value={approved} name="appr" handleChange={this.handleChange} />
+            </td>
+          </tr>
+        </table>
         <button className="edit_button" type="submit">Update</button>
         <button className="edit_button" type="button" onClick={this.onDelete}>Delete</button>
       </form>

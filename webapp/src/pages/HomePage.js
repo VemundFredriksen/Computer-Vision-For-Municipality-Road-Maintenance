@@ -3,6 +3,7 @@ import isSubset from 'is-subset';
 import MapComponent from '../components/MapComponent';
 import InfoBar from '../components/infoBar/InfoBar';
 import FilterBar from '../components/filterBar/FilterBar';
+import Button from '../components/shared/button/Button';
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -110,6 +111,26 @@ class HomePage extends React.Component {
       });
   };
 
+  handleSubmitWO = () => {
+    const { workOrders } = this.state;
+    fetch('https://api.dewp.eu.org/insert-workorderdata', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        workOrders,
+      }),
+    })
+      .then((res) => (
+        res.json()
+      ))
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   render() {
     const {
       hasLoaded,
@@ -134,6 +155,7 @@ class HomePage extends React.Component {
     const inWOList = workOrders.some((item) => item._id === currentObject._id);
     return (
       <div style={{ height: '100vh', textAlign: 'center' }}>
+        <Button text="Send work orders" onClick={workOrders.length > 0 ? this.handleSubmitWO : null} />
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end' }}>
           {currentObject
             ? (
