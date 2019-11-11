@@ -192,7 +192,7 @@ def do_video_analysis(path_to_video, path_to_image_dir, path_to_save_dir):
 	net = load_net("yolov3-pothole.cfg".encode("utf-8"), "yolov3-pothole_23000.weights".encode("utf-8"), 0)
 	meta = load_meta("obj.data".encode("utf-8"))
 
-	video_to_images(path_to_video, path_to_image_dir, 0.5)
+	video_to_images(path_to_video, path_to_image_dir, 0.2)
 	os.remove(path_to_video)
 	
 	imgs = glob.glob(path_to_image_dir + "/*.jpg")
