@@ -7,7 +7,9 @@ const Schema = mongoose.Schema;
 const areaSchema = new Schema({
   responsible: {
     type: String,
-    required: true
+    enum: ["trondheim kommune", "statens vegvesen", "unknown"],
+    required: true,
+    default: "unknown"
   },
   polygon: {
     type: [[Number]],

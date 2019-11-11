@@ -60,8 +60,7 @@ class LabelTool():
         self.svSourcePath = StringVar()
         self.entrySrc = Entry(self.frame, textvariable=self.svSourcePath)
         self.entrySrc.grid(row=0, column=1, sticky=W + E)
-        # self.svSourcePath.set('TestData')  # os.getcwd()
-        self.svSourcePath.set('TestData')  # os.getcwd()
+        self.svSourcePath.set('Test Data')  # os.getcwd()
 
         # load button
         self.ldBtn = Button(self.frame, text="Load Dir", command=self.loadDir)
@@ -75,7 +74,7 @@ class LabelTool():
         self.svDestinationPath = StringVar()
         self.entryDes = Entry(self.frame, textvariable=self.svDestinationPath)
         self.entryDes.grid(row=1, column=1, sticky=W + E)
-        self.svDestinationPath.set('output_c2')  # os.path.join(os.getcwd(),"Labels")
+        self.svDestinationPath.set('output')  # os.path.join(os.getcwd(),"Labels")
 
         # main panel for labeling
         self.mainPanel = Canvas(self.frame, cursor='tcross')
@@ -198,43 +197,27 @@ class LabelTool():
         fullfilename = os.path.basename(imagepath)
         self.imagename, _ = os.path.splitext(fullfilename)
         labelname = self.imagename + '.txt'
-
         self.labelfilename = os.path.join(self.outDir, labelname)
-
-        print(self.labelfilename)
 
         if os.path.exists(self.labelfilename):
             with open(self.labelfilename) as f:
                 for (i, line) in enumerate(f):
-                    print(line)
                     # tmp = [int(t.strip()) for t in line.split()]
                     tmp = line.split()
 
                     # a = int((int(tmp[1] * self.size[0]) - int(tmp[3] * self.size[0]))/self.factor)
                     # a = tmp[1] * self.size[1]
 
-                    real_x = float(tmp[1]) * self.size[0]
-                    real_y = float(tmp[2]) * self.size[1]
+                    width = int((float(tmp[3]) * self.size[0])/self.factor)
+                    height = int((float(tmp[4]) * self.size[1])/self.factor)
 
-                    real_width = float(tmp[3]) * self.size[0]
-                    real_height = float(tmp[4]) * self.size[1]
+                    tmp[1] = int((float(tmp[1]) * self.size[0])/self.factor) - width/2 # int((float(tmp[1]) * self.size[0] - float(tmp[3]) * self.size[0])/self.factor)
+                    tmp[2] = int((float(tmp[2]) * self.size[1])/self.factor) - height/2 # int((float(tmp[2]) * self.size[1] - float(tmp[4]) * self.size[1])/self.factor)
 
-                    real_bbox = []
+                    tmp[3] = int(tmp[1] + width)
+                    tmp[4] = int(tmp[2] + height)
 
-                    real_bbox.append(real_x - real_width/2)
-                    real_bbox.append(real_y - real_height/2)
-
-                    real_bbox.append(real_x + real_width / 2)
-                    real_bbox.append(real_y + real_height / 2)
-
-                    width = (float(tmp[3]) * self.size[0])/self.factor
-                    height = (float(tmp[4]) * self.size[1])/self.factor
-
-                    tmp[1] = (float(tmp[1]) * self.size[0])/self.factor - width/2 # int((float(tmp[1]) * self.size[0] - float(tmp[3]) * self.size[0])/self.factor)
-                    tmp[2] = (float(tmp[2]) * self.size[1])/self.factor - height/2 # int((float(tmp[2]) * self.size[1] - float(tmp[4]) * self.size[1])/self.factor)
-
-                    tmp[3] = tmp[1] + width
-                    tmp[4] = tmp[2] + height
+                    print(tmp)
 
                     self.bboxList.append(tuple(tmp))
                     color_index = (len(self.bboxList) - 1) % len(COLORS)
@@ -244,7 +227,7 @@ class LabelTool():
                                                             outline=COLORS[color_index])
                     # outline = COLORS[(len(self.bboxList)-1) % len(COLORS)])
                     self.bboxIdList.append(tmpId)
-                    self.listbox.insert(END, '%s : (%d, %d) -> (%d, %d)' % (tmp[0], real_bbox[0], real_bbox[1], real_bbox[2], real_bbox[3]))
+                    self.listbox.insert(END, '%s : (%d, %d) -> (%d, %d)' % (tmp[0], tmp[1], tmp[2], tmp[3], tmp[4]))
                     self.listbox.itemconfig(len(self.bboxIdList) - 1, fg=COLORS[color_index])
                     # self.listbox.itemconfig(len(self.bboxIdList) - 1, fg = COLORS[(len(self.bboxIdList) - 1) % len(COLORS)])
 
@@ -255,19 +238,20 @@ class LabelTool():
             for bbox in self.bboxList:
 
                 # position and dimention in pixels
-                width = (bbox[3] - bbox[1]) * self.factor
-                height = (bbox[4] - bbox[2]) * self.factor
+                width = int((bbox[3] - bbox[1]) * self.factor)
+                height = int((bbox[4] - bbox[2]) * self.factor)
 
-                pos_x = (bbox[1] * self.factor) + width/2
-                pos_y = (bbox[2] * self.factor) + height/2
+                pos_x = int(int(int(bbox[1]) * self.factor) + width/2)
+                pos_y = int(int(int(bbox[2]) * self.factor) + height/2)
 
-                f.write("{} {} {} {} {}\n".format(0,
+                f.write("{} {} {} {} {}\n".format(1,
                                                   pos_x/self.size[0],
                                                   pos_y/self.size[1],
                                                   width/self.size[0],
                                                   height/self.size[1]
                                                   ))
 
+                print(self.size[0])
 
                 # f.write(' '.join(map(str, bbox)) + '\n')
         print('Image No. %d saved' % (self.cur))
@@ -281,7 +265,7 @@ class LabelTool():
             self.bboxList.append((self.currentLabelclass, x1, y1, x2, y2))
             self.bboxIdList.append(self.bboxId)
             self.bboxId = None
-            self.listbox.insert(END, '%s : (%d, %d) -> (%d, %d)' % (self.currentLabelclass, x1 * self.factor, y1 * self.factor, x2 * self.factor, y2 * self.factor))
+            self.listbox.insert(END, '%s : (%d, %d) -> (%d, %d)' % (self.currentLabelclass, x1, y1, x2, y2))
             self.listbox.itemconfig(len(self.bboxIdList) - 1, fg=COLORS[(len(self.bboxIdList) - 1) % len(COLORS)])
         self.STATE['click'] = 1 - self.STATE['click']
 

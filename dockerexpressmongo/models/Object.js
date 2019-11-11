@@ -68,7 +68,12 @@ const detectedObjectSchema = new Schema({
       w: { type: Number, required: true },
       h: { type: Number, required: true }
     }
-  ]
+  ],
+  responsible: {
+    type: String,
+    required: true,
+    default: "unknown"
+  }
 });
 
 // To use our schema definition, we need to convert our blogSchema into a Model we can work with.

@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const url = "mongodb://mongo:27017/express_mongodb";
 const multer = require("multer");
+const inside = require("point-in-polygon");
 const fs = require("fs");
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
@@ -18,6 +19,7 @@ const upload = multer({ storage: storage }); // This constant allows us to take 
 mongoose.connect(url, { useNewUrlParser: true });
 //Get the model
 const detectedObjectDB = require("../../models/Object");
+const areaDB = require("../../models/Area");
 
 //home..
 router.get("/", (req, res, next) => {
@@ -47,12 +49,24 @@ router.post("/upload-image", upload.array("image"), (req, res, next) => {
 
 //insert one or many objects (array of json objects)
 router.post("/insert-objectdata", (req, res, next) => {
-  detectedObjectDB.insertMany(req.body, (err, doc) => {
-    if (err) {
-      return res.status(400).json(err.message);
-    } else {
-      res.json({ msg: "Objectdata inserted!" });
-    }
+  areaDB.find({}, { polygon: 1, responsible: 1, _id: 0 }, (err, docs) => {
+    if (err) res.json(err);
+    Object.keys(req.body).forEach(key => {
+      let point = [
+        parseFloat(req.body[key].coordinates[0]),
+        parseFloat(req.body[key].coordinates[1])
+      ];
+      for (let area of docs) {
+        let poly = area.polygon;
+        if (inside(point, poly)) {
+          req.body[key]["responsible"] = area.responsible;
+        }
+      }
+    });
+    detectedObjectDB.insertMany(req.body, (err, documents) => {
+      if (err) res.json(err);
+      res.json({ msg: "Objects inserted" });
+    });
   });
 });
 
@@ -183,8 +197,9 @@ const deleteImages = function() {
   // we do not attempt to make a folder before it is deleted
   // it is possible to chain asynchornous callback functions
   // but it has not been done for simplicity
-  fs.rmdirSync("/app/uploads/images");
-  fs.mkdirSync("/app/uploads/images");
+  // NB: Cannot delete a folder with contents, later on write a method here that deletes each individual file(s)
+  //fs.rmdirSync("/app/uploads/images");
+  //fs.mkdirSync("/app/uploads/images");
 };
 
 router.delete("/delete-all-objects", (req, res) => {
