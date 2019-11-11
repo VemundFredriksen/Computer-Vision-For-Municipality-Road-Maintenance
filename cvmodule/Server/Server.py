@@ -14,11 +14,11 @@ def read_config():
 		ip = f.readline().strip()
 	else:
 		dir_path = os.path.abspath(__file__[:-10])
-		ip = "127.0.0.1"
+		#ip = "84.210.211.15"
 	
-	print("ip is %s" % ip)
+#	print("ip is %s" % ip)
 	print("dir_path is %s" % dir_path)
-	return (dir_path, ip)
+	return (dir_path, '')
 
 def main():
 	(dir_path, ip) = read_config()
@@ -29,9 +29,10 @@ def main():
 
 	handler = RequestHandler
 	handler.authorizer = authorizer
-
-
-	server = FTPServer((ip, 21), handler)
+#	handler.masquerade_address = '84.210.211.15'
+	handler.passive_ports = range(60000, 60005)
+   
+	server = FTPServer(('', 21), handler)
 	server.serve_forever()
 
 if __name__ == "__main__":
