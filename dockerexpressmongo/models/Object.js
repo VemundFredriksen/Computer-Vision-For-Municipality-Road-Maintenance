@@ -68,13 +68,18 @@ const detectedObjectSchema = new Schema({
       w: { type: Number, required: true },
       h: { type: Number, required: true }
     }
-  ],
-  responsible: {
-    type: String,
-    required: true,
-    default: "unknown"
-  }
+  ]
 });
+
+detectedObjectSchema.statics.findAndModify = function(
+  query,
+  sort,
+  doc,
+  options,
+  callback
+) {
+  return this.collection.findAndModify(query, sort, doc, options, callback);
+};
 
 // To use our schema definition, we need to convert our blogSchema into a Model we can work with.
 // To do so, we pass it into mongoose.model(modelName, schema):
