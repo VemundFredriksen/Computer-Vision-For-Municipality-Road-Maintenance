@@ -14,6 +14,12 @@ const InfoBar = (
     handleDelete,
   },
 ) => (
+  let baseImage = new Image();
+  baseImage.onload = ()=>{
+    let img = document.getElementById('pothole_image');
+    img.src = can.toDataURL();
+  };
+
   <div className="info_bar__wrapper">
     <span className="close_icon__container">
       <button type="button" className="close_button" onClick={onCloseClick}>
@@ -21,7 +27,7 @@ const InfoBar = (
       </button>
     </span>
     <div className="image__container">
-      <img src={`https://api.dewp.eu.org/get-image?filename=${object.filename}`} alt="detected road object" className="object_image" />
+      <img id="pothole_image" src={`https://api.dewp.eu.org/get-image?filename=${object.filename}`} alt="detected road object" className="object_image" />
     </div>
     {
       edit ? (
