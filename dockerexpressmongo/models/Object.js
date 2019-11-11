@@ -10,6 +10,17 @@ const detectedObjectSchema = new Schema({
     enum: ["pothole", "crack"],
     required: true
   },
+  responsible: {
+    type: String,
+    enum: ["statens vegvesen", "trondheim kommune", "private"],
+    required: true,
+    default: "private"
+  },
+  work_order: {
+    type: Boolean,
+    default: false,
+    required: true
+  },
   priority: {
     type: Number,
     min: 1,
@@ -20,9 +31,9 @@ const detectedObjectSchema = new Schema({
     type: [Number],
     required: true
   },
-  status: {
-    type: String,
-    enum: ["fixed", "not fixed"],
+  fixed: {
+    type: Boolean,
+    default: false,
     required: true
   },
   filename: {

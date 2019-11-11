@@ -4,6 +4,7 @@ const router = express.Router();
 const url = "mongodb://mongo:27017/express_mongodb";
 const multer = require("multer");
 const inside = require("point-in-polygon");
+const fs = require("fs");
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
     cb(null, "/app/uploads/images");
@@ -112,6 +113,33 @@ router.get("/get-object-by-type", (req, res, next) => {
     });
 });
 
+//Get object specified by its id "/get-object-by-id?id=someID"
+router.get("/get-object-by-id", (req, res, next) => {
+  detectedObjectDB.findOne({ _id: req.query.id }, function (err, object) {
+    if (err) {
+      return res.status(400).json({ msg: "Could not find the Object"});      
+    }
+    if (object === null) {
+      // in the case that the id field was not provided, object will be null
+      return res.status(400).json({ msg: "Could not find the Object"});
+    }
+    return res.json(object)
+  });
+});
+
+// Same as above, but queries for multiple ids using the $in operator
+router.get("/get-objects-by-ids", (req, res, next) => {
+  detectedObjectDB.find({ "_id": { "$in": req.body.ids } }, function (err, objects) {
+    if (err) {
+      return res.status(400).json({ msg: "Could not find the Objects"});      
+    }
+    if (objects === null) {
+      // in the case that the id field was not provided, object will be null
+      return res.status(400).json({ msg: "Could not find the Objects"});
+    }
+    return res.json(objects)
+  });
+});
 //Update object specified by its id "/update-object-by-id?id=someID"
 //Might be changed in future sprint...
 router.put("/update-object-by-id", (req, res, next) => {
@@ -156,15 +184,29 @@ router.post("/delete-object-by-id", (req, res, next) => {
       console.log(err);
       return res.status(400).json({ msg: "No objects were deleted.." });
     } else {
+      // NOTE: TBD, consider deleting the image too
+      // for now we will keep the image without the object to
+      // store as many pictures to run CV on as possible
       return res.json({ msg: "Object deleted" });
     }
   });
 });
 
+const deleteImages = function() {
+  // Need it to be done synchronously so 
+  // we do not attempt to make a folder before it is deleted
+  // it is possible to chain asynchornous callback functions
+  // but it has not been done for simplicity
+  // NB: Cannot delete a folder with contents, later on write a method here that deletes each individual file(s)
+  //fs.rmdirSync("/app/uploads/images");
+  //fs.mkdirSync("/app/uploads/images");
+};
+
 router.delete("/delete-all-objects", (req, res) => {
   //The empty object will match all of them.
   detectedObjectDB.deleteMany({}, err => {
     if (err) return res.json(err);
+    deleteImages();
     return res.json({ msg: "All objects were deleted!! :O " });
   });
 });
