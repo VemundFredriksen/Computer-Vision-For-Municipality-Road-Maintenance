@@ -163,6 +163,32 @@ router.put("/update-workorder-by-id", (req, res) => {
   });
 });
 
+//delete-workorders-on-specified-object
+router.post("/delete-workorder-by-object-ids", (req, res) => {
+  workorderDB.remove({ object_id: { $in: req.body.object_ids } }, err => {
+    if (err) {
+      return res.status(400).json({ msg: "No workorders were deleted.." });
+    }
+    request(
+      {
+        method: "PUT",
+        uri: "http://localhost:4000/update-objects-by-ids",
+        json: true,
+        body: {
+          ids: req.body.object_ids,
+          fieldsToUpdate: {
+            work_order: false
+          }
+        }
+      },
+      (err1, response, body) => {
+        if (err1) return res.json(err1);
+      }
+    );
+    return res.json({ msg: "Workorder(s) deleted" });
+  });
+});
+
 //Delete workorder specified by id
 router.post("/delete-workorder-by-id", (req, res) => {
   workorderDB.findByIdAndRemove(req.body.workorder_id[0], (err, doc) => {
