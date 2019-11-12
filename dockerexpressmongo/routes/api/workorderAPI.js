@@ -76,7 +76,7 @@ router.post("/generate-workorders-by-ids", (req, res) => {
       request(
         {
           method: "PUT",
-          uri: "http://localhost:4000/update-objects-by-ids",
+          uri: "http://dewp.eu.org:4000/update-objects-by-ids",
           json: true,
           body: {
             ids: req.body.object_ids,
@@ -172,7 +172,7 @@ router.post("/delete-workorder-by-id", (req, res) => {
     request(
       {
         method: "PUT",
-        uri: "http://localhost:4000/update-objects-by-ids",
+        uri: "http://dewp.eu.org:4000/update-objects-by-ids",
         json: true,
         body: {
           ids: [doc.object_id],
@@ -202,7 +202,7 @@ router.delete("/delete-all-workorders", (req, res) => {
       request(
         {
           method: "PUT",
-          uri: "http://localhost:4000/update-objects-by-ids",
+          uri: "http://dewp.eu.org:4000/update-objects-by-ids",
           json: true,
           body: {
             ids: all_obj_ids,
