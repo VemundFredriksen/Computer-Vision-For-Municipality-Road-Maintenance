@@ -63,6 +63,7 @@ router.post("/generate-workorders-by-ids", (req, res) => {
         let work_order = { object_id: obj_id };
         work_orders.push(work_order);
       }
+      //updating objects so work_order = true
       workorderDB.insertMany(work_orders, (err2, doc) => {
         if (err2) {
           return res.status(400).json({
@@ -71,8 +72,6 @@ router.post("/generate-workorders-by-ids", (req, res) => {
           });
         }
       });
-
-      //updating objects so work_order = true
       request(
         {
           method: "PUT",
@@ -160,6 +159,32 @@ router.put("/update-workorder-by-id", (req, res) => {
     } else {
       return res.json({ msg: "Workorder updated" });
     }
+  });
+});
+
+//delete-workorders-on-specified-object
+router.post("/delete-workorder-by-object-ids", (req, res) => {
+  workorderDB.remove({ object_id: { $in: req.body.object_ids } }, err => {
+    if (err) {
+      return res.status(400).json({ msg: "No workorders were deleted.." });
+    }
+    request(
+      {
+        method: "PUT",
+        uri: "http://dewp.eu.org:4000/update-objects-by-ids",
+        json: true,
+        body: {
+          ids: req.body.object_ids,
+          fieldsToUpdate: {
+            work_order: false
+          }
+        }
+      },
+      (err1, response, body) => {
+        if (err1) return res.json(err1);
+      }
+    );
+    return res.json({ msg: "Workorder(s) deleted" });
   });
 });
 
