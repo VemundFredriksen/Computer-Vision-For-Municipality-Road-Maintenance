@@ -174,6 +174,7 @@ router.put("/update-object-by-id", (req, res) => {
   });
 });
 
+//Updating different objects the same way
 //in the body: {"ids": [id1, id2, --- , idx], "fieldsToUpdate": { "field1": newValue1, "field2": newValue2}}
 router.put("/update-objects-by-ids", (req, res) => {
   for (let id of req.body["ids"]) {
@@ -183,7 +184,6 @@ router.put("/update-objects-by-ids", (req, res) => {
       new_state[key] = req.body["fieldsToUpdate"][key];
     });
     new_state["modified_date"] = Date.now();
-    console.log(new_state);
     if (Object.keys(new_state).length == 0) {
       return res.status(400).json({ msg: "The http-body was empty..." });
     }
@@ -199,7 +199,7 @@ router.put("/update-objects-by-ids", (req, res) => {
       new_state["previous_states"] = pre_obj.previous_states;
       new_state["previous_states"].push(pre_state);
       detectedObjectDB.findOneAndUpdate({ _id: id }, new_state, (err, obj) => {
-        if (err) console.log(err);
+        if (err) res.json(err);
       });
     });
   }
