@@ -34,9 +34,16 @@ class RequestHandler(FTPHandler):
 
         print("These are the image files i will be uploading %s" % (image_files_to_upload))
 
-
+        temp_file = open("temp_meta_file", "w+")
+        metaString = "["
         for path in json_files_to_upload:
-            upload_data(path)
+            with open(path, "r") as file:
+                metaString +=  file.read()
+        metaString = metaString[:-1]
+        metaString += "]"
+        temp_file.write(metaString)
+        temp_file.close()    
+        upload_data("temp_meta_file")
         for path in image_files_to_upload:
             upload_image(path)
  
