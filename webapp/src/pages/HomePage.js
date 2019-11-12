@@ -95,8 +95,9 @@ class HomePage extends React.Component {
     const canvas = document.createElement("CANVAS");
     const context = canvas.getContext("2d");
     const img = e.target;
-    const w = img.width;
-    const h = img.height;
+    console.log(img)
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
 
     canvas.width = w;
     canvas.height = h;
