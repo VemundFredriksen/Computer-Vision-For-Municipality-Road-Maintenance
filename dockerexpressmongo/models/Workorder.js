@@ -5,15 +5,17 @@ const Schema = mongoose.Schema;
 // Each schema maps to a MongoDB collection and defines the
 // shape of the documents within that collection.
 const workorderSchema = new Schema({
-  objectId: {
+  object_id: {
     type: String,
     required: true
   },
   status: {
     type: String,
-    required: true
+    enum: ["new", "in progress", "done"],
+    required: true,
+    default: "new"
   },
-  creationDate: {
+  creation_date: {
     type: Date,
     default: Date.now,
     required: true
