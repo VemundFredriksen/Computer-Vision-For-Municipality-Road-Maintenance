@@ -23,7 +23,7 @@ const areaDB = require("../../models/Area");
 
 //home..
 router.get("/", (req, res, next) => {
-  res.json({ msg: "Hello world.." });
+  return res.status(200).json({ msg: "Hello world.." });
 });
 
 //Uploads a single image
@@ -46,7 +46,7 @@ router.post("/upload-image", upload.array("image"), (req, res) => {
 //insert one or many objects (array of json objects)
 router.post("/insert-objectdata", (req, res) => {
   areaDB.find({}, { polygon: 1, responsible: 1, _id: 0 }, (err, docs) => {
-    if (err) res.json(err);
+    if (err) return res.status(400).json(err);
     Object.keys(req.body).forEach(key => {
       let point = [
         parseFloat(req.body[key].coordinates[0]),
@@ -60,8 +60,8 @@ router.post("/insert-objectdata", (req, res) => {
       }
     });
     detectedObjectDB.insertMany(req.body, (err, documents) => {
-      if (err) res.json(err);
-      res.json({ msg: "Objects inserted" });
+      if (err) return res.status(400).json(err);
+      return res.status(200).json({ msg: "Objects inserted" });
     });
   });
 });
@@ -71,20 +71,18 @@ router.get("/get-image", (req, res) => {
   let filename = req.query.filename;
   try {
     const file = `/app/uploads/images/${filename}`;
-    res.download(file);
+    return res.download(file);
   } catch (err) {
-    res.status(400).json(err);
+    return res.status(400).json(err);
   }
 });
 
 //Get all objects as json (only metadata, not images)
 router.get("/get-all-objects", (req, res) => {
-  detectedObjectDB
-    .find()
-    .lean()
-    .exec(function(err, objects) {
-      return res.json(objects);
-    });
+  detectedObjectDB.find({}, (err, docs) => {
+    if (err) return res.status(400).json(err);
+    return res.status(200).json(docs);
+  });
 });
 
 //Get objects by type.
@@ -93,7 +91,7 @@ router.get("/get-object-by-type", (req, res) => {
   detectedObjectDB
     .find({ objecttype: req.query.objecttype }, (err, docs) => {
       if (err) {
-        return res.json(err);
+        return res.status(400).json(err);
       }
     })
     .lean()
@@ -103,7 +101,7 @@ router.get("/get-object-by-type", (req, res) => {
           .status(400)
           .json({ msg: "No object of type: " + req.query.objecttype });
       } else {
-        return res.json(objects);
+        return res.status(200).json(objects);
       }
     });
 });
@@ -118,7 +116,7 @@ router.get("/get-object-by-id", (req, res) => {
       // in the case that the id field was not provided, object will be null
       return res.status(400).json({ msg: "Could not find the object" });
     }
-    return res.json(object);
+    return res.status(200).json(object);
   });
 });
 
@@ -134,7 +132,7 @@ router.get("/get-objects-by-ids", (req, res) => {
       // in the case that the id field was not provided, object will be null
       return res.status(400).json({ msg: "Could not find the objects" });
     }
-    return res.json(objects);
+    return res.status(200).json(objects);
   });
 });
 
@@ -168,7 +166,7 @@ router.put("/update-object-by-id", (req, res) => {
       new_state,
       (err, obj) => {
         if (err) console.log(err);
-        return res.json({ msg: "Object updated" });
+        return res.status(200).json({ msg: "Object updated" });
       }
     );
   });
@@ -199,19 +197,19 @@ router.put("/update-objects-by-ids", (req, res) => {
       new_state["previous_states"] = pre_obj.previous_states;
       new_state["previous_states"].push(pre_state);
       detectedObjectDB.findOneAndUpdate({ _id: id }, new_state, (err, obj) => {
-        if (err) res.json(err);
+        if (err) res.status(400).json(err);
       });
     });
   }
-  return res.json({ msg: "Objects updateded" });
+  return res.status(200).json({ msg: "Objects updateded" });
 });
 
 // router.put("/update-all-objects", (req, res) => {
 //   let fieldsToUpdate = req.body.fieldsToUpdate;
 //   detectedObjectDB.update({}, fieldsToUpdate, (err1, docs) => {
-//     if (err1) return res.json(err1);
+//     if (err1) return res.status(400).json(err1);
 //   });
-//   res.json({ msg: "Objects updated" });
+//   res.status(200).json({ msg: "Objects updated" });
 // });
 
 //Delete object specified by its id "/delete-object-by-id?id=someID"
@@ -223,7 +221,7 @@ router.post("/delete-object-by-id", (req, res) => {
       // NOTE: TBD, consider deleting the image too
       // for now we will keep the image without the object to
       // store as many pictures to run CV on as possible
-      return res.json({ msg: "Object deleted" });
+      return res.status(200).json({ msg: "Object deleted" });
     }
   });
 });
@@ -241,9 +239,9 @@ const deleteImages = function() {
 router.delete("/delete-all-objects", (req, res) => {
   //The empty object will match all of them.
   detectedObjectDB.deleteMany({}, err => {
-    if (err) return res.json(err);
+    if (err) return res.status(400).json(err);
     deleteImages();
-    return res.json({ msg: "All objects were deleted!! :O " });
+    return res.status(200).json({ msg: "All objects were deleted!! :O " });
   });
 });
 

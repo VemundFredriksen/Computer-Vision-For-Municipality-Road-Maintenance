@@ -9,24 +9,17 @@ mongoose.connect(url, { useNewUrlParser: true });
 const areaDB = require("../../models/Area");
 
 router.get("/get-all-areas", (req, res) => {
-  areaDB
-    .find()
-    .lean()
-    .exec(function(err, wos) {
-      return res.json(wos);
-    });
+  areaDB.find({}, (err, docs) => {
+    if (err) return res.status(400).json(err);
+    return res.status(200).json(docs);
+  });
 });
 
 //insert one or many areas (array of json objects)
 router.post("/insert-areadata", (req, res) => {
   areaDB.insertMany(req.body, (err, doc) => {
-    if (err) {
-      console.log(err);
-      return res
-        .status(400)
-        .json({ msg: "Something went wrong when inserting.." });
-    }
-    res.json({ msg: "areadata inserted!" });
+    if (err) return res.status(400).json(err);
+    return res.status(200).json({ msg: "areadata inserted!" });
   });
 });
 
@@ -40,26 +33,16 @@ router.put("/update-area-by-id", (req, res) => {
     return res.status(400).json({ msg: "The http-body was empty..." });
   }
   areaDB.findOneAndUpdate({ _id: req.query.id }, item, (err, doc) => {
-    if (err) {
-      console.log(err);
-      return res.status(400).json({
-        msg: "No area were updated.. Couldn't find the area"
-      });
-    } else {
-      return res.json({ msg: "area updated" });
-    }
+    if (err) return res.status(400).json(err);
+    return res.status(200).json({ msg: "area updated" });
   });
 });
 
 //Delete area specified by its id "/delete-area-by-id?id=someID"
 router.delete("/delete-area-by-id", (req, res) => {
   areaDB.findByIdAndRemove(req.query.id, (err, doc) => {
-    if (err) {
-      console.log(err);
-      return res.status(400).json({ msg: "No areas were deleted.." });
-    } else {
-      return res.json({ msg: "area deleted" });
-    }
+    if (err) return res.status(400).json(err);
+    return res.status(200).json({ msg: "area deleted" });
   });
 });
 
@@ -71,26 +54,23 @@ router.get("/get-area-by-coordinate", (req, res) => {
     parseFloat(req.query.coordinate2)
   ];
   areaDB.find({}, { polygon: 1, responsible: 1, _id: 0 }, (err, docs) => {
+    if (err) return res.status(400).json(err);
     for (let k = 0; k < docs.length; k++) {
       let poly = docs[k].polygon;
-      if (inside(point, poly)) {
-        res.json({ responsible: docs[k].responsible });
-      }
+      if (inside(point, poly))
+        return res.status(200).json({ responsible: docs[k].responsible });
     }
-    res.json({ responsible: "unknown" });
+    return res.status(200).json({ responsible: "unknown" });
   });
 });
 
 router.delete("/delete-all-areas", (req, res) => {
   //The empty object will match all of them.
   areaDB.deleteMany({}, err => {
-    if (err) return res.json(err);
-    return res.json({ msg: "All areas were deleted!! :O " });
+    if (err) return res.status(400).json(err);
+    return res.status(200).json({ msg: "All areas were deleted!! :O " });
   });
 });
-
-//exports...
-module.exports = router;
 
 //exports...
 module.exports = router;
