@@ -83,10 +83,15 @@ class HomePage extends React.Component {
 
   drawBox = (e)=>{
     console.log(e);
-    let canvas = document.createElement("CANVAS");
-    let context = canvas.getContext("2d");
-    let img = e.target;
-    img.crossOrigin = "anonymous";
+    const { currentObject } = this.state;
+    console.log(currentObject);
+    if(!currentObject || !currentObject.length) {
+      return;
+    }
+    
+    const canvas = document.createElement("CANVAS");
+    const context = canvas.getContext("2d");
+    const img = e.target;
 
     canvas.width = img.width;
     canvas.height = img.height;
