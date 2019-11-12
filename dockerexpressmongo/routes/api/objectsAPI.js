@@ -206,6 +206,14 @@ router.put("/update-objects-by-ids", (req, res) => {
   return res.json({ msg: "Objects updateded" });
 });
 
+// router.put("/update-all-objects", (req, res) => {
+//   let fieldsToUpdate = req.body.fieldsToUpdate;
+//   detectedObjectDB.update({}, fieldsToUpdate, (err1, docs) => {
+//     if (err1) return res.json(err1);
+//   });
+//   res.json({ msg: "Objects updated" });
+// });
+
 //Delete object specified by its id "/delete-object-by-id?id=someID"
 router.post("/delete-object-by-id", (req, res) => {
   detectedObjectDB.findByIdAndRemove(req.query.id, (err, doc) => {

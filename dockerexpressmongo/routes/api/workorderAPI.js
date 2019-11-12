@@ -76,7 +76,7 @@ router.post("/generate-workorders-by-ids", (req, res) => {
       request(
         {
           method: "PUT",
-          uri: "http://dewp.eu.org:4000/update-objects-by-ids",
+          uri: "http://localhost:4000/update-objects-by-ids",
           json: true,
           body: {
             ids: req.body.object_ids,
@@ -163,24 +163,61 @@ router.put("/update-workorder-by-id", (req, res) => {
   });
 });
 
-//Delete workorder specified by its id "/delete-workorder-by-id?id=someID"
-router.delete("/delete-workorder-by-id", (req, res) => {
-  workorderDB.findByIdAndRemove(req.query.id, (err, doc) => {
+//Delete workorder specified by id
+router.post("/delete-workorder-by-id", (req, res) => {
+  workorderDB.findByIdAndRemove(req.body.workorder_id[0], (err, doc) => {
     if (err) {
-      console.log(err);
       return res.status(400).json({ msg: "No workorders were deleted.." });
-    } else {
-      return res.json({ msg: "Workorder deleted" });
     }
+    request(
+      {
+        method: "PUT",
+        uri: "http://localhost:4000/update-objects-by-ids",
+        json: true,
+        body: {
+          ids: [doc.object_id],
+          fieldsToUpdate: {
+            work_order: false
+          }
+        }
+      },
+      (err1, response, body) => {
+        if (err1) return res.json(err1);
+      }
+    );
+    return res.json({ msg: "Workorder deleted" });
   });
 });
 
 router.delete("/delete-all-workorders", (req, res) => {
   //The empty object will match all of them.
-  workorderDB.deleteMany({}, err => {
-    if (err) return res.json(err);
-    return res.json({ msg: "All workorders were deleted!! :O " });
+
+  let all_obj_ids = [];
+  detectedObjectDB.find({}, "_id", (err, doc) => {
+    for (let obj of doc) {
+      all_obj_ids.push(obj._id);
+    }
+    workorderDB.deleteMany({}, err => {
+      if (err) return res.json(err);
+      request(
+        {
+          method: "PUT",
+          uri: "http://localhost:4000/update-objects-by-ids",
+          json: true,
+          body: {
+            ids: all_obj_ids,
+            fieldsToUpdate: {
+              work_order: false
+            }
+          }
+        },
+        (err1, response, body) => {
+          if (err1) return res.json(err1);
+        }
+      );
+    });
   });
+  res.json({ msg: "All workorders deleted and objects updated" });
 });
 
 //exports...
