@@ -85,10 +85,10 @@ class HomePage extends React.Component {
     console.log(e);
     const { currentObject } = this.state;
     console.log(currentObject);
-    if(!currentObject || !currentObject.length) {
+    /*if(!currentObject || !currentObject.length) {
       return;
-    }
-    
+    }*/
+
     const canvas = document.createElement("CANVAS");
     const context = canvas.getContext("2d");
     const img = e.target;

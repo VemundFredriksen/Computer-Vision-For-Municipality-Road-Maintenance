@@ -26,7 +26,7 @@ const InfoBar = (
       {imageWithBoxes ? (
       <img id="pothole_image" src={imageWithBoxes} alt="detected road object" className="object_image" />
         ) : (
-        <img id="pothole_image" onLoad={drawBox} src={`https://api.dewp.eu.org/get-image?filename=${object.filename}`} alt="detected road object" className="object_image" />
+        <img id="pothole_image" crossOrigin="anonymous" onLoad={drawBox} src={`https://api.dewp.eu.org/get-image?filename=${object.filename}`} alt="detected road object" className="object_image" />
         )}
     </div>
     {
@@ -72,6 +72,8 @@ InfoBar.propTypes = {
   onCloseClick: PropTypes.func,
   onEditClick: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
+  drawBox: PropTypes.func.isRequired,
+  //imageWithBoxes: imageURL ? TODO
 };
 
 InfoBar.defaultProps = {
