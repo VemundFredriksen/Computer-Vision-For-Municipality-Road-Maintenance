@@ -26,6 +26,15 @@ router.get("/", (req, res, next) => {
   res.json({ msg: "Hello world.." });
 });
 
+// Authentication endpoint
+router.get("/login", (req, res, next) => {
+  if (req.body.username === "admin" && req.body.password === "admin123") {
+    return res.json({ key: "D9h3Hd7g3uUfgug7Ssds", status: "success" });
+  } else {
+    return res.json({ status: "failed" });
+  }
+});
+
 //Uploads a single image
 //Here we simply use the middleware (multer) as per the documentation to get the image passed and store it.
 router.post("/upload-image", upload.array("image"), (req, res, next) => {
