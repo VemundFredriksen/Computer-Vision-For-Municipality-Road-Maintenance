@@ -37,10 +37,14 @@ class HomePage extends React.Component {
   }
 
   handleMarkerClick = (id) => {
-    const { objects } = this.state;
+    const { objects, 
+      currentObject,
+      imageWithBoxes
+    } = this.state;
     const object = objects.filter((obj) => obj._id === id);
 
     this.setState({
+      imageWithBoxes: currentObject === object[0] ? imageWithBoxes : null,
       currentObject: object[0],
       edit: false,
     });
@@ -78,30 +82,36 @@ class HomePage extends React.Component {
     this.setState({
       objects: obj,
       currentObject: null,
+      imageWithBoxes: null,
     });
   };
 
   drawBox = (e)=>{
-    console.log(e);
     const { currentObject } = this.state;
-    console.log(currentObject);
-    /*if(!currentObject || !currentObject.length) {
+    if(!currentObject || !currentObject.bounding_box.length) {
       return;
-    }*/
+    }
 
     const canvas = document.createElement("CANVAS");
     const context = canvas.getContext("2d");
     const img = e.target;
+    const w = img.width;
+    const h = img.height;
 
-    canvas.width = img.width;
-    canvas.height = img.height;
+    canvas.width = w;
+    canvas.height = h;
 
     context.drawImage(img, 0, 0);
     context.strokeStyle = "red";
-    context.strokeWidth = 10;
-    context.strokeRect(10, 10, 10, 10);
-    //for testing
-    //img.src = canvas.toDataURL();
+    context.lineWidth = 7;
+    for(let i = 0; i < currentObject.bounding_box.length; i++) {
+      const bb = currentObject.bounding_box[i];
+      context.strokeRect(bb.x*w - bb.w*w/2,
+                        bb.y*h - bb.h*h/2,
+                        bb.w*w,
+                        bb.h*h);
+    }
+
     this.setState({
       imageWithBoxes: canvas.toDataURL(),
     })
