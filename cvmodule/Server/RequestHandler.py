@@ -34,22 +34,25 @@ class RequestHandler(FTPHandler):
 
         print("These are the image files i will be uploading %s" % (image_files_to_upload))
 
-        temp_file = open("temp_meta_file", "w+")
+        temp_filename = "temp_meta_file{}".format(now)
+        print("Creating a temporary file to store the combined metadata %s" % temp_filename)
+        temp_file = open(temp_filename "w+")
         metaString = "["
         for path in json_files_to_upload:
             with open(path, "r") as file:
                 metaString +=  file.read()
-        metaString = metaString[:-1]
+        metaString = metaString[:-1] #remove trailing comma
         metaString += "]"
         temp_file.write(metaString)
         temp_file.close()    
-        upload_data("temp_meta_file")
+        upload_data(temp_filename)
         for path in image_files_to_upload:
             upload_image(path)
  
-        print("Deleting %s and %s" % (path_to_image_dir, path_to_save_dir))
+        print("Deleting %s , %s and %s" % (path_to_image_dir, path_to_save_dir, temp_filename))
         shutil.rmtree(path_to_image_dir)
         shutil.rmtree(path_to_save_dir)
+        os.remove(temp_filename)
         self.add_channel()
 
     def on_connect(self):
