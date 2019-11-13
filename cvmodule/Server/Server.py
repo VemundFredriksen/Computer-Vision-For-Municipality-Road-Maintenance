@@ -10,13 +10,11 @@ def read_config():
 	ip = ""
 	if os.path.isfile("./config.txt"):
 		f = open("./config.txt")
-		dir_path = f.readline().strip()
-		ip = f.readline().strip()
+		libdarknet_path = f.readline().strip().split('=')[1]
+		dir_path = f.readline().strip().split('=')[1]
 	else:
 		dir_path = os.path.abspath(__file__[:-10])
-		#ip = "84.210.211.15"
-	
-#	print("ip is %s" % ip)
+		print("No config.txt found, you need to make a config.txt file here %s, the file should contain the full path to libdarknet.so, the dir for the ftp serve and the full path to the weights used in detection , each on a seperate line" % (os.getcwd()))
 	print("dir_path is %s" % dir_path)
 	return (dir_path, '')
 

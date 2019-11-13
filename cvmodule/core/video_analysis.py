@@ -3,6 +3,7 @@ import math
 import random
 import shutil
 import sys
+import os
 
 def sample(probs):
 	s = sum(probs)
@@ -43,7 +44,20 @@ class METADATA(Structure):
 #import os
 #lib = CDLL("/home/pjreddie/documents/darknet/libdarknet.so", RTLD_GLOBAL)
 #print(os.getcwd())
-lib = CDLL("/home/tk/dev/TDT4290-Theia/cvmodule/core/darknet/libdarknet.so", RTLD_GLOBAL)
+
+libdarknet_path = ""
+network_weights = ""
+if os.path.isfile("./config.txt"):
+	f = open("./config.txt")
+	libdarknet_path = f.readline().strip().split('=')[1]
+	f.readline() # Skips one line where ftp-path is declared
+	network_weights = f.readline().strip().split('=')[1]
+	fps = f.readline().strip().split('=')[1]
+else:
+	print("No config.txt found, you need to make a config.txt file here %s, the file should contain the full path to libdarknet.so, the dir for the ftp serve and the full path to the weights used in detection , each on a seperate line" % (os.getcwd()))
+
+lib = CDLL(libdarknet_path, RTLD_GLOBAL)
+
 lib.network_width.argtypes = [c_void_p]
 lib.network_width.restype = c_int
 lib.network_height.argtypes = [c_void_p]
@@ -203,10 +217,12 @@ def store_meta_data(imagePath, preds):
 
 def do_video_analysis(path_to_video, path_to_image_dir, path_to_save_dir):
 	#These paths are now wrong? should we use absolute paths intead?
-	net = load_net("yolov3-pothole.cfg".encode("utf-8"), "yolov3-pothole_23000.weights".encode("utf-8"), 0)
+	global network_weights
+	global fps
+	net = load_net("yolov3-pothole.cfg".encode("utf-8"), network_weights.encode("utf-8"), 0)
 	meta = load_meta("obj.data".encode("utf-8"))
 
-	video_to_images(path_to_video, path_to_image_dir, 0.2)
+	video_to_images(path_to_video, path_to_image_dir, 1.0/(int(fps)))
 	os.remove(path_to_video)
 	
 	imgs = glob.glob(path_to_image_dir + "/*.jpg")
