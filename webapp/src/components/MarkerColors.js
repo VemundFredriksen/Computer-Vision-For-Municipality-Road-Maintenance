@@ -6,6 +6,7 @@ import './MarkerColors.css';
 const MarkerColors = () => (
   <div className="marker_colors__container">
     <MarkerColor color="red" text="Object has not yet been approved" />
+    <MarkerColor color="yellow" text="Object is in work orders" />
     <MarkerColor color="green" text="Object is in work order list" />
     <MarkerColor color="blue" text="Other objects" />
   </div>

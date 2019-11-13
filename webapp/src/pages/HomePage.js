@@ -4,6 +4,7 @@ import MapComponent from '../components/MapComponent';
 import InfoBar from '../components/infoBar/InfoBar';
 import FilterBar from '../components/filterBar/FilterBar';
 import Button from '../components/shared/button/Button';
+import MarkerColors from '../components/MarkerColors';
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -96,15 +97,34 @@ class HomePage extends React.Component {
   };
 
   handleDeleteWO = () => {
-    const { currentObject } = this.state;
-    fetch(`https://api.dewp.eu.org/delete-workorder-by-id?id=${currentObject._id}`, {
+    const { currentObject, objects } = this.state;
+    const object_ids = [currentObject._id];
+    fetch('https://api.dewp.eu.org/delete-workorder-by-object-ids', {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        object_ids,
+      }),
     })
       .then((res) => (
         res.json()
       ))
-      .then((data) => {
-        console.log(data);
+      .then(() => {
+        fetch(`https://api.dewp.eu.org/get-object-by-id?id=${currentObject._id}`, {
+          method: 'GET',
+        })
+          .then((result) => (
+            result.json()
+          ))
+          .then((data) => {
+            const newObjects = objects.filter((item) => item._id !== data._id);
+            this.setState({
+              objects: [...newObjects, data],
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       })
       .catch((error) => {
         console.log(error);
@@ -112,19 +132,37 @@ class HomePage extends React.Component {
   };
 
   handleSubmitWO = () => {
-    const { workOrders } = this.state;
-    fetch('https://api.dewp.eu.org/insert-workorderdata', {
+    const { workOrders, objects } = this.state;
+    const object_ids = workOrders.map((item) => item._id);
+    const ids = workOrders.map((item) => item._id);
+
+    fetch('https://api.dewp.eu.org/generate-workorders-by-ids', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        workOrders,
+        object_ids,
       }),
     })
-      .then((res) => (
-        res.json()
-      ))
-      .then((data) => {
-        console.log(data);
+      .then(() => {
+        fetch('https://api.dewp.eu.org/get-objects-by-ids', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ids,
+          }),
+        })
+          .then((result) => (
+            result.json()
+          ))
+          .then((data) => {
+            const newObjects = objects.filter((item) => !(ids.includes(item._id)));
+            this.setState({
+              objects: [...newObjects, ...data],
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       })
       .catch((error) => {
         console.log(error);
@@ -179,6 +217,7 @@ class HomePage extends React.Component {
               onMarkerClick={this.handleMarkerClick}
               workOrders={workOrders}
             />
+            <MarkerColors />
           </div>
         </div>
       </div>
