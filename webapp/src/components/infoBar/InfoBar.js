@@ -16,6 +16,8 @@ const InfoBar = (
     inWOList,
     handleRemoveWOList,
     handleDeleteWO,
+    drawBox,
+    imageWithBoxes,
   },
 ) => {
   const determine = () => {
@@ -38,11 +40,11 @@ const InfoBar = (
         </button>
       </span>
       <div className="image__container">
-        <img
-          src={`https://api.dewp.eu.org/get-image?filename=${object.filename}`}
-          alt="detected road object"
-          className="object_image"
-        />
+        {imageWithBoxes ? (
+      <img id="pothole_image" src={imageWithBoxes} alt="detected road object" className="object_image" />
+        ) : (
+        <img id="pothole_image" crossOrigin="anonymous" onLoad={drawBox} src={`https://api.dewp.eu.org/get-image?filename=${object.filename}`} alt="detected road object" className="object_image" />
+        )}
       </div>
       {
         edit ? (
@@ -98,6 +100,8 @@ InfoBar.propTypes = {
   onCloseClick: PropTypes.func,
   onEditClick: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
+  drawBox: PropTypes.func.isRequired,
+  imageWithBoxes: PropTypes.string.isRequired,
   handleAddWOList: PropTypes.func.isRequired,
   inWOList: PropTypes.bool.isRequired,
   handleRemoveWOList: PropTypes.func.isRequired,

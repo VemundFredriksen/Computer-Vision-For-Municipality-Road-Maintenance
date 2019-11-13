@@ -18,6 +18,7 @@ class HomePage extends React.Component {
       edit: false,
       filters: null,
       workOrders: [],
+      imageWithBoxes: null,
     };
   }
 
@@ -39,10 +40,14 @@ class HomePage extends React.Component {
   }
 
   handleMarkerClick = (id) => {
-    const { objects } = this.state;
+    const { objects, 
+      currentObject,
+      imageWithBoxes
+    } = this.state;
     const object = objects.filter((obj) => obj._id === id);
 
     this.setState({
+      imageWithBoxes: currentObject === object[0] ? imageWithBoxes : null,
       currentObject: object[0],
       edit: false,
     });
@@ -52,6 +57,7 @@ class HomePage extends React.Component {
     this.setState({
       currentObject: null,
       edit: false,
+      imageWithBoxes: null,
     });
   };
 
@@ -79,9 +85,43 @@ class HomePage extends React.Component {
     this.setState({
       objects: obj,
       currentObject: null,
+      imageWithBoxes: null,
     });
   };
 
+
+  drawBox = (e) => {
+    const { currentObject } = this.state;
+    if(!currentObject || !currentObject.bounding_box.length) {
+      return;
+    }
+
+    const canvas = document.createElement("CANVAS");
+    const context = canvas.getContext("2d");
+    const img = e.target;
+    console.log(img)
+    const w = img.naturalWidth;
+    const h = img.naturalHeight;
+
+    canvas.width = w;
+    canvas.height = h;
+
+    context.drawImage(img, 0, 0);
+    context.strokeStyle = "red";
+    context.lineWidth = 7;
+    for(let i = 0; i < currentObject.bounding_box.length; i++) {
+      const bb = currentObject.bounding_box[i];
+      context.strokeRect(bb.x*w - bb.w*w/2,
+                        bb.y*h - bb.h*h/2,
+                        bb.w*w,
+                        bb.h*h);
+    }
+
+    this.setState({
+      imageWithBoxes: canvas.toDataURL(),
+    });
+  };
+=======
   handleAddWOList = () => {
     const { currentObject } = this.state;
     this.setState((prevState) => ({
@@ -167,7 +207,6 @@ class HomePage extends React.Component {
       .catch((error) => {
         console.log(error);
       });
-  };
 
   render() {
     const {
@@ -177,6 +216,7 @@ class HomePage extends React.Component {
       currentObject,
       edit,
       filters,
+      imageWithBoxes,
       workOrders,
     } = this.state;
 
@@ -203,6 +243,8 @@ class HomePage extends React.Component {
                 onCloseClick={this.handleCloseClick}
                 onEditClick={this.handleEditClick}
                 handleDelete={this.handleDelete}
+                drawBox={this.drawBox}
+                imageWithBoxes={imageWithBoxes}
                 handleAddWOList={this.handleAddWOList}
                 inWOList={inWOList}
                 handleRemoveWOList={this.handleRemoveWOList}
