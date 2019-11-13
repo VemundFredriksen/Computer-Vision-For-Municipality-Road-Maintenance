@@ -1,3 +1,3 @@
-libdarknet.so path
-path of directory to host on the ftp server
-ip of the ftp server
+libdarknet=/home/tk/dev/TDT4290-Theia/cvmodule/core/darknet/libdarknet.so
+ftp-folder=/home/tk/dev/TDT4290-Theia/cvmodule/Server/
+weights=/home/tk/dev/TDT4290-Theia/cvmodule/Server/yolov3-pothole_23000.weights

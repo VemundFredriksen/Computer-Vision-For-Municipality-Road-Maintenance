@@ -46,9 +46,12 @@ class METADATA(Structure):
 #print(os.getcwd())
 
 libdarknet_path = ""
+network_weights = ""
 if os.path.isfile("./config.txt"):
 	f = open("./config.txt")
-	libdarknet_path = f.readline().strip()
+	libdarknet_path = f.readline().strip().split('=')[1]
+	f.readline() # Skips one line where ftp-path is declared
+	network_weights = f.readline().strip().split('=')[1]
 else:
 	print("No config.txt found, you need to make a config.txt file here %s, the file should contain the full path to libdarknet.so, the dir for the ftp server to use and the ip for ftp server, each on a seperate line" % (os.getcwd()))
 
@@ -198,7 +201,8 @@ def store_meta_data(imagePath):
 
 def do_video_analysis(path_to_video, path_to_image_dir, path_to_save_dir):
 	#These paths are now wrong? should we use absolute paths intead?
-	net = load_net("yolov3-pothole.cfg".encode("utf-8"), "yolov3-pothole_23000.weights".encode("utf-8"), 0)
+	global network_weights
+	net = load_net("yolov3-pothole.cfg".encode("utf-8"), network_weights.encode("utf-8"), 0)
 	meta = load_meta("obj.data".encode("utf-8"))
 
 	video_to_images(path_to_video, path_to_image_dir, 0.2)
