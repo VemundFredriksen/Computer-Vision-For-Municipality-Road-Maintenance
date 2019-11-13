@@ -121,7 +121,7 @@ router.get("/get-object-by-id", (req, res) => {
 });
 
 // Same as above, but queries for multiple ids using the $in operator
-router.get("/get-objects-by-ids", (req, res) => {
+router.post("/get-objects-by-ids", (req, res) => {
   detectedObjectDB.find({ _id: { $in: req.body.ids } }, (err, objects) => {
     if (err) {
       return res
