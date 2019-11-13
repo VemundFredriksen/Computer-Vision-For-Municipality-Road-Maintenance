@@ -3,6 +3,7 @@ import math
 import random
 import shutil
 import sys
+import os
 
 def sample(probs):
 	s = sum(probs)
@@ -43,7 +44,15 @@ class METADATA(Structure):
 #import os
 #lib = CDLL("/home/pjreddie/documents/darknet/libdarknet.so", RTLD_GLOBAL)
 #print(os.getcwd())
-lib = CDLL("/home/tk/temp/Computer-Vision-For-Municipality-Road-Maintenance/cvmodule/core/darknet/libdarknet.so", RTLD_GLOBAL)
+
+libdarknet_path = ""
+if os.path.isfile("./config.txt"):
+	f = open("./config.txt")
+	libdarknet_path = f.readline().strip()
+else:
+	print("No config.txt found, you need to make a config.txt file here %s, the file should contain the full path to libdarknet.so" % (os.getcwd()))
+
+lib = CDLL(libdarknet_path, RTLD_GLOBAL)
 lib.network_width.argtypes = [c_void_p]
 lib.network_width.restype = c_int
 lib.network_height.argtypes = [c_void_p]
