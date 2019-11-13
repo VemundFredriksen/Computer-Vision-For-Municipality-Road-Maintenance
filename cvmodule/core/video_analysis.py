@@ -53,7 +53,7 @@ if os.path.isfile("./config.txt"):
 	f.readline() # Skips one line where ftp-path is declared
 	network_weights = f.readline().strip().split('=')[1]
 else:
-	print("No config.txt found, you need to make a config.txt file here %s, the file should contain the full path to libdarknet.so, the dir for the ftp server to use and the ip for ftp server, each on a seperate line" % (os.getcwd()))
+	print("No config.txt found, you need to make a config.txt file here %s, the file should contain the full path to libdarknet.so, the dir for the ftp serve and the full path to the weights used in detection , each on a seperate line" % (os.getcwd()))
 
 lib = CDLL(libdarknet_path, RTLD_GLOBAL)
 lib.network_width.argtypes = [c_void_p]
