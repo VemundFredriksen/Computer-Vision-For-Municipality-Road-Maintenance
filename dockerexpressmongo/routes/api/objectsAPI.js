@@ -13,16 +13,18 @@ const storage = multer.diskStorage({
     cb(null, file.originalname);
   }
 });
-const upload = multer({ storage: storage }); // This constant allows us to take in files and store it in our server in the defined path.
+// This constant allows us to take in files and store it in our server in the defined path.
+const upload = multer({ storage: storage });
 
 // Connect to MongoDB
 mongoose.connect(url, { useNewUrlParser: true });
 //Get the model
 const detectedObjectDB = require("../../models/Object");
 const areaDB = require("../../models/Area");
+const workorderDB = require("../../models/Workorder");
 
 //home..
-router.get("/", (req, res, next) => {
+router.get("/", (req, res) => {
   return res.status(200).json({ msg: "Hello world.." });
 });
 
@@ -30,7 +32,6 @@ router.get("/", (req, res, next) => {
 //Here we simply use the middleware (multer) as per the documentation to get the image passed and store it.
 router.post("/upload-image", upload.array("image"), (req, res) => {
   if (req.files.length <= 0) {
-    console.log("No file received");
     return res.status(400).send({
       success: false
     });
@@ -71,7 +72,7 @@ router.get("/get-image", (req, res) => {
   let filename = req.query.filename;
   try {
     const file = `/app/uploads/images/${filename}`;
-    return res.download(file);
+    return res.status(200).send(file);
   } catch (err) {
     return res.status(400).json(err);
   }
@@ -88,35 +89,27 @@ router.get("/get-all-objects", (req, res) => {
 //Get objects by type.
 //A call will be like this :"...../get-object-by-type?objecttype=pothole"
 router.get("/get-object-by-type", (req, res) => {
-  detectedObjectDB
-    .find({ objecttype: req.query.objecttype }, (err, docs) => {
-      if (err) {
-        return res.status(400).json(err);
-      }
-    })
-    .lean()
-    .exec(function(err, objects) {
-      if (objects.length == 0) {
-        return res
-          .status(400)
-          .json({ msg: "No object of type: " + req.query.objecttype });
-      } else {
-        return res.status(200).json(objects);
-      }
-    });
+  detectedObjectDB.find({ type: req.query.objecttype }, (err, docs) => {
+    if (err) return res.status(400).json(err);
+    if (docs.length == 0) {
+      // in the case that the id field was not provided, object will be null
+      return res.status(400).json({
+        msg: "Could not find any objects of type " + req.query.objecttype
+      });
+    }
+    return res.status(200).json(docs);
+  });
 });
 
 //Get object specified by its id "/get-object-by-id?id=someID"
 router.get("/get-object-by-id", (req, res) => {
-  detectedObjectDB.findOne({ _id: req.query.id }, function(err, object) {
-    if (err) {
-      return res.status(400).json(err);
-    }
-    if (object === null) {
+  detectedObjectDB.findOne({ _id: req.query.id }, (err, doc) => {
+    if (err) return res.status(400).json(err);
+    if (doc.length == 0) {
       // in the case that the id field was not provided, object will be null
       return res.status(400).json({ msg: "Could not find the object" });
     }
-    return res.status(200).json(object);
+    return res.status(200).json(doc);
   });
 });
 
@@ -139,36 +132,36 @@ router.post("/get-objects-by-ids", (req, res) => {
 //Update object specified by its id "/update-object-by-id?id=someID"
 //Might be changed in future sprint...
 router.put("/update-object-by-id", (req, res) => {
-  console.log("Updating...");
-  let pre_state = {};
-  let new_state = {};
-  Object.keys(req.body).forEach(key => {
-    new_state[key] = req.body[key];
-  });
-  new_state["modified_date"] = Date.now();
-  console.log(new_state);
-  if (Object.keys(new_state).length == 0) {
-    return res.status(400).json({ msg: "The http-body was empty..." });
-  }
   detectedObjectDB.findOne({ _id: req.query.id }, (err, pre_obj) => {
-    if (err) {
-      return res.status(400).json(err);
-    }
-    Object.keys(new_state).forEach(key => {
-      pre_state[key] = { old: pre_obj[key], new: new_state[key] };
+    if (err) return res.status(400).json(err);
+    let pre_state = {};
+    let new_state = {};
+    Object.keys(req.body).forEach(key => {
+      new_state[key] = req.body[key];
     });
-    new_state["modified_date"] = Date.now();
-    pre_state["modified_date"] = new Date(new_state["modified_date"]);
-    new_state["previous_states"] = pre_obj.previous_states;
-    new_state["previous_states"].push(pre_state);
-    detectedObjectDB.findOneAndUpdate(
-      { _id: req.query.id },
-      new_state,
-      (err, obj) => {
-        if (err) console.log(err);
-        return res.status(200).json({ msg: "Object updated" });
+    if (Object.keys(new_state).length == 0) {
+      return res.status(400).json({ msg: "The http-body was empty..." });
+    }
+
+    Object.keys(new_state).forEach(key => {
+      //check if new values are different from old once, if so, add.
+      if (pre_obj[key] != new_state[key] && key in pre_obj) {
+        pre_state[key] = { old: pre_obj[key], new: new_state[key] };
       }
-    );
+    });
+
+    //If any new values, update the object
+    if (Object.keys(pre_state).length > 0) {
+      new_state["modified_date"] = Date.now();
+      pre_state["modified_date"] = new Date(new_state["modified_date"]);
+      new_state["previous_states"] = pre_obj.previous_states;
+      new_state["previous_states"].push(pre_state);
+
+      detectedObjectDB.findByIdAndUpdate(req.query.id, new_state, err => {
+        if (err) return res.status(400).json(err);
+      });
+    }
+    return res.status(200).json({ msg: "Objects updated with any new values" });
   });
 });
 
@@ -176,53 +169,59 @@ router.put("/update-object-by-id", (req, res) => {
 //in the body: {"ids": [id1, id2, --- , idx], "fieldsToUpdate": { "field1": newValue1, "field2": newValue2}}
 router.put("/update-objects-by-ids", (req, res) => {
   for (let id of req.body["ids"]) {
-    let pre_state = {};
-    let new_state = {};
-    Object.keys(req.body["fieldsToUpdate"]).forEach(key => {
-      new_state[key] = req.body["fieldsToUpdate"][key];
-    });
-    new_state["modified_date"] = Date.now();
-    if (Object.keys(new_state).length == 0) {
-      return res.status(400).json({ msg: "The http-body was empty..." });
-    }
     detectedObjectDB.findOne({ _id: id }, (err, pre_obj) => {
-      if (err) {
-        return res.status(400).json(err);
+      if (err) return res.status(400).json(err);
+
+      let pre_state = {};
+      let new_state = {};
+      Object.keys(req.body["fieldsToUpdate"]).forEach(key => {
+        new_state[key] = req.body["fieldsToUpdate"][key];
+      });
+      if (Object.keys(new_state).length == 0) {
+        return res.status(400).json({ msg: "The http-body was empty..." });
       }
+
       Object.keys(new_state).forEach(key => {
-        pre_state[key] = { old: pre_obj[key], new: new_state[key] };
+        //check if new values are different from old once, if so, add.
+        if (pre_obj[key] != new_state[key] && key in pre_obj) {
+          pre_state[key] = { old: pre_obj[key], new: new_state[key] };
+        }
       });
-      new_state["modified_date"] = Date.now();
-      pre_state["modified_date"] = new Date(new_state["modified_date"]);
-      new_state["previous_states"] = pre_obj.previous_states;
-      new_state["previous_states"].push(pre_state);
-      detectedObjectDB.findOneAndUpdate({ _id: id }, new_state, (err, obj) => {
-        if (err) res.status(400).json(err);
-      });
+
+      //If any new values, update the object
+      if (Object.keys(pre_state).length > 0) {
+        new_state["modified_date"] = Date.now();
+        pre_state["modified_date"] = new Date(new_state["modified_date"]);
+        new_state["previous_states"] = pre_obj.previous_states;
+        new_state["previous_states"].push(pre_state);
+
+        detectedObjectDB.findOneAndUpdate(
+          { _id: id },
+          new_state,
+          (err, obj) => {
+            if (err) return res.status(400).json(err);
+          }
+        );
+      }
     });
   }
-  return res.status(200).json({ msg: "Objects updateded" });
+  return res.status(200).json({ msg: "Objects updated with any new values" });
 });
-
-// router.put("/update-all-objects", (req, res) => {
-//   let fieldsToUpdate = req.body.fieldsToUpdate;
-//   detectedObjectDB.update({}, fieldsToUpdate, (err1, docs) => {
-//     if (err1) return res.status(400).json(err1);
-//   });
-//   res.status(200).json({ msg: "Objects updated" });
-// });
 
 //Delete object specified by its id "/delete-object-by-id?id=someID"
 router.post("/delete-object-by-id", (req, res) => {
   detectedObjectDB.findByIdAndRemove(req.query.id, (err, doc) => {
-    if (err) {
-      return res.status(400).json(err);
-    } else {
-      // NOTE: TBD, consider deleting the image too
-      // for now we will keep the image without the object to
-      // store as many pictures to run CV on as possible
-      return res.status(200).json({ msg: "Object deleted" });
-    }
+    if (err) return res.status(400).json(err);
+    //deleteing workorders if any were made on the object
+    workorderDB.findOneAndRemove({ object_id: req.query.id }, err1 => {
+      if (err1) res.status(400).json(err1);
+      return res
+        .status(200)
+        .json({ msg: "Object and associated workorders deleted" });
+    });
+    // NOTE: TBD, consider deleting the image too
+    // for now we will keep the image without the object to
+    // store as many pictures to run CV on as possible
   });
 });
 

@@ -60,7 +60,7 @@ router.get("/get-area-by-coordinate", (req, res) => {
       if (inside(point, poly))
         return res.status(200).json({ responsible: docs[k].responsible });
     }
-    return res.status(200).json({ responsible: "unknown" });
+    return res.status(200).json({ responsible: "private" });
   });
 });
 
