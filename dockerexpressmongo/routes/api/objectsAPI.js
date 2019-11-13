@@ -208,6 +208,33 @@ router.put("/update-objects-by-ids", (req, res) => {
   return res.status(200).json({ msg: "Objects updated with any new values" });
 });
 
+//update who is responsible of an object
+//typical to run this if there has been changes in the area DB
+router.get("/update-object-responsible", (req, res) => {
+  let item = { responsible: "privat" };
+  detectedObjectDB.find({}, (err, objs) => {
+    if (err) return res.status(400).json(err);
+    areaDB.find({}, (err1, areas) => {
+      if (err1) return res.status(400).json(err1);
+      for (let obj of objs) {
+        let coords = obj.coordinates;
+        for (let area of areas) {
+          let poly = area.polygon;
+          if (inside(coords, poly)) {
+            item["responsible"] = area.responsible;
+          }
+        }
+        detectedObjectDB.findByIdAndUpdate(obj._id, item, err2 => {
+          if (err2) return res.status(400).json(err2);
+        });
+      }
+    });
+  });
+  return res
+    .status(200)
+    .json({ msg: "Objects responsibility-attribut updated" });
+});
+
 //Delete object specified by its id "/delete-object-by-id?id=someID"
 router.post("/delete-object-by-id", (req, res) => {
   detectedObjectDB.findByIdAndRemove(req.query.id, (err, doc) => {
