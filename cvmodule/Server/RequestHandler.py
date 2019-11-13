@@ -36,7 +36,7 @@ class RequestHandler(FTPHandler):
 
         temp_filename = "temp_meta_file{}".format(now)
         print("Creating a temporary file to store the combined metadata %s" % temp_filename)
-        temp_file = open(temp_filename "w+")
+        temp_file = open(temp_filename, "w+")
         metaString = "["
         for path in json_files_to_upload:
             with open(path, "r") as file:
