@@ -1,0 +1,29 @@
+@import '../vars.css';
+
+.marker_colors__container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    box-sizing: border-box;
+    margin: 20px 0;
+    font-family: var(--main-font);
+    font-size: 12px;
+
+}
+
+.marker_color__wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.color_circle {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    margin: 0 10px;
+}
+
+.color_text {
+
+}
