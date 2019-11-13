@@ -41,9 +41,9 @@ const InfoBar = (
       </span>
       <div className="image__container">
         {imageWithBoxes ? (
-      <img id="pothole_image" src={imageWithBoxes} alt="detected road object" className="object_image" />
+          <img id="pothole_image" src={imageWithBoxes} alt="detected road object" className="object_image" />
         ) : (
-        <img id="pothole_image" crossOrigin="anonymous" onLoad={drawBox} src={`https://api.dewp.eu.org/get-image?filename=${object.filename}`} alt="detected road object" className="object_image" />
+          <img id="pothole_image" crossOrigin="anonymous" onLoad={drawBox} src={`https://api.dewp.eu.org/get-image?filename=${object.filename}`} alt="detected road object" className="object_image" />
         )}
       </div>
       {

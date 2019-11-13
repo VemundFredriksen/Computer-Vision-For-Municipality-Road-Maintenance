@@ -25,7 +25,8 @@ module.exports = {
     "no-underscore-dangle": 'off',
     "jsx-a11y/label-has-associated-control": "off",
     "jsx-a11y/label-has-for": 0,
-    "camelcase": ["error", {"allow": ["object_ids"]}]
+    "camelcase": ["error", {"allow": ["object_ids"]}],
+    "linebreak-style":0
   },
   parser: "babel-eslint"
 };

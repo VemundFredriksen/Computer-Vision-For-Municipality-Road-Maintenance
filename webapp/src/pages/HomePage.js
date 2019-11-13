@@ -40,9 +40,10 @@ class HomePage extends React.Component {
   }
 
   handleMarkerClick = (id) => {
-    const { objects, 
+    const {
+      objects,
       currentObject,
-      imageWithBoxes
+      imageWithBoxes,
     } = this.state;
     const object = objects.filter((obj) => obj._id === id);
 
@@ -92,14 +93,14 @@ class HomePage extends React.Component {
 
   drawBox = (e) => {
     const { currentObject } = this.state;
-    if(!currentObject || !currentObject.bounding_box.length) {
+    if (!currentObject || !currentObject.bounding_box.length) {
       return;
     }
 
-    const canvas = document.createElement("CANVAS");
-    const context = canvas.getContext("2d");
+    const canvas = document.createElement('CANVAS');
+    const context = canvas.getContext('2d');
     const img = e.target;
-    console.log(img)
+    console.log(img);
     const w = img.naturalWidth;
     const h = img.naturalHeight;
 
@@ -107,21 +108,21 @@ class HomePage extends React.Component {
     canvas.height = h;
 
     context.drawImage(img, 0, 0);
-    context.strokeStyle = "red";
+    context.strokeStyle = 'red';
     context.lineWidth = 7;
-    for(let i = 0; i < currentObject.bounding_box.length; i++) {
+    for (let i = 0; i < currentObject.bounding_box.length; i += 1) {
       const bb = currentObject.bounding_box[i];
-      context.strokeRect(bb.x*w - bb.w*w/2,
-                        bb.y*h - bb.h*h/2,
-                        bb.w*w,
-                        bb.h*h);
+      context.strokeRect(bb.x * w - bb.w * (w / 2),
+        bb.y * h - bb.h * (h / 2),
+        bb.w * w,
+        bb.h * h);
     }
 
     this.setState({
       imageWithBoxes: canvas.toDataURL(),
     });
   };
-=======
+
   handleAddWOList = () => {
     const { currentObject } = this.state;
     this.setState((prevState) => ({
@@ -207,6 +208,7 @@ class HomePage extends React.Component {
       .catch((error) => {
         console.log(error);
       });
+  };
 
   render() {
     const {
