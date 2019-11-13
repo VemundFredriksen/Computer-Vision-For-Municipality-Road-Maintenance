@@ -1,3 +1,4 @@
 libdarknet=/home/tk/dev/TDT4290-Theia/cvmodule/core/darknet/libdarknet.so
 ftp-folder=/home/tk/dev/TDT4290-Theia/cvmodule/Server/
 weights=/home/tk/dev/TDT4290-Theia/cvmodule/Server/yolov3-pothole_23000.weights
+fps=5

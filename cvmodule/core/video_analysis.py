@@ -52,6 +52,7 @@ if os.path.isfile("./config.txt"):
 	libdarknet_path = f.readline().strip().split('=')[1]
 	f.readline() # Skips one line where ftp-path is declared
 	network_weights = f.readline().strip().split('=')[1]
+	fps = f.readline().strip().split('=')[1]
 else:
 	print("No config.txt found, you need to make a config.txt file here %s, the file should contain the full path to libdarknet.so, the dir for the ftp serve and the full path to the weights used in detection , each on a seperate line" % (os.getcwd()))
 
@@ -202,10 +203,11 @@ def store_meta_data(imagePath):
 def do_video_analysis(path_to_video, path_to_image_dir, path_to_save_dir):
 	#These paths are now wrong? should we use absolute paths intead?
 	global network_weights
+	global fps
 	net = load_net("yolov3-pothole.cfg".encode("utf-8"), network_weights.encode("utf-8"), 0)
 	meta = load_meta("obj.data".encode("utf-8"))
 
-	video_to_images(path_to_video, path_to_image_dir, 0.2)
+	video_to_images(path_to_video, path_to_image_dir, 1.0/(int(fps)))
 	os.remove(path_to_video)
 	
 	imgs = glob.glob(path_to_image_dir + "/*.jpg")
