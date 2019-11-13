@@ -4,6 +4,7 @@
     width: 300px;
     height: 698px;
     justify-content: space-between;
+    align-self: center;
     align-items: center;
     border: #d8d8d8 1px solid;
     font-family: Arial;
@@ -14,20 +15,17 @@
     margin: 4px 1px;
 }
 
-.image__container {
+.object_image {
     max-width: 250px;
     max-height: 350px;
-}
-
-.object_image {
-    width: 100%;
-    height: auto;
 }
 
 .info__container {
     display: flex;
     flex-direction: column;
     text-align: left;
+    box-sizing: border-box;
+    margin: 10px 30px;
 }
 
 .object_info {
@@ -39,3 +37,14 @@
     border: none;
     cursor: pointer;
 }
+
+table {
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+tr {
+    height: 38px;
+    border-bottom: 1px #d8d8d8 solid;
+}
+

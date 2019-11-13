@@ -34,8 +34,3 @@
 .edit_button:focus {
     outline: none;
 }
-
-select {
-    margin: 0 8px;
-    height: 25px;
-}
