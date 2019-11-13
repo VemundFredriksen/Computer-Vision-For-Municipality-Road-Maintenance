@@ -57,6 +57,7 @@ else:
 	print("No config.txt found, you need to make a config.txt file here %s, the file should contain the full path to libdarknet.so, the dir for the ftp serve and the full path to the weights used in detection , each on a seperate line" % (os.getcwd()))
 
 lib = CDLL(libdarknet_path, RTLD_GLOBAL)
+
 lib.network_width.argtypes = [c_void_p]
 lib.network_width.restype = c_int
 lib.network_height.argtypes = [c_void_p]
@@ -176,7 +177,7 @@ def mock_gps():
     generated = (base[0] + random.uniform(0, 0.02600), base[1] + random.uniform(0, 0.05700))
     return "{}, {}".format(generated[0], generated[1])
 
-def store_meta_data(imagePath):
+def store_meta_data(imagePath, preds):
 
     dash = 0
     for i in range(len(imagePath) -1, -1, -1):
@@ -191,10 +192,24 @@ def store_meta_data(imagePath):
     log += "\n\"priority\" : 5,"
     log += "\n\"coordinates\": [ {} ],".format(mock_gps())
     log += "\n\"status\": \"not fixed\","
-    log += "\n\"filename\": \"{}\"".format(fileName)
+    log += "\n\"filename\": \"{}\",".format(fileName)
+    log += "\n\"bounding_box\": [\n"
+    img = Image.open(imagePath)
+    w,h = img.size
+    for p in preds:
+        box = p[2]
+        log += "{{ \"x\": {},".format(box[0]/w)
+        log += " \"y\": {},".format(box[1]/h)
+        log += " \"w\": {},".format(box[2]/w)
+        log += " \"h\": {}".format(box[3]/h)
+        log += "},\n"
+
+    log = log[:-2]
+    log += "]\n"
     log += "},\n"
-    log = log[:-3] + "\n}"
+    log = log[:-3] + "\n},"
     f.write(log)
+    print(log)
     f.close()
 
     return os.getcwd()
@@ -215,7 +230,7 @@ def do_video_analysis(path_to_video, path_to_image_dir, path_to_save_dir):
 		r = detect(net, meta, im.encode("utf-8"))
 		if(len(r) > 0):
 			image = draw_prediction_box(im, r, path_to_save_dir)
-			store_meta_data(image)
+			store_meta_data(image, r)
 
 
 if __name__ == "__main__":
