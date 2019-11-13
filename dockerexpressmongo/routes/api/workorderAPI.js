@@ -117,6 +117,8 @@ router.put("/update-workorder-by-id", (req, res) => {
 
 //delete-workorders-on-specified-object
 router.post("/delete-workorder-by-object-ids", (req, res) => {
+  var count = Object.keys(req.body).length;
+  if (count === 0) return res.status(400).json({ msg: "The body was empty.." });
   workorderDB.remove({ object_id: { $in: req.body.object_ids } }, err => {
     if (err) return res.status(400).json(err);
     detectedObjectDB.updateMany(
