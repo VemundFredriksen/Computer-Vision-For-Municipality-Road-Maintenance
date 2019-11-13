@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const { Parser } = require("json2csv");
 const router = express.Router();
 const mongodb_url = "mongodb://mongo:27017/express_mongodb";
-const request = require("request");
 
 mongoose.connect(mongodb_url, { useNewUrlParser: true });
 //Get the model
@@ -11,36 +10,26 @@ const workorderDB = require("../../models/Workorder");
 const detectedObjectDB = require("../../models/Object");
 
 router.get("/get-all-workorders", (req, res) => {
-  workorderDB
-    .find()
-    .lean()
-    .exec(function(err, wos) {
-      return res.json(wos);
-    });
+  workorderDB.find({}, (err, wos) => {
+    if (err) return res.status(400).json(err);
+    return res.status(200).json(wos);
+  });
 });
 
 //Get workorder by its id.
 //A call will be like this :"...../get-workorder-by-id?id=someID"
 router.get("/get-workorder-by-id", (req, res) => {
   workorderDB.findById(req.query.id, (err, wo) => {
-    if (err || !wo) {
-      console.log(err);
-      return res.status(400).json({ msg: "No object with that id..." });
-    }
-    res.json(wo);
+    if (err || !wo) return res.status(400).json(err);
+    return res.status(200).json(wo);
   });
 });
 
 //insert one or many workorders (array of json objects)
 router.post("/insert-workorderdata", (req, res) => {
   workorderDB.insertMany(req.body, (err, doc) => {
-    if (err) {
-      console.log(err);
-      return res
-        .status(400)
-        .json({ msg: "Something went wrong when inserting.." });
-    }
-    res.json({ msg: "Workorderdata inserted!" });
+    if (err) return res.status(400).json(err);
+    return res.json({ msg: "Workorderdata inserted!" });
   });
 });
 
@@ -49,9 +38,7 @@ router.post("/generate-workorders-by-ids", (req, res) => {
   detectedObjectDB.find(
     { _id: { $in: req.body.object_ids } },
     (err1, objects) => {
-      if (err1) {
-        return res.status(400).json({ err1 });
-      }
+      if (err1) return res.status(400).json({ err1 });
       if (objects === null) {
         // in the case that the id field was not provided, object will be null
         return res.status(400).json({ msg: "Could not find objects" });
@@ -65,46 +52,18 @@ router.post("/generate-workorders-by-ids", (req, res) => {
       }
       //updating objects so work_order = true
       workorderDB.insertMany(work_orders, (err2, doc) => {
-        if (err2) {
-          return res.status(400).json({
-            msg: "Something went wrong when inserting workorders..",
-            Error: err2
-          });
-        }
-      });
-      request(
-        {
-          method: "PUT",
-          uri: "http://dewp.eu.org:4000/update-objects-by-ids",
-          json: true,
-          body: {
-            ids: req.body.object_ids,
-            fieldsToUpdate: {
-              work_order: true
-            }
+        if (err2) return res.status(400).json(err2);
+        detectedObjectDB.updateMany(
+          { _id: { $in: req.body.object_ids } },
+          { work_order: true },
+          err3 => {
+            if (err3) return res.status(400).json(err3);
+            return res
+              .status(200)
+              .json({ msg: "Workorders created and objects updated" });
           }
-        },
-        (err3, response, body) => {
-          if (err3) return res.json(err3);
-        }
-      );
-      const fields = [
-        "type",
-        "coordinates",
-        "priority",
-        "approved",
-        "fixed",
-        "responsible"
-      ];
-      const opts = { fields };
-      try {
-        const parser = new Parser(opts);
-        const csv = parser.parse(objects);
-        res.attachment("workorders.csv");
-        res.status(200).send(csv);
-      } catch (err) {
-        console.error(err);
-      }
+        );
+      });
     }
   );
 });
@@ -112,14 +71,14 @@ router.post("/generate-workorders-by-ids", (req, res) => {
 //gets the workorders specified by the id of objecs. Body = { "ids" : [id1, id2, id3]}
 //this will not generate new wos, only retun a cvs on the object that a wo exist
 router.get("/get-workorders-as-csv", (req, res) => {
-  workorderDB.find({ object_id: { $in: req.body.object_ids } }, (err1, wos) => {
-    if (err1) res.json(err1);
+  workorderDB.find({ object_id: { $in: req.body.object_ids } }, (err, wos) => {
+    if (err) return res.status(400).json(err);
     obj_ids = [];
     for (let wo in wos) {
       obj_ids.push(wos[wo]["object_id"]);
     }
-    detectedObjectDB.find({ _id: { $in: obj_ids } }, (err2, objects) => {
-      if (err2) res.json(err2);
+    detectedObjectDB.find({ _id: { $in: obj_ids } }, (err1, objects) => {
+      if (err1) return res.status(400).json(err1);
       const fields = [
         "type",
         "coordinates",
@@ -133,9 +92,9 @@ router.get("/get-workorders-as-csv", (req, res) => {
         const parser = new Parser(opts);
         const csv = parser.parse(objects);
         res.attachment("workorders.csv");
-        res.status(200).send(csv);
-      } catch (err) {
-        console.error(err);
+        return res.status(200).send(csv);
+      } catch (err3) {
+        return res.status(400).json(err3);
       }
     });
   });
@@ -151,98 +110,54 @@ router.put("/update-workorder-by-id", (req, res) => {
     return res.status(400).json({ msg: "The http-body was empty..." });
   }
   workorderDB.findOneAndUpdate({ _id: req.query.id }, item, (err, doc) => {
-    if (err) {
-      console.log(err);
-      return res.status(400).json({
-        msg: "No workorders were updated.. Couldn't find the workorder"
-      });
-    } else {
-      return res.json({ msg: "Workorder updated" });
-    }
+    if (err) return res.status(400).json(err);
+    return res.status(200).json({ msg: "Workorder updated" });
   });
 });
 
 //delete-workorders-on-specified-object
 router.post("/delete-workorder-by-object-ids", (req, res) => {
   workorderDB.remove({ object_id: { $in: req.body.object_ids } }, err => {
-    if (err) {
-      return res.status(400).json({ msg: "No workorders were deleted.." });
-    }
-    request(
-      {
-        method: "PUT",
-        uri: "http://dewp.eu.org:4000/update-objects-by-ids",
-        json: true,
-        body: {
-          ids: req.body.object_ids,
-          fieldsToUpdate: {
-            work_order: false
-          }
-        }
-      },
-      (err1, response, body) => {
+    if (err) return res.status(400).json(err);
+    detectedObjectDB.updateMany(
+      { _id: { $in: req.body.object_ids } },
+      { work_order: false },
+      err1 => {
         if (err1) return res.json(err1);
+        return res
+          .status(200)
+          .json({ msg: "All workorders deleted and objects updated" });
       }
     );
-    return res.json({ msg: "Workorder(s) deleted" });
   });
 });
 
-//Delete workorder specified by id
+//Delete signle workorder specified by id. Body wil contain list of one id.
 router.post("/delete-workorder-by-id", (req, res) => {
   workorderDB.findByIdAndRemove(req.body.workorder_id[0], (err, doc) => {
-    if (err) {
-      return res.status(400).json({ msg: "No workorders were deleted.." });
-    }
-    request(
-      {
-        method: "PUT",
-        uri: "http://dewp.eu.org:4000/update-objects-by-ids",
-        json: true,
-        body: {
-          ids: [doc.object_id],
-          fieldsToUpdate: {
-            work_order: false
-          }
-        }
-      },
-      (err1, response, body) => {
-        if (err1) return res.json(err1);
+    if (err) return res.status(400).json(err);
+    detectedObjectDB.findOneAndUpdate(
+      { _id: doc.object_id },
+      { work_order: false },
+      err1 => {
+        if (err1) return res.status(400).json(err1);
+        return res.status(200).json({ msg: "Workorder deleted" });
       }
     );
-    return res.json({ msg: "Workorder deleted" });
   });
 });
 
 router.delete("/delete-all-workorders", (req, res) => {
   //The empty object will match all of them.
-
-  let all_obj_ids = [];
-  detectedObjectDB.find({}, "_id", (err, doc) => {
-    for (let obj of doc) {
-      all_obj_ids.push(obj._id);
-    }
-    workorderDB.deleteMany({}, err => {
-      if (err) return res.json(err);
-      request(
-        {
-          method: "PUT",
-          uri: "http://dewp.eu.org:4000/update-objects-by-ids",
-          json: true,
-          body: {
-            ids: all_obj_ids,
-            fieldsToUpdate: {
-              work_order: false
-            }
-          }
-        },
-        (err1, response, body) => {
-          if (err1) return res.json(err1);
-        }
-      );
+  workorderDB.deleteMany({}, err => {
+    if (err) return res.status(400).json(err);
+    detectedObjectDB.updateMany({}, { work_order: false }, err1 => {
+      if (err1) return res.status(400).json(err1);
+      return res
+        .status(200)
+        .json({ msg: "All workorders deleted and objects updated" });
     });
   });
-  res.json({ msg: "All workorders deleted and objects updated" });
 });
 
 //exports...
