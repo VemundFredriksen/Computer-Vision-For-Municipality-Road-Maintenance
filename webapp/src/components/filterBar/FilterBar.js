@@ -28,7 +28,7 @@ export default class FilterBar extends React.Component {
       });
     }
 
-    if (e.target.name === 'status') {
+    if (e.target.name === 'fixed') {
       this.setState({
         fixed: e.target.value,
       });
