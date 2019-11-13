@@ -50,7 +50,7 @@ if os.path.isfile("./config.txt"):
 	f = open("./config.txt")
 	libdarknet_path = f.readline().strip()
 else:
-	print("No config.txt found, you need to make a config.txt file here %s, the file should contain the full path to libdarknet.so" % (os.getcwd()))
+	print("No config.txt found, you need to make a config.txt file here %s, the file should contain the full path to libdarknet.so, the dir for the ftp server to use and the ip for ftp server, each on a seperate line" % (os.getcwd()))
 
 lib = CDLL(libdarknet_path, RTLD_GLOBAL)
 lib.network_width.argtypes = [c_void_p]
