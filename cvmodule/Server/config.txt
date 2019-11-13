@@ -1,0 +1,3 @@
+libdarknet.so path
+path of directory to host on the ftp server
+ip of the ftp server
