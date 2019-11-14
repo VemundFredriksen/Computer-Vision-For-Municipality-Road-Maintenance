@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import './LoginForm.css';
 
@@ -12,10 +13,8 @@ export default class LoginForm extends React.Component {
       password: '',
       usernameError: '',
       passwordError: '',
+      error: '',
     };
-
-    this.handleChange = this.handleChange.bind(this);
-    this.submitLoginForm = this.submitLoginForm.bind(this);
   }
 
   handleChange = (e) => {
@@ -33,14 +32,45 @@ export default class LoginForm extends React.Component {
   };
 
   submitLoginForm = (e) => {
+    console.log(this.props);
+    const { username, password } = this.state;
+    const { handleLogin } = this.props;
     e.preventDefault();
     if (this.validateForm) {
-      this.setState({
-        username: '',
-        password: '',
-        usernameError: '',
-        passwordError: '',
-      });
+      fetch('https://api.dewp.eu.org/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      })
+        .then((res) => (
+          res.json()
+        ))
+        .then((data) => {
+          if (data.status === 'success') {
+            this.setState({
+              username: '',
+              password: '',
+              usernameError: '',
+              passwordError: '',
+              error: '',
+            });
+            handleLogin(data.key);
+            console.log(data);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          this.setState({
+            username: '',
+            password: '',
+            usernameError: '',
+            passwordError: '',
+            error: 'Something went wrong during login. Please try again',
+          });
+        });
     }
   };
 
@@ -72,6 +102,7 @@ export default class LoginForm extends React.Component {
       password,
       usernameError,
       passwordError,
+      error,
     } = this.state;
 
     return (
@@ -100,8 +131,13 @@ export default class LoginForm extends React.Component {
             required
           />
         </div>
+        { error !== '' ? <div>{error}</div> : null }
         <button className="login_button" type="submit">Login</button>
       </form>
     );
   }
 }
+
+LoginForm.propTypes = {
+  handleLogin: PropTypes.func.isRequired,
+};
