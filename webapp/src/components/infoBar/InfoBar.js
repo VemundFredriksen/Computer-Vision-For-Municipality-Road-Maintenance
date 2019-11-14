@@ -19,6 +19,7 @@ const InfoBar = (
     drawBox,
     imageWithBoxes,
     handleUpdate,
+    handleImageClick,
   },
 ) => {
   const determineOption = () => {
@@ -45,9 +46,23 @@ const InfoBar = (
       </span>
       <div className="image__container">
         {imageWithBoxes ? (
-          <img id="pothole_image" src={imageWithBoxes} alt="detected road object" className="object_image" />
+          <button type="button" className="button_image" onClick={handleImageClick}>
+            <img
+              id="pothole_image"
+              src={imageWithBoxes}
+              alt="detected road object"
+              className="object_image"
+            />
+          </button>
         ) : (
-          <img id="pothole_image" crossOrigin="anonymous" onLoad={drawBox} src={`https://api.dewp.eu.org/get-image?filename=${object.filename}`} alt="detected road object" className="object_image" />
+          <img
+            id="pothole_image"
+            crossOrigin="anonymous"
+            onLoad={drawBox}
+            src={`https://api.dewp.eu.org/get-image?filename=${object.filename}`}
+            alt="detected road object"
+            className="object_image"
+          />
         )}
       </div>
       {
@@ -111,16 +126,18 @@ InfoBar.propTypes = {
   onEditClick: PropTypes.func.isRequired,
   handleDelete: PropTypes.func.isRequired,
   drawBox: PropTypes.func.isRequired,
-  imageWithBoxes: PropTypes.string.isRequired,
+  imageWithBoxes: PropTypes.string,
   handleAddWOList: PropTypes.func.isRequired,
   inWOList: PropTypes.bool.isRequired,
   handleRemoveWOList: PropTypes.func.isRequired,
   handleDeleteWO: PropTypes.func.isRequired,
   handleUpdate: PropTypes.func.isRequired,
+  handleImageClick: PropTypes.func.isRequired,
 };
 
 InfoBar.defaultProps = {
   onCloseClick: null,
+  imageWithBoxes: null,
 };
 
 const CloseIcon = () => (
