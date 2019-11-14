@@ -20,7 +20,10 @@ const InfoBar = (
     imageWithBoxes,
   },
 ) => {
-  const determine = () => {
+  const determineOption = () => {
+    if (object.responsible === 'statens vegvesen') {
+      return <span>This object cannot be edited due to responsibility area</span>;
+    }
     if (object.work_order) {
       return <Button text="Delete work order" onClick={handleDeleteWO} />;
     }
@@ -75,11 +78,16 @@ const InfoBar = (
                 <td>Approved:</td>
                 <td>{object.approved ? 'yes' : 'no'}</td>
               </tr>
+              <tr>
+                <td>Responsible:</td>
+                <td>{object.responsible}</td>
+              </tr>
 
             </table>
             <div>
-              <Button text="Edit" onClick={onEditClick} />
-              {determine()}
+              {object.responsible === 'trondheim kommune' ? <Button text="Edit" onClick={onEditClick} />
+                : null}
+              {determineOption()}
             </div>
           </div>
         )
