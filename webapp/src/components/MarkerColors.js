@@ -8,6 +8,7 @@ const MarkerColors = () => (
     <MarkerColor color="red" text="Object has not yet been approved" />
     <MarkerColor color="yellow" text="Object is in work orders" />
     <MarkerColor color="green" text="Object is in work order list" />
+    <MarkerColor color="grey" text="Statens vegvesen is responsible" />
     <MarkerColor color="blue" text="Other objects" />
   </div>
 );
