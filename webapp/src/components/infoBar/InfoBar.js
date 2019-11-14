@@ -18,6 +18,7 @@ const InfoBar = (
     handleDeleteWO,
     drawBox,
     imageWithBoxes,
+    handleUpdate,
   },
 ) => {
   const determine = () => {
@@ -55,6 +56,7 @@ const InfoBar = (
             priority={object.priority}
             approved={object.approved}
             handleDelete={handleDelete}
+            handleUpdate={handleUpdate}
           />
         ) : (
           <div className="info__container">
@@ -106,6 +108,7 @@ InfoBar.propTypes = {
   inWOList: PropTypes.bool.isRequired,
   handleRemoveWOList: PropTypes.func.isRequired,
   handleDeleteWO: PropTypes.func.isRequired,
+  handleUpdate: PropTypes.func.isRequired,
 };
 
 InfoBar.defaultProps = {

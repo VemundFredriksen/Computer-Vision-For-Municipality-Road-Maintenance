@@ -55,7 +55,7 @@ export default class EditForm extends React.Component {
       priority,
       approved,
     } = this.state;
-    const { id } = this.props;
+    const { id, handleUpdate } = this.props;
     const body = JSON.stringify({
       type,
       fixed: fixed === 'yes',
@@ -71,8 +71,19 @@ export default class EditForm extends React.Component {
       .then((res) => (
         res.json()
       ))
-      .then((data) => {
-        console.log(data);
+      .then(() => {
+        fetch(`https://api.dewp.eu.org/get-object-by-id?id=${id}`, {
+          method: 'GET',
+        })
+          .then((res) => (
+            res.json()
+          ))
+          .then((resJson) => {
+            handleUpdate(resJson);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       })
       .catch((error) => {
         console.log(error);
@@ -157,4 +168,5 @@ EditForm.propTypes = {
   priority: PropTypes.number.isRequired,
   handleDelete: PropTypes.func.isRequired,
   approved: PropTypes.bool.isRequired,
+  handleUpdate: PropTypes.func.isRequired,
 };

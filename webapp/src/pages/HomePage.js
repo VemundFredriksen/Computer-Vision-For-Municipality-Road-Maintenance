@@ -1,5 +1,7 @@
 import React from 'react';
 import isSubset from 'is-subset';
+import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
 import MapComponent from '../components/MapComponent';
 import InfoBar from '../components/infoBar/InfoBar';
 import FilterBar from '../components/filterBar/FilterBar';
@@ -19,6 +21,7 @@ class HomePage extends React.Component {
       filters: null,
       workOrders: [],
       imageWithBoxes: null,
+      redirect: false,
     };
   }
 
@@ -63,8 +66,25 @@ class HomePage extends React.Component {
   };
 
   handleEditClick = () => {
+    const { loggedIn } = this.props;
+    if (loggedIn) {
+      this.setState({
+        edit: true,
+      });
+    } else {
+      this.setState({
+        redirect: true,
+      });
+    }
+  };
+
+  handleUpdate = (object) => {
+    const { objects } = this.state;
+    const updatedObjects = objects.filter((item) => item._id !== object._id);
     this.setState({
-      edit: true,
+      objects: [...updatedObjects, object],
+      currentObject: object,
+      edit: false,
     });
   };
 
@@ -82,12 +102,19 @@ class HomePage extends React.Component {
 
   handleDelete = (id) => {
     const { objects } = this.state;
-    const obj = objects.filter((o) => o._id !== id);
-    this.setState({
-      objects: obj,
-      currentObject: null,
-      imageWithBoxes: null,
-    });
+    const { loggedIn } = this.props;
+    if (loggedIn) {
+      const obj = objects.filter((o) => o._id !== id);
+      this.setState({
+        objects: obj,
+        currentObject: null,
+        imageWithBoxes: null,
+      });
+    } else {
+      this.setState({
+        redirect: true,
+      });
+    }
   };
 
 
@@ -100,7 +127,6 @@ class HomePage extends React.Component {
     const canvas = document.createElement('CANVAS');
     const context = canvas.getContext('2d');
     const img = e.target;
-    console.log(img);
     const w = img.naturalWidth;
     const h = img.naturalHeight;
 
@@ -125,89 +151,117 @@ class HomePage extends React.Component {
 
   handleAddWOList = () => {
     const { currentObject } = this.state;
-    this.setState((prevState) => ({
-      workOrders: [...prevState.workOrders, currentObject],
-    }));
+    const { loggedIn } = this.props;
+    if (loggedIn) {
+      this.setState((prevState) => ({
+        workOrders: [...prevState.workOrders, currentObject],
+      }));
+    } else {
+      this.setState({
+        redirect: true,
+      });
+    }
   };
 
   handleRemoveWOList = () => {
     const { currentObject } = this.state;
-    this.setState((prevState) => ({
-      workOrders: prevState.workOrders.filter((item) => item._id !== currentObject._id),
-    }));
+    const { loggedIn } = this.props;
+    if (loggedIn) {
+      this.setState((prevState) => ({
+        workOrders: prevState.workOrders.filter((item) => item._id !== currentObject._id),
+      }));
+    } else {
+      this.setState({
+        redirect: true,
+      });
+    }
   };
 
   handleDeleteWO = () => {
-    const { currentObject, objects } = this.state;
-    const object_ids = [currentObject._id];
-    fetch('https://api.dewp.eu.org/delete-workorder-by-object-ids', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        object_ids,
-      }),
-    })
-      .then((res) => (
-        res.json()
-      ))
-      .then(() => {
-        fetch(`https://api.dewp.eu.org/get-object-by-id?id=${currentObject._id}`, {
-          method: 'GET',
-        })
-          .then((result) => (
-            result.json()
-          ))
-          .then((data) => {
-            const newObjects = objects.filter((item) => item._id !== data._id);
-            this.setState({
-              objects: [...newObjects, data],
-            });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      })
-      .catch((error) => {
-        console.log(error);
+    const { loggedIn } = this.props;
+    if (!loggedIn) {
+      this.setState({
+        redirect: true,
       });
+    } else {
+      const { currentObject, objects } = this.state;
+      const object_ids = [currentObject._id];
+      fetch('https://api.dewp.eu.org/delete-workorder-by-object-ids', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          object_ids,
+        }),
+      })
+        .then((res) => (
+          res.json()
+        ))
+        .then(() => {
+          fetch(`https://api.dewp.eu.org/get-object-by-id?id=${currentObject._id}`, {
+            method: 'GET',
+          })
+            .then((result) => (
+              result.json()
+            ))
+            .then((data) => {
+              const newObjects = objects.filter((item) => item._id !== data._id);
+              this.setState({
+                objects: [...newObjects, data],
+              });
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   handleSubmitWO = () => {
-    const { workOrders, objects } = this.state;
-    const object_ids = workOrders.map((item) => item._id);
-    const ids = workOrders.map((item) => item._id);
-
-    fetch('https://api.dewp.eu.org/generate-workorders-by-ids', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        object_ids,
-      }),
-    })
-      .then(() => {
-        fetch('https://api.dewp.eu.org/get-objects-by-ids', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ids,
-          }),
-        })
-          .then((result) => (
-            result.json()
-          ))
-          .then((data) => {
-            const newObjects = objects.filter((item) => !(ids.includes(item._id)));
-            this.setState({
-              objects: [...newObjects, ...data],
-            });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      })
-      .catch((error) => {
-        console.log(error);
+    const { loggedIn } = this.props;
+    if (!loggedIn) {
+      this.setState({
+        redirect: true,
       });
+    } else {
+      const { workOrders, objects } = this.state;
+      const object_ids = workOrders.map((item) => item._id);
+      const ids = workOrders.map((item) => item._id);
+
+      fetch('https://api.dewp.eu.org/generate-workorders-by-ids', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          object_ids,
+        }),
+      })
+        .then(() => {
+          fetch('https://api.dewp.eu.org/get-objects-by-ids', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ids,
+            }),
+          })
+            .then((result) => (
+              result.json()
+            ))
+            .then((data) => {
+              const newObjects = objects.filter((item) => !(ids.includes(item._id)));
+              this.setState({
+                objects: [...newObjects, ...data],
+              });
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   render() {
@@ -220,7 +274,12 @@ class HomePage extends React.Component {
       filters,
       imageWithBoxes,
       workOrders,
+      redirect,
     } = this.state;
+
+    if (redirect) {
+      return <Redirect to="login" />;
+    }
 
     if (!hasLoaded) {
       return <div>is loading..</div>;
@@ -251,6 +310,7 @@ class HomePage extends React.Component {
                 inWOList={inWOList}
                 handleRemoveWOList={this.handleRemoveWOList}
                 handleDeleteWO={this.handleDeleteWO}
+                handleUpdate={this.handleUpdate}
               />
             )
             : null}
@@ -268,5 +328,9 @@ class HomePage extends React.Component {
     );
   }
 }
+
+HomePage.propTypes = {
+  loggedIn: PropTypes.bool.isRequired,
+};
 
 export default HomePage;
