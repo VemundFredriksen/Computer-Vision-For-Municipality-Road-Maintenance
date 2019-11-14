@@ -15,15 +15,11 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin-right: 7px;
 }
 
 .color_circle {
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    margin: 0 10px;
-}
-
-.color_text {
-
+    width: 18px;
+    height: 18px;
 }
