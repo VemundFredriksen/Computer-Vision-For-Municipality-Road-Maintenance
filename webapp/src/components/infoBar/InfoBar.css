@@ -15,6 +15,12 @@
     margin: 4px 1px;
 }
 
+.button_image {
+    background-color: white;
+    border: none;
+    padding: 0;
+}
+
 .object_image {
     max-width: 250px;
     max-height: 350px;

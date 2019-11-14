@@ -22,6 +22,7 @@ class HomePage extends React.Component {
       workOrders: [],
       imageWithBoxes: null,
       redirect: false,
+      showImage: false,
     };
   }
 
@@ -63,6 +64,12 @@ class HomePage extends React.Component {
       edit: false,
       imageWithBoxes: null,
     });
+  };
+
+  handleImageClick = () => {
+    this.setState((prevState) => ({
+      showImage: !prevState.showImage,
+    }));
   };
 
   handleEditClick = () => {
@@ -275,7 +282,23 @@ class HomePage extends React.Component {
       imageWithBoxes,
       workOrders,
       redirect,
+      showImage,
     } = this.state;
+
+    if (showImage) {
+      return (
+        <div style={{ width: '100vw', height: '100vh' }}>
+          <button type="button" onClick={this.handleImageClick}>
+            <img
+              style={{ width: '100%', height: '100%' }}
+              id="pothole_image"
+              src={imageWithBoxes}
+              alt="detected road object"
+            />
+          </button>
+        </div>
+      );
+    }
 
     if (redirect) {
       return <Redirect to="login" />;
@@ -311,6 +334,7 @@ class HomePage extends React.Component {
                 handleRemoveWOList={this.handleRemoveWOList}
                 handleDeleteWO={this.handleDeleteWO}
                 handleUpdate={this.handleUpdate}
+                handleImageClick={this.handleImageClick}
               />
             )
             : null}
