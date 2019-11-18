@@ -209,14 +209,26 @@ def store_meta_data(imagePath, preds):
     log += "},\n"
     log = log[:-3] + "\n},"
     f.write(log)
-    print(log)
+    #print(log)
     f.close()
 
     return os.getcwd()
 
+def start_progress(title):
+    print(title + "[" + '-'*40 + "]" + chr(8)*41, flush=True, end='')
+
+
+def update_progress(progress, prev_num_squares):
+    new_num_squares = math.floor((progress/100)*40)
+    squares_to_add = new_num_squares - prev_num_squares
+    print('#'*squares_to_add, flush=True, end='')
+    return new_num_squares
+
+def finish_progress(prev_num_squares):
+    squares_to_add = math.floor(40 - prev_num_squares)
+    print('#'*squares_to_add + "]", flush=True)
 
 def do_video_analysis(path_to_video, path_to_image_dir, path_to_save_dir):
-	#These paths are now wrong? should we use absolute paths intead?
 	global network_weights
 	global fps
 	net = load_net("yolov3-pothole.cfg".encode("utf-8"), network_weights.encode("utf-8"), 0)
@@ -225,17 +237,23 @@ def do_video_analysis(path_to_video, path_to_image_dir, path_to_save_dir):
 	video_to_images(path_to_video, path_to_image_dir, 1.0/(int(fps)))
 	os.remove(path_to_video)
 	
+	start_progress("Images analysed: ")
+	counter = 0
+	pns = 0
 	imgs = glob.glob(path_to_image_dir + "/*.jpg")
 	for im in imgs:
 		r = detect(net, meta, im.encode("utf-8"))
+		counter += 1
+		pns = update_progress(counter/len(imgs)*100, pns)
 		if(len(r) > 0):
 			image = draw_prediction_box(im, r, path_to_save_dir)
 			store_meta_data(image, r)
+	finish_progress(pns)
 
 
 if __name__ == "__main__":
-	print("Doing vid analysis")
-	print(sys.argv[1], sys.argv[2], sys.argv[3])
+	print("Starting CV analysis.")
+	#print(sys.argv[1], sys.argv[2], sys.argv[3])
 	do_video_analysis(sys.argv[1], sys.argv[2], sys.argv[3])
 """
 else:
