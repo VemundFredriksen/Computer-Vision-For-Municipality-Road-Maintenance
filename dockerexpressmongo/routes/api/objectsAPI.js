@@ -38,7 +38,8 @@ router.post("/login", (req, res, next) => {
 });
 
 //Uploads a single image
-//Here we simply use the middleware (multer) as per the documentation to get the image passed and store it.
+//Here we simply use the middleware (multer) as
+// per the documentation to get the image passed and store it.
 router.post("/upload-image", upload.array("image"), (req, res) => {
   if (req.files.length <= 0) {
     return res.status(400).send({
@@ -282,25 +283,6 @@ router.post("/delete-object-by-id", (req, res) => {
     // NOTE: TBD, consider deleting the image too
     // for now we will keep the image without the object to
     // store as many pictures to run CV on as possible
-  });
-});
-
-const deleteImages = function() {
-  // Need it to be done synchronously so
-  // we do not attempt to make a folder before it is deleted
-  // it is possible to chain asynchornous callback functions
-  // but it has not been done for simplicity
-  // NB: Cannot delete a folder with contents, later on write a method here that deletes each individual file(s)
-  //fs.rmdirSync("/app/uploads/images");
-  //fs.mkdirSync("/app/uploads/images");
-};
-
-router.delete("/delete-all-objects", (req, res) => {
-  //The empty object will match all of them.
-  detectedObjectDB.deleteMany({}, err => {
-    if (err) return res.status(400).json(err);
-    deleteImages();
-    return res.status(200).json({ msg: "All objects were deleted!! :O " });
   });
 });
 
