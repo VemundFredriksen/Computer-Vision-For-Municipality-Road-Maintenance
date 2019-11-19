@@ -11,7 +11,7 @@
     text-align: left;
 }
 
-.submit_button {
+.edit_button {
     box-sizing: border-box;
     position: relative;
     border-radius: 22px;
@@ -20,21 +20,18 @@
     height: 41px;
     cursor: pointer;
     background-color: inherit;
+    margin: 10px;
 }
 
-.submit_button:hover {
+.edit_button:hover {
     border-color: #61dafb;
 }
 
-.submit_button:active {
+.edit_button:active {
     border-color: #61dafb;
 }
 
-.submit_button:focus {
+.edit_button:focus {
     outline: none;
 }
 
-select {
-    margin: 0 8px;
-    height: 25px;
-}

@@ -2,29 +2,36 @@
     display: flex;
     flex-direction: column;
     width: 300px;
+    height: 698px;
     justify-content: space-between;
-    padding: 20px;
+    align-self: center;
+    align-items: center;
     border: #d8d8d8 1px solid;
     font-family: Arial;
 }
 
 .close_icon__container {
     align-self: flex-end;
+    margin: 4px 1px;
 }
 
-.image__container {
-
+.button_image {
+    background-color: white;
+    border: none;
+    padding: 0;
 }
 
 .object_image {
-    width: 100%;
-    height: auto;
+    max-width: 250px;
+    max-height: 350px;
 }
 
 .info__container {
     display: flex;
     flex-direction: column;
     text-align: left;
+    box-sizing: border-box;
+    margin: 10px 30px;
 }
 
 .object_info {
@@ -36,3 +43,15 @@
     border: none;
     cursor: pointer;
 }
+
+table {
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+}
+
+tr {
+    height: 38px;
+    border-bottom: 1px #d8d8d8 solid;
+}
+

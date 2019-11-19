@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '../shared/button/Button';
-import EditForm from '../header/editForm/EditForm';
+import EditForm from '../editForm/EditForm';
 
 import './InfoBar.css';
 
@@ -11,58 +11,133 @@ const InfoBar = (
     edit,
     onCloseClick,
     onEditClick,
+    handleDelete,
+    handleAddWOList,
+    inWOList,
+    handleRemoveWOList,
+    handleDeleteWO,
+    drawBox,
+    imageWithBoxes,
+    handleUpdate,
+    handleImageClick,
   },
-) => (
-  <div className="info_bar__wrapper">
-    <span className="close_icon__container">
-      <button type="button" className="close_button" onClick={onCloseClick}>
-        <CloseIcon />
-      </button>
-    </span>
-    <div className="image__container">
-      <img src={`https://api.dewp.eu.org/get-image?filename=${object.filename}`} alt="detected road object" className="object_image" />
-    </div>
-    {
-      edit ? (
-        <EditForm
-          id={object._id}
-          type={object.objecttype}
-          status={object.status}
-          priority={object.priority}
-        />
-      ) : (
-        <div className="info__container">
-          <span className="object_info">
-            {`Type: ${object.objecttype}`}
-          </span>
-          <span className="object_info">
-            {`Status: ${object.status}`}
-          </span>
-          <span className="object_info">
-            {`Priority: ${object.priority}`}
-          </span>
-          <Button text="Edit" onClick={onEditClick} />
-        </div>
-      )
+) => {
+  const determineOption = () => {
+    if (object.responsible === 'statens vegvesen') {
+      return <span>This object cannot be edited due to responsibility area</span>;
     }
-  </div>
-);
+    if (object.work_order) {
+      return <Button text="Delete work order" onClick={handleDeleteWO} />;
+    }
+    if (inWOList) {
+      return <Button text="Remove from list" onClick={handleRemoveWOList} />;
+    }
+    if (object.approved && !object.fixed) {
+      return <Button text="Add to work order list" onClick={handleAddWOList} />;
+    }
+    return <span>Object needs to be approved and not fixed to add to work orders</span>;
+  };
+  return (
+    <div className="info_bar__wrapper">
+      <span className="close_icon__container">
+        <button type="button" className="close_button" onClick={onCloseClick}>
+          <CloseIcon />
+        </button>
+      </span>
+      <div className="image__container">
+        {imageWithBoxes ? (
+          <button type="button" className="button_image" onClick={handleImageClick}>
+            <img
+              id="pothole_image"
+              src={imageWithBoxes}
+              alt="detected road object"
+              className="object_image"
+            />
+          </button>
+        ) : (
+          <img
+            id="pothole_image"
+            crossOrigin="anonymous"
+            onLoad={drawBox}
+            src={`https://api.dewp.eu.org/get-image?filename=${object.filename}`}
+            alt="detected road object"
+            className="object_image"
+          />
+        )}
+      </div>
+      {
+        edit ? (
+          <EditForm
+            id={object._id}
+            type={object.type}
+            status={object.fixed}
+            priority={object.priority}
+            approved={object.approved}
+            handleDelete={handleDelete}
+            handleUpdate={handleUpdate}
+          />
+        ) : (
+          <div className="info__container">
+            <table>
+              <tr>
+                <td>Type:</td>
+                <td>{object.type}</td>
+              </tr>
+              <tr>
+                <td>Fixed:</td>
+                <td>{object.fixed ? 'yes' : 'no'}</td>
+              </tr>
+              <tr>
+                <td>Priority:</td>
+                <td>{object.priority}</td>
+              </tr>
+              <tr>
+                <td>Approved:</td>
+                <td>{object.approved ? 'yes' : 'no'}</td>
+              </tr>
+              <tr>
+                <td>Responsible:</td>
+                <td>{object.responsible}</td>
+              </tr>
+
+            </table>
+            <div>
+              {object.responsible === 'trondheim kommune' ? <Button text="Edit" onClick={onEditClick} />
+                : null}
+              {determineOption()}
+            </div>
+          </div>
+        )
+      }
+    </div>
+  );
+};
 
 InfoBar.propTypes = {
-  object: PropTypes.arrayOf(PropTypes.shape({
+  object: PropTypes.objectOf(PropTypes.shape({
     _id: PropTypes.string.isRequired,
-    objecttype: PropTypes.string.isRequired,
-    status: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    fixed: PropTypes.bool.isRequired,
     priority: PropTypes.number,
     imagePath: PropTypes.string,
   })).isRequired,
   edit: PropTypes.bool.isRequired,
   onCloseClick: PropTypes.func,
   onEditClick: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func.isRequired,
+  drawBox: PropTypes.func.isRequired,
+  imageWithBoxes: PropTypes.string,
+  handleAddWOList: PropTypes.func.isRequired,
+  inWOList: PropTypes.bool.isRequired,
+  handleRemoveWOList: PropTypes.func.isRequired,
+  handleDeleteWO: PropTypes.func.isRequired,
+  handleUpdate: PropTypes.func.isRequired,
+  handleImageClick: PropTypes.func.isRequired,
 };
 
 InfoBar.defaultProps = {
   onCloseClick: null,
+  imageWithBoxes: null,
 };
 
 const CloseIcon = () => (

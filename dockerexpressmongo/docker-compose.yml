@@ -12,7 +12,7 @@ services:
     links:
       - mongo
     volumes:
-      - objectsimages:/app/uploads/images
+      - objectsimages:/app/uploads
   mongo:
     container_name: mongo
     image: mongo
