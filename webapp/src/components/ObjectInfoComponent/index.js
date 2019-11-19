@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Button from '../shared/button/Button';
-import CloseButton from '../shared/CloseButton/Closebutton';
-import InfoTable from './infoTable/InfoTable';
-import ObjectImage from '../shared/objectImage/ObjectImage';
+import Button from '../shared/Button';
+import CloseButton from '../shared/CloseButton';
+import InfoTable from './InfoTable';
+import ObjectImage from '../shared/ObjectImage';
 import * as URLs from '../../utils/urls';
 
-import './ObjectInfoComponent.css';
+import './index.css';
 
 const ObjectInfoComponent = (
   {
