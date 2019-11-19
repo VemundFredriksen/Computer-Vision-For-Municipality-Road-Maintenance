@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import './MarkerColors.css';
+import './index.css';
 
 const MarkerColors = () => (
   <div className="marker_colors__container">

@@ -3,7 +3,7 @@ import { Map, TileLayer, Marker } from 'react-leaflet';
 import PropTypes from 'prop-types';
 import findCorrectMarker from '../../utils/markers';
 
-import './MapComponent.css';
+import './index.css';
 
 const MapComponent = ({ objects, onMarkerClick, workOrders }) => (
   <Map className="map" center={[63.42, 10.39]} zoom={12}>

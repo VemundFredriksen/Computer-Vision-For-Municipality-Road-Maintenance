@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Index from '../shared/Select';
+import Select from '../shared/Select';
 
-import './FilterBar.css';
+import './index.css';
 
 const typeOptions = ['-- type --', 'pothole', 'crack'];
 const fixedOptions = ['-- fixed --', 'yes', 'no'];
@@ -10,7 +10,7 @@ const priorityOptions = ['-- priority --', '1', '2', '3', '4', '5', '6', '7', '8
 const approvedOptions = ['-- approved --', 'yes', 'no'];
 
 
-export default class FilterBar extends React.Component {
+export default class FilterComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -95,20 +95,20 @@ export default class FilterBar extends React.Component {
     return (
       <div className="filter_bar__wrapper">
         <div>
-          <Index options={typeOptions} value={type} name="type" handleChange={this.handleFilter} />
-          <Index
+          <Select options={typeOptions} value={type} name="type" handleChange={this.handleFilter} />
+          <Select
             options={fixedOptions}
             value={fixed}
             name="fixed"
             handleChange={this.handleFilter}
           />
-          <Index
+          <Select
             options={priorityOptions}
             value={priority}
             name="prio"
             handleChange={this.handleFilter}
           />
-          <Index options={approvedOptions} value={approved} name="appr" handleChange={this.handleFilter} />
+          <Select options={approvedOptions} value={approved} name="appr" handleChange={this.handleFilter} />
         </div>
         <div>
           <button className="filter_button" type="submit" onClick={this.onSubmit}>Filter</button>
@@ -119,7 +119,7 @@ export default class FilterBar extends React.Component {
   }
 }
 
-FilterBar.propTypes = {
+FilterComponent.propTypes = {
   onFilter: PropTypes.func.isRequired,
   onFilterReset: PropTypes.func.isRequired,
 };

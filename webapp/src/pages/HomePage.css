@@ -1,0 +1,14 @@
+.homepage__container {
+    height: 100vh;
+    text-align: center;
+}
+
+.object_info__wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.image__wrapper {
+    width: 100vw;
+    height: 100vh;
+}
