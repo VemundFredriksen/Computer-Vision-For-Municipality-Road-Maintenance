@@ -7,7 +7,11 @@
     height: 41px;
     cursor: pointer;
     background-color: inherit;
+<<<<<<< HEAD
     margin: 15px;
+=======
+    margin: 10px;
+>>>>>>> 0f321dba9b6f9e6f1bafbac75ede5ed3db546e25
 }
 
 .button:hover {

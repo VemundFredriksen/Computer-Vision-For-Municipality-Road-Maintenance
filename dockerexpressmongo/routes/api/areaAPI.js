@@ -39,7 +39,11 @@ router.put("/update-area-by-id", (req, res) => {
 });
 
 //Delete area specified by its id "/delete-area-by-id?id=someID"
+<<<<<<< HEAD
 router.post("/delete-area-by-id", (req, res) => {
+=======
+router.delete("/delete-area-by-id", (req, res) => {
+>>>>>>> 0f321dba9b6f9e6f1bafbac75ede5ed3db546e25
   areaDB.findByIdAndRemove(req.query.id, (err, doc) => {
     if (err) return res.status(400).json(err);
     return res.status(200).json({ msg: "area deleted" });
@@ -60,7 +64,11 @@ router.get("/get-area-by-coordinate", (req, res) => {
       if (inside(point, poly))
         return res.status(200).json({ responsible: docs[k].responsible });
     }
+<<<<<<< HEAD
     return res.status(200).json({ responsible: "private" });
+=======
+    return res.status(200).json({ responsible: "unknown" });
+>>>>>>> 0f321dba9b6f9e6f1bafbac75ede5ed3db546e25
   });
 });
 

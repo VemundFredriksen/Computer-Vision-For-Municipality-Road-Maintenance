@@ -28,6 +28,15 @@ router.get("/", (req, res) => {
   return res.status(200).json({ msg: "Hello world.." });
 });
 
+// Authentication endpoint
+router.post("/login", (req, res, next) => {
+  if (req.body.username === "admin" && req.body.password === "admin123") {
+    return res.json({ key: "D9h3Hd7g3uUfgug7Ssds", status: "success" });
+  } else {
+    return res.json({ status: "failed" });
+  }
+});
+
 //Uploads a single image
 //Here we simply use the middleware (multer) as per the documentation to get the image passed and store it.
 router.post("/upload-image", upload.array("image"), (req, res) => {
@@ -117,9 +126,7 @@ router.get("/get-object-by-id", (req, res) => {
 router.post("/get-objects-by-ids", (req, res) => {
   detectedObjectDB.find({ _id: { $in: req.body.ids } }, (err, objects) => {
     if (err) {
-      return res
-        .status(400)
-        .json({ msg: "Cound not get any objects", Error: err });
+      return res.status(400).json(err);
     }
     if (objects === null) {
       // in the case that the id field was not provided, object will be null
@@ -156,10 +163,36 @@ router.put("/update-object-by-id", (req, res) => {
       pre_state["modified_date"] = new Date(new_state["modified_date"]);
       new_state["previous_states"] = pre_obj.previous_states;
       new_state["previous_states"].push(pre_state);
+      detectedObjectDB.findOneAndUpdate(
+        { _id: req.query.id },
+        new_state,
+        (err, obj) => {
+          if (err) console.log(err);
+          return res.status(200).json({ msg: "Object updated" });
+        }
+      );
+    }
+  });
+});
 
-      detectedObjectDB.findByIdAndUpdate(req.query.id, new_state, err => {
-        if (err) return res.status(400).json(err);
-      });
+// router.put("/update-all-objects", (req, res) => {
+//   let fieldsToUpdate = req.body.fieldsToUpdate;
+//   detectedObjectDB.update({}, fieldsToUpdate, (err1, docs) => {
+//     if (err1) return res.status(400).json(err1);
+//   });
+//   res.status(200).json({ msg: "Objects updated" });
+// });
+
+//Delete object specified by its id "/delete-object-by-id?id=someID"
+router.post("/delete-object-by-id", (req, res) => {
+  detectedObjectDB.findByIdAndRemove(req.query.id, (err, doc) => {
+    if (err) {
+      return res.status(400).json(err);
+    } else {
+      // NOTE: TBD, consider deleting the image too
+      // for now we will keep the image without the object to
+      // store as many pictures to run CV on as possible
+      // return res.status(200).json({ msg: "Object deleted" });
     }
     return res.status(200).json({ msg: "Objects updated with any new values" });
   });
@@ -249,6 +282,25 @@ router.post("/delete-object-by-id", (req, res) => {
     // NOTE: TBD, consider deleting the image too
     // for now we will keep the image without the object to
     // store as many pictures to run CV on as possible
+  });
+});
+
+const deleteImages = function() {
+  // Need it to be done synchronously so
+  // we do not attempt to make a folder before it is deleted
+  // it is possible to chain asynchornous callback functions
+  // but it has not been done for simplicity
+  // NB: Cannot delete a folder with contents, later on write a method here that deletes each individual file(s)
+  //fs.rmdirSync("/app/uploads/images");
+  //fs.mkdirSync("/app/uploads/images");
+};
+
+router.delete("/delete-all-objects", (req, res) => {
+  //The empty object will match all of them.
+  detectedObjectDB.deleteMany({}, err => {
+    if (err) return res.status(400).json(err);
+    deleteImages();
+    return res.status(200).json({ msg: "All objects were deleted!! :O " });
   });
 });
 
