@@ -103,7 +103,7 @@ router.get("/get-object-by-type", (req, res) => {
 
 //Get object specified by its id "/get-object-by-id?id=someID"
 router.get("/get-object-by-id", (req, res) => {
-  detectedObjectDB.findOne({ _id: req.query.id }, (err, doc) => {
+  detectedObjectDB.findById(req.query.id, (err, doc) => {
     if (err) return res.status(400).json(err);
     if (doc.length == 0) {
       // in the case that the id field was not provided, object will be null
@@ -211,7 +211,7 @@ router.put("/update-objects-by-ids", (req, res) => {
 //update who is responsible of an object
 //typical to run this if there has been changes in the area DB
 router.get("/update-object-responsible", (req, res) => {
-  let item = { responsible: "privat" };
+  let item = { responsible: "private" };
   detectedObjectDB.find({}, (err, objs) => {
     if (err) return res.status(400).json(err);
     areaDB.find({}, (err1, areas) => {
@@ -235,12 +235,12 @@ router.get("/update-object-responsible", (req, res) => {
     .json({ msg: "Objects responsibility-attribut updated" });
 });
 
-//Delete object specified by its id "/delete-object-by-id?id=someID"
+//Delete object specified by its id. Body = {id = "someID"}
 router.post("/delete-object-by-id", (req, res) => {
-  detectedObjectDB.findByIdAndRemove(req.query.id, (err, doc) => {
+  detectedObjectDB.findByIdAndRemove(req.body.id, (err, doc) => {
     if (err) return res.status(400).json(err);
     //deleteing workorders if any were made on the object
-    workorderDB.findOneAndRemove({ object_id: req.query.id }, err1 => {
+    workorderDB.findOneAndRemove({ object_id: req.body.id }, err1 => {
       if (err1) res.status(400).json(err1);
       return res
         .status(200)

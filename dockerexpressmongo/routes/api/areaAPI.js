@@ -39,7 +39,7 @@ router.put("/update-area-by-id", (req, res) => {
 });
 
 //Delete area specified by its id "/delete-area-by-id?id=someID"
-router.delete("/delete-area-by-id", (req, res) => {
+router.post("/delete-area-by-id", (req, res) => {
   areaDB.findByIdAndRemove(req.query.id, (err, doc) => {
     if (err) return res.status(400).json(err);
     return res.status(200).json({ msg: "area deleted" });

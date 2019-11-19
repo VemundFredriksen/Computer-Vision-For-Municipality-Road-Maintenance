@@ -68,7 +68,7 @@ router.post("/generate-workorders-by-ids", (req, res) => {
   );
 });
 
-//gets the workorders specified by the id of objecs. Body = { "ids" : [id1, id2, id3]}
+//gets the workorders specified by the id of detected objecs. Body = { "object_ids" : [id1, id2, id3]}
 //this will not generate new wos, only retun a cvs on the object that a wo exist
 router.get("/get-workorders-as-csv", (req, res) => {
   workorderDB.find({ object_id: { $in: req.body.object_ids } }, (err, wos) => {
@@ -134,7 +134,7 @@ router.post("/delete-workorder-by-object-ids", (req, res) => {
   });
 });
 
-//Delete signle workorder specified by id. Body wil contain list of one id.
+//Delete signle workorder specified by id. Body will contain list of one id.
 router.post("/delete-workorder-by-id", (req, res) => {
   workorderDB.findByIdAndRemove(req.body.workorder_id[0], (err, doc) => {
     if (err) return res.status(400).json(err);
