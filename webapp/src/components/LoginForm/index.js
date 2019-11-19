@@ -32,7 +32,6 @@ export default class LoginForm extends React.Component {
   };
 
   submitLoginForm = (e) => {
-    console.log(this.props);
     const { username, password } = this.state;
     const { handleLogin } = this.props;
     e.preventDefault();
@@ -58,11 +57,9 @@ export default class LoginForm extends React.Component {
               error: '',
             });
             handleLogin(data.key);
-            console.log(data);
           }
         })
-        .catch((error) => {
-          console.log(error);
+        .catch(() => {
           this.setState({
             username: '',
             password: '',

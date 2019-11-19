@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Select from '../shared/select/Select';
+import Index from '../../shared/Select';
 
 import './EditForm.css';
 
@@ -62,57 +62,12 @@ export default class EditForm extends React.Component {
       priority,
       approved: approved === 'yes',
     });
-    const url = `https://api.dewp.eu.org/update-object-by-id?id=${id}`;
-    fetch(url, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body,
-    })
-      .then((res) => (
-        res.json()
-      ))
-      .then(() => {
-        fetch(`https://api.dewp.eu.org/get-object-by-id?id=${id}`, {
-          method: 'GET',
-        })
-          .then((res) => (
-            res.json()
-          ))
-          .then((resJson) => {
-            handleUpdate(resJson);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    handleUpdate(id, body);
   };
 
   onDelete = (e) => {
     e.preventDefault();
     const { id, handleDelete } = this.props;
-    const body = JSON.stringify({
-      id,
-    });
-    const url = `https://api.dewp.eu.org/delete-object-by-id?id=${id}`;
-    fetch(url, {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body,
-    })
-      .then((res) => (
-        res.json()
-      ))
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
     handleDelete(id);
   };
 
@@ -127,32 +82,32 @@ export default class EditForm extends React.Component {
     return (
       <form method="post" className="edit_form" onSubmit={this.onSubmit}>
         <table className="selection__wrapper">
-          <tr>
-            <td>Type</td>
-            <td>
-              <span>
-                <Select options={typeOptions} value={type} name="typ" handleChange={this.handleChange} />
-              </span>
-            </td>
-          </tr>
-          <tr>
-            <td>Fixed</td>
-            <td>
-              <Select options={statusOptions} value={fixed} name="stat" handleChange={this.handleChange} />
-            </td>
-          </tr>
-          <tr>
-            <td>Priority</td>
-            <td>
-              <Select options={priorityOptions} value={priority.toString()} name="pri" handleChange={this.handleChange} />
-            </td>
-          </tr>
-          <tr>
-            <td>Approved</td>
-            <td>
-              <Select options={approvedOptions} value={approved} name="appr" handleChange={this.handleChange} />
-            </td>
-          </tr>
+          <tbody>
+            <tr>
+              <td>Type</td>
+              <td>
+                <Index options={typeOptions} value={type} name="typ" handleChange={this.handleChange} />
+              </td>
+            </tr>
+            <tr>
+              <td>Fixed</td>
+              <td>
+                <Index options={statusOptions} value={fixed} name="stat" handleChange={this.handleChange} />
+              </td>
+            </tr>
+            <tr>
+              <td>Priority</td>
+              <td>
+                <Index options={priorityOptions} value={priority.toString()} name="pri" handleChange={this.handleChange} />
+              </td>
+            </tr>
+            <tr>
+              <td>Approved</td>
+              <td>
+                <Index options={approvedOptions} value={approved} name="appr" handleChange={this.handleChange} />
+              </td>
+            </tr>
+          </tbody>
         </table>
         <button className="edit_button" type="submit">Update</button>
         <button className="edit_button" type="button" onClick={this.onDelete}>Delete</button>
@@ -165,8 +120,8 @@ EditForm.propTypes = {
   id: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   fixed: PropTypes.bool.isRequired,
+  approved: PropTypes.bool.isRequired,
   priority: PropTypes.number.isRequired,
   handleDelete: PropTypes.func.isRequired,
-  approved: PropTypes.bool.isRequired,
   handleUpdate: PropTypes.func.isRequired,
 };

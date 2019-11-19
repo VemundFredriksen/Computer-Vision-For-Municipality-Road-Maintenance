@@ -21,12 +21,7 @@
     padding: 0;
 }
 
-.object_image {
-    max-width: 250px;
-    max-height: 350px;
-}
-
-.info__container {
+.info_table__wrapper {
     display: flex;
     flex-direction: column;
     text-align: left;
@@ -42,16 +37,5 @@
     width: 45px;
     border: none;
     cursor: pointer;
-}
-
-table {
-    border-collapse: collapse;
-    margin: 20px 0;
-    font-size: 14px;
-}
-
-tr {
-    height: 38px;
-    border-bottom: 1px #d8d8d8 solid;
 }
 

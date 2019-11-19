@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Select from '../shared/select/Select';
+import Index from '../shared/Select';
 
 import './FilterBar.css';
 
@@ -95,20 +95,20 @@ export default class FilterBar extends React.Component {
     return (
       <div className="filter_bar__wrapper">
         <div>
-          <Select options={typeOptions} value={type} name="type" handleChange={this.handleFilter} />
-          <Select
+          <Index options={typeOptions} value={type} name="type" handleChange={this.handleFilter} />
+          <Index
             options={fixedOptions}
             value={fixed}
             name="fixed"
             handleChange={this.handleFilter}
           />
-          <Select
+          <Index
             options={priorityOptions}
             value={priority}
             name="prio"
             handleChange={this.handleFilter}
           />
-          <Select options={approvedOptions} value={approved} name="appr" handleChange={this.handleFilter} />
+          <Index options={approvedOptions} value={approved} name="appr" handleChange={this.handleFilter} />
         </div>
         <div>
           <button className="filter_button" type="submit" onClick={this.onSubmit}>Filter</button>
