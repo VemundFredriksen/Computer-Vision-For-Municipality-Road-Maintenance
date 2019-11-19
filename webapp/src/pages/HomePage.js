@@ -3,10 +3,15 @@ import isSubset from 'is-subset';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import MapComponent from '../components/MapComponent';
-import InfoBar from '../components/infoBar/InfoBar';
-import FilterBar from '../components/filterBar/FilterBar';
-import Button from '../components/shared/button/Button';
+import ObjectInfoComponent from '../components/ObjectInfoComponent';
+import EditObjectComponent from '../components/EditObjectComponent';
+import FilterComponent from '../components/FilterComponent';
+import Button from '../components/shared/Button';
 import MarkerColors from '../components/MarkerColors';
+import ObjectImage from '../components/shared/ObjectImage';
+import * as URLs from '../utils/urls';
+
+import './HomePage.css';
 
 class HomePage extends React.Component {
   constructor(props) {
@@ -15,7 +20,7 @@ class HomePage extends React.Component {
     this.state = {
       hasLoaded: false,
       objects: [],
-      error: null,
+      loadError: null,
       currentObject: null,
       edit: false,
       filters: null,
@@ -23,11 +28,12 @@ class HomePage extends React.Component {
       imageWithBoxes: null,
       redirect: false,
       showImage: false,
+      error: null,
     };
   }
 
   componentDidMount() {
-    fetch('https://api.dewp.eu.org/get-all-objects')
+    fetch(URLs.getAllObjects)
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({
@@ -38,7 +44,7 @@ class HomePage extends React.Component {
       .catch(() => {
         this.setState({
           hasLoaded: true,
-          error: 'Not able to load objects',
+          loadError: 'Not able to load objects',
         });
       });
   }
@@ -50,11 +56,11 @@ class HomePage extends React.Component {
       imageWithBoxes,
     } = this.state;
     const object = objects.filter((obj) => obj._id === id);
-
     this.setState({
       imageWithBoxes: currentObject === object[0] ? imageWithBoxes : null,
       currentObject: object[0],
       edit: false,
+      error: null,
     });
   };
 
@@ -63,12 +69,14 @@ class HomePage extends React.Component {
       currentObject: null,
       edit: false,
       imageWithBoxes: null,
+      error: null,
     });
   };
 
   handleImageClick = () => {
     this.setState((prevState) => ({
       showImage: !prevState.showImage,
+      error: null,
     }));
   };
 
@@ -77,22 +85,13 @@ class HomePage extends React.Component {
     if (loggedIn) {
       this.setState({
         edit: true,
+        error: null,
       });
     } else {
       this.setState({
         redirect: true,
       });
     }
-  };
-
-  handleUpdate = (object) => {
-    const { objects } = this.state;
-    const updatedObjects = objects.filter((item) => item._id !== object._id);
-    this.setState({
-      objects: [...updatedObjects, object],
-      currentObject: object,
-      edit: false,
-    });
   };
 
   onFilter = (filters) => {
@@ -107,16 +106,71 @@ class HomePage extends React.Component {
     });
   };
 
+  handleUpdate = (id, body) => {
+    fetch(URLs.updateObjectById(id), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body,
+    })
+      .then(() => {
+        this.getObjectById(id);
+      })
+      .catch(() => {
+        this.setState({
+          error: 'Could not update object',
+        });
+      });
+  };
+
+  getObjectById = (id) => {
+    const { objects } = this.state;
+    fetch(URLs.getObjectById(id), {
+      method: 'GET',
+    })
+      .then((res) => (
+        res.json()
+      ))
+      .then((resJson) => {
+        const updatedObjects = objects.filter((item) => item._id !== resJson._id);
+        this.setState({
+          objects: [...updatedObjects, resJson],
+          currentObject: resJson,
+          edit: false,
+          error: null,
+        });
+      })
+      .catch(() => {
+        this.setState({
+          error: 'Could not fetch updated object',
+        });
+      });
+  };
+
   handleDelete = (id) => {
     const { objects } = this.state;
     const { loggedIn } = this.props;
     if (loggedIn) {
-      const obj = objects.filter((o) => o._id !== id);
-      this.setState({
-        objects: obj,
-        currentObject: null,
-        imageWithBoxes: null,
-      });
+      fetch(URLs.deleteObjectById(id), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id,
+        }),
+      })
+        .then(() => {
+          const obj = objects.filter((item) => item._id !== id);
+          this.setState({
+            objects: obj,
+            currentObject: null,
+            imageWithBoxes: null,
+            error: null,
+          });
+        })
+        .catch(() => {
+          this.setState({
+            error: 'Could not delete object',
+          });
+        });
     } else {
       this.setState({
         redirect: true,
@@ -162,6 +216,7 @@ class HomePage extends React.Component {
     if (loggedIn) {
       this.setState((prevState) => ({
         workOrders: [...prevState.workOrders, currentObject],
+        error: null,
       }));
     } else {
       this.setState({
@@ -176,53 +231,12 @@ class HomePage extends React.Component {
     if (loggedIn) {
       this.setState((prevState) => ({
         workOrders: prevState.workOrders.filter((item) => item._id !== currentObject._id),
+        error: null,
       }));
     } else {
       this.setState({
         redirect: true,
       });
-    }
-  };
-
-  handleDeleteWO = () => {
-    const { loggedIn } = this.props;
-    if (!loggedIn) {
-      this.setState({
-        redirect: true,
-      });
-    } else {
-      const { currentObject, objects } = this.state;
-      const object_ids = [currentObject._id];
-      fetch('https://api.dewp.eu.org/delete-workorder-by-object-ids', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          object_ids,
-        }),
-      })
-        .then((res) => (
-          res.json()
-        ))
-        .then(() => {
-          fetch(`https://api.dewp.eu.org/get-object-by-id?id=${currentObject._id}`, {
-            method: 'GET',
-          })
-            .then((result) => (
-              result.json()
-            ))
-            .then((data) => {
-              const newObjects = objects.filter((item) => item._id !== data._id);
-              this.setState({
-                objects: [...newObjects, data],
-              });
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        })
-        .catch((error) => {
-          console.log(error);
-        });
     }
   };
 
@@ -237,7 +251,7 @@ class HomePage extends React.Component {
       const object_ids = workOrders.map((item) => item._id);
       const ids = workOrders.map((item) => item._id);
 
-      fetch('https://api.dewp.eu.org/generate-workorders-by-ids', {
+      fetch(URLs.generateWorkOrdersByIds, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -245,7 +259,7 @@ class HomePage extends React.Component {
         }),
       })
         .then(() => {
-          fetch('https://api.dewp.eu.org/get-objects-by-ids', {
+          fetch(URLs.getObjectByIds, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -259,14 +273,49 @@ class HomePage extends React.Component {
               const newObjects = objects.filter((item) => !(ids.includes(item._id)));
               this.setState({
                 objects: [...newObjects, ...data],
+                currentObject: null,
+                error: null,
+                workOrders: [],
               });
             })
-            .catch((err) => {
-              console.log(err);
+            .catch(() => {
+              this.setState({
+                error: 'Could not fetch updated objects',
+                workOrders: [],
+              });
             });
         })
-        .catch((error) => {
-          console.log(error);
+        .catch(() => {
+          this.setState({
+            error: 'Could not generate work order',
+          });
+        });
+    }
+  };
+
+  handleDeleteWO = () => {
+    const { loggedIn } = this.props;
+    if (!loggedIn) {
+      this.setState({
+        redirect: true,
+      });
+    } else {
+      const { currentObject } = this.state;
+      const object_ids = [currentObject._id];
+      fetch(URLs.deleteWorkOrdersByIds, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          object_ids,
+        }),
+      })
+        .then(() => {
+          this.getObjectById(currentObject._id);
+        })
+        .catch(() => {
+          this.setState({
+            error: 'Could not delete work order',
+          });
         });
     }
   };
@@ -275,7 +324,7 @@ class HomePage extends React.Component {
     const {
       hasLoaded,
       objects,
-      error,
+      loadError,
       currentObject,
       edit,
       filters,
@@ -283,19 +332,17 @@ class HomePage extends React.Component {
       workOrders,
       redirect,
       showImage,
+      error,
     } = this.state;
 
     if (showImage) {
       return (
-        <div style={{ width: '100vw', height: '100vh' }}>
-          <button type="button" onClick={this.handleImageClick}>
-            <img
-              style={{ width: '100%', height: '100%' }}
-              id="pothole_image"
-              src={imageWithBoxes}
-              alt="detected road object"
-            />
-          </button>
+        <div className="image__wrapper">
+          <ObjectImage
+            src={imageWithBoxes}
+            id={currentObject.filename}
+            onClick={this.handleImageClick}
+          />
         </div>
       );
     }
@@ -303,12 +350,11 @@ class HomePage extends React.Component {
     if (redirect) {
       return <Redirect to="login" />;
     }
-
     if (!hasLoaded) {
       return <div>is loading..</div>;
     }
-    if (error) {
-      return <div>{error}</div>;
+    if (loadError) {
+      return <div>{loadError}</div>;
     }
     let obj = objects;
     if (filters) {
@@ -316,30 +362,39 @@ class HomePage extends React.Component {
     }
     const inWOList = workOrders.some((item) => item._id === currentObject._id);
     return (
-      <div style={{ height: '100vh', textAlign: 'center' }}>
+      <div className="homepage__container">
         <Button text="Send work orders" onClick={workOrders.length > 0 ? this.handleSubmitWO : null} />
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end' }}>
-          {currentObject
+        <div className="object_info__wrapper">
+          {currentObject && !edit
             ? (
-              <InfoBar
+              <ObjectInfoComponent
                 object={currentObject}
-                edit={edit}
                 onCloseClick={this.handleCloseClick}
                 onEditClick={this.handleEditClick}
-                handleDelete={this.handleDelete}
                 drawBox={this.drawBox}
                 imageWithBoxes={imageWithBoxes}
                 handleAddWOList={this.handleAddWOList}
                 inWOList={inWOList}
                 handleRemoveWOList={this.handleRemoveWOList}
                 handleDeleteWO={this.handleDeleteWO}
-                handleUpdate={this.handleUpdate}
                 handleImageClick={this.handleImageClick}
+                error={error}
+              />
+            ) : null }
+          {currentObject && edit
+            ? (
+              <EditObjectComponent
+                object={currentObject}
+                handleImageClick={this.handleImageClick}
+                onCloseClick={this.handleCloseClick}
+                imageWithBoxes={imageWithBoxes}
+                handleDelete={this.handleDelete}
+                handleUpdate={this.handleUpdate}
               />
             )
             : null}
           <div>
-            <FilterBar onFilter={this.onFilter} onFilterReset={this.onFilterReset} />
+            <FilterComponent onFilter={this.onFilter} onFilterReset={this.onFilterReset} />
             <MapComponent
               objects={obj}
               onMarkerClick={this.handleMarkerClick}

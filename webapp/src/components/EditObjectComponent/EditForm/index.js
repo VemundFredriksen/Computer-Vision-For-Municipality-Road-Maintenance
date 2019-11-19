@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Index from '../../shared/Select';
+import Select from '../../shared/Select';
 
-import './EditForm.css';
+import './index.css';
 
 const typeOptions = ['pothole', 'crack'];
 const statusOptions = ['yes', 'no'];
@@ -86,25 +86,25 @@ export default class EditForm extends React.Component {
             <tr>
               <td>Type</td>
               <td>
-                <Index options={typeOptions} value={type} name="typ" handleChange={this.handleChange} />
+                <Select options={typeOptions} value={type} name="typ" handleChange={this.handleChange} />
               </td>
             </tr>
             <tr>
               <td>Fixed</td>
               <td>
-                <Index options={statusOptions} value={fixed} name="stat" handleChange={this.handleChange} />
+                <Select options={statusOptions} value={fixed} name="stat" handleChange={this.handleChange} />
               </td>
             </tr>
             <tr>
               <td>Priority</td>
               <td>
-                <Index options={priorityOptions} value={priority.toString()} name="pri" handleChange={this.handleChange} />
+                <Select options={priorityOptions} value={priority.toString()} name="pri" handleChange={this.handleChange} />
               </td>
             </tr>
             <tr>
               <td>Approved</td>
               <td>
-                <Index options={approvedOptions} value={approved} name="appr" handleChange={this.handleChange} />
+                <Select options={approvedOptions} value={approved} name="appr" handleChange={this.handleChange} />
               </td>
             </tr>
           </tbody>
