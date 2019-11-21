@@ -1,5 +1,9 @@
 # Web App
 
+## Install dependencies
+
+npm install
+
 ## Start application
 
 npm run start
@@ -8,3 +12,6 @@ npm run start
 
 npm run lint
 
+## Build JavaScript bundle using Webpack
+
+npm run build
