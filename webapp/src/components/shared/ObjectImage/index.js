@@ -12,7 +12,7 @@ const ObjectImage = (
     onClick,
   },
 ) => (
-  <button type="button" className="button_image" onClick={onClick}>
+  <button type="button" className="wrapper_button" onClick={onClick}>
     <img
       id={id}
       crossOrigin={crossOrigin}

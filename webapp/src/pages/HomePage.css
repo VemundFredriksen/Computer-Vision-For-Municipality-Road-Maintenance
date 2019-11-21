@@ -1,11 +1,14 @@
 .homepage__container {
     height: 100vh;
     text-align: center;
+    font-family: Arial;
 }
 
-.object_info__wrapper {
+.main_content__container {
     display: flex;
     justify-content: center;
+    margin: auto;
+    width: 90vw;
 }
 
 .image__wrapper {

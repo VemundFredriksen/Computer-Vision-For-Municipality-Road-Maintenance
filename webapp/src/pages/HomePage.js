@@ -363,8 +363,10 @@ class HomePage extends React.Component {
     const inWOList = workOrders.some((item) => item._id === currentObject._id);
     return (
       <div className="homepage__container">
-        <Button text="Send work orders" onClick={workOrders.length > 0 ? this.handleSubmitWO : null} />
-        <div className="object_info__wrapper">
+        <div>
+          <Button text="Send work orders" onClick={workOrders.length > 0 ? this.handleSubmitWO : null} />
+        </div>
+        <div className="main_content__container">
           {currentObject && !edit
             ? (
               <ObjectInfoComponent

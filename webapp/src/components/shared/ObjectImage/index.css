@@ -1,4 +1,11 @@
+.wrapper_button {
+    border: none;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
 .object_image {
-    max-width: 250px;
-    max-height: 350px;
+    width: 100%;
+    height: 100%;
 }

@@ -1,24 +1,19 @@
 .info_bar__wrapper {
     display: flex;
     flex-direction: column;
-    width: 300px;
-    height: 698px;
     justify-content: space-between;
-    align-self: center;
     align-items: center;
     border: #d8d8d8 1px solid;
-    font-family: Arial;
+    margin: 70px 0;
+    padding: 23px;
+    width: 100%;
+    max-width: 300px;
+    max-height: 800px;
 }
 
 .close_icon__container {
     align-self: flex-end;
-    margin: 4px 1px;
-}
-
-.button_image {
-    background-color: white;
-    border: none;
-    padding: 0;
+    transform: translate(20px, -13px);
 }
 
 .info_table__wrapper {
@@ -26,7 +21,7 @@
     flex-direction: column;
     text-align: left;
     box-sizing: border-box;
-    margin: 10px 30px;
+    margin: 0 23px;
 }
 
 .object_info {
@@ -37,5 +32,6 @@
     width: 45px;
     border: none;
     cursor: pointer;
+    background-color: white;
 }
 
