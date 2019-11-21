@@ -1,0 +1,26 @@
+# Here, we are building two containers.
+# 1. Node container(It is our express app)
+# 2. mongodb container(mongodb).
+version: "3"
+services:
+  app:
+    container_name: app
+    restart: always
+    build: .
+    ports:
+      - "4000:4000"
+    links:
+      - mongo
+    volumes:
+      - objectsimages:/app/uploads
+  mongo:
+    container_name: mongo
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - objectsdb:/data/db
+
+volumes:
+  objectsdb:
+  objectsimages:
