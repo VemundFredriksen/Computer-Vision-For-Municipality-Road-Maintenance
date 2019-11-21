@@ -25,4 +25,7 @@ If the host system has the necessary prerequisites in place and the core code ha
 
 If the host is connected to the internet through a router the router needs to forward the ports 21, 22 and 60000 til 60005 to the host computer. These are the ports needed for the FTP to work.
 
+If you want to use the pretrained weights they are available to download from here:
+https://drive.google.com/drive/folders/1Y1oPwf7pAxci3eTjVfweZ_UjCzgYZil0?usp=sharing
+
 To start the module simply run *sudo python3 server.py* in */cvmodule/Server/*. It needs admin privelgies to open TCP ports, therefore sudo. When started the ftp-server will stand by waiting for files to be analyzed.
