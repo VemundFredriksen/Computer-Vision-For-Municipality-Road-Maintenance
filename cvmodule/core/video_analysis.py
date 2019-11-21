@@ -41,9 +41,7 @@ class IMAGE(Structure):
 class METADATA(Structure):
     _fields_ = [("classes", c_int),
                 ("names", POINTER(c_char_p))]
-#import os
-#lib = CDLL("/home/pjreddie/documents/darknet/libdarknet.so", RTLD_GLOBAL)
-#print(os.getcwd())
+
 
 libdarknet_path = ""
 network_weights = ""
@@ -209,7 +207,6 @@ def store_meta_data(imagePath, preds):
     log += "},\n"
     log = log[:-3] + "\n},"
     f.write(log)
-    #print(log)
     f.close()
 
     return os.getcwd()
@@ -253,25 +250,5 @@ def do_video_analysis(path_to_video, path_to_image_dir, path_to_save_dir):
 
 if __name__ == "__main__":
 	print("Starting CV analysis.")
-	#print(sys.argv[1], sys.argv[2], sys.argv[3])
 	do_video_analysis(sys.argv[1], sys.argv[2], sys.argv[3])
-"""
-else:
-	net = load_net("yolo-potholes-tiny.cfg".encode("utf-8"), "yolo-potholes-tiny_29000.weights".encode("utf-8"), 0)
-	meta = load_meta("obj.data".encode("utf-8"))
 
-	vid = "bumpy_road.mp4"
-	now = datetime.now()
-	imPath = "{}/.analyzis-{}".format(os.getcwd(),now)
-	savePath = "{}/.result-{}".format(os.getcwd(), now)
-	os.mkdir(imPath)
-	os.mkdir(savePath)
-	video_to_images(vid, imPath, 0.5)
-	
-	imgs = glob.glob(imPath + "/*.jpg")
-	for im in imgs:
-		r = detect(net, meta, im.encode("utf-8"))
-		if(len(r) > 0):
-			image = draw_prediction_box(im, r, savePath)
-			store_meta_data(image)
-	shutil.rmtree(imPath)"""

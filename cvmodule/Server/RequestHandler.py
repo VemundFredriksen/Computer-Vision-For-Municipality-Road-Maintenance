@@ -38,20 +38,14 @@ class RequestHandler(FTPHandler):
                     file_path, 
                     path_to_image_dir,
                     path_to_save_dir]
-        #print("Starting analysis with args: " + str(cmd_args))
         result = subprocess.run(cmd_args)
         
         json_files_to_upload = glob.glob(path_to_save_dir + "/*.meta")
         
         image_files_to_upload = glob.glob(path_to_save_dir + "/*.jpg")
 
-
-        #print("These are the JSON files i will be uploading %s" % (json_files_to_upload))
-
-        #print("These are the image files i will be uploading %s" % (image_files_to_upload))
-
         temp_filename = "temp_meta_file{}".format(now)
-        #print("Creating a temporary file to store the combined metadata %s" % temp_filename)
+        
         temp_file = open(temp_filename, "w+")
         metaString = "["
         for path in json_files_to_upload:
