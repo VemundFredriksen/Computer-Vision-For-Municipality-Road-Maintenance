@@ -1,6 +1,6 @@
-# Web App
+# Web Application
 
-The project web application is built on the React UI library. It uses component state, class-based components and relies heavily on functionality from react-leaflet as well as using react-router. For all dependencies you can review the "package.json" file. This project uses Webpack in order to generate a JavaScript bundle. Husky is used to enforce eslint to run as a pre-commit hook with settings in ".huskyrc", using the recommended airbnb linter settings as well as some customizations as found in ".eslintrc.js"
+The project web application is built on the React UI library. It uses component state, class-based components as well as functional components, and relies on functionality from react-leaflet. For all dependencies you can review the "package.json" file. This project uses Webpack in order to generate a JavaScript bundle. Husky is used to enforce eslint to run as a pre-commit hook with settings in ".huskyrc", using the recommended airbnb linter settings as well as some customizations as found in ".eslintrc.js". This application is a basic prototype for this prosject and should be built from scratch using a state management framework if the project is to be developed further and extended. 
 
 ## Install dependencies
 
