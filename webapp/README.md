@@ -39,4 +39,4 @@ The Cypress framework can be started by executing "npm run cypress" in the main 
 
 ### Run the testing framework in headless mode
 
-You may run the test runner (browser) in headless mode, exeucting all the tests, taking all the screenshots and videos by running the command "npm run cypress:run"
+You may run the test runner (browser) in headless mode, executing all the tests, taking all the screenshots and videos by running the command "npm run cypress:run"

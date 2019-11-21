@@ -27,7 +27,7 @@ describe('The Detailed View', function() {
     })
     it('Contains all expected Object information fields', function() {
         // Image
-        cy.get('[class="button_image"]')
+        cy.get('[class="wrapper_button"]')
         .should('exist')
         // Information table
         cy.get('tr')
@@ -46,7 +46,7 @@ describe('The Detailed View', function() {
         .should('exist')
     })
     it('Opens the fullscreen Object image modal', function() {
-        cy.get('[class="button_image"]')
+        cy.get('[class="wrapper_button"]')
         .should('exist')
         .click()
     })
@@ -54,7 +54,7 @@ describe('The Detailed View', function() {
         cy.screenshot('Object image modal fullscreen')
     })
     it('Closes the Object image modal', function() {
-        cy.get('[class="button_image"]')
+        cy.get('[class="wrapper_button"]')
         .click()
     })
     it('Close detailed view by clicking the close button', function() {
