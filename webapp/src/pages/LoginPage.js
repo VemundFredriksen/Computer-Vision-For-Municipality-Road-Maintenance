@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import LoginForm from '../components/login/LoginForm';
+import Index from '../components/LoginForm';
 
 import './LoginPage.css';
 
@@ -8,7 +8,7 @@ const LoginPage = ({ loggedIn, handleLogin }) => (
   <div className="login__wrapper">
     <h1>Login</h1>
     { loggedIn ? <p>You are logged in</p>
-      : <LoginForm handleLogin={handleLogin} /> }
+      : <Index handleLogin={handleLogin} /> }
   </div>
 );
 

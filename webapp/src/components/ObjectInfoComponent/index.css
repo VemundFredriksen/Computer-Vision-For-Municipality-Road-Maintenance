@@ -1,0 +1,37 @@
+.info_bar__wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    border: #d8d8d8 1px solid;
+    margin: 70px 0;
+    padding: 23px;
+    width: 100%;
+    max-width: 300px;
+    max-height: 800px;
+}
+
+.close_icon__container {
+    align-self: flex-end;
+    transform: translate(20px, -13px);
+}
+
+.info_table__wrapper {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    box-sizing: border-box;
+    margin: 0 23px;
+}
+
+.object_info {
+    margin: 10px;
+}
+
+.close_button {
+    width: 45px;
+    border: none;
+    cursor: pointer;
+    background-color: white;
+}
+
