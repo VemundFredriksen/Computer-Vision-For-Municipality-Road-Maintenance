@@ -31,7 +31,7 @@ This React application needs to point to a valid REST API endpoint, preferably g
 
 ## Cypress E2E Testing
 
-This project uses the Cypress framework for End to End testing. It is able to test any web application that runs in the browser, and has an open-source test runner based on Chromium. The configuration file for the test framework can be found in "cypress.json", the tests in "cypress/integration/main" and you can also access any completed tests screenshots and video results from the "cypress" folder and the map "videos" or "screenshots". It is important to note that these tests are intended to be run during development, and on the development environment of the system, which is why it is pointing towards the localhost:8080 URL. Some of these tests may break as the DOM is changed due to further development, so tests should be updated to reflect these changes.
+This project uses the Cypress framework for End to End testing. It is able to test any web application that runs in the browser, and has an open-source test runner based on Chromium. The configuration file for the test framework can be found in "cypress.json" and the tests in "cypress/integration/main". You can also access any completed tests screenshots and video results from the "cypress" folder and the folder "videos" or "screenshots", respectively. It is important to note that these tests are intended to be run during development, and on the development environment of the system, which is why it is pointing towards the localhost:8080 URL instead of a production environment. Some of these tests may break as the DOM is changed due to further development, so tests should be updated to reflect these changes when needed.
 
 ### Run the testing framework in GUI mode
 
